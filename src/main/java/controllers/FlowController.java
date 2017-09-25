@@ -3,6 +3,7 @@ package controllers;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
+import iohelpers.ConfigChecker;
 import org.json.JSONObject;
 import subcontrollers.ConnectionController;
 import subcontrollers.MemoryMapper;
@@ -15,12 +16,14 @@ public class FlowController {
     private PackagingController packagingController;
     private ConnectionController connectionController;
     private MemoryMapper memoryMapper;
+    private ConfigChecker configChecker;
 
     public FlowController(){
-        readController = new ReadController();
+        configChecker = new ConfigChecker();
         packagingController = new PackagingController();
         connectionController = new ConnectionController();
-        memoryMapper = new MemoryMapper();
+        memoryMapper = new MemoryMapper(configChecker);
+        readController = new ReadController(configChecker);
         testParsing();
 
 

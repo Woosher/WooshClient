@@ -1,12 +1,13 @@
 package subcontrollers;
 
+import iohelpers.ConfigChecker;
 import iohelpers.ConfigReader;
 
 public class ReadController {
 
     ConfigReader configReader;
 
-    public ReadController(){
-        configReader = new ConfigReader();
+    public ReadController(ConfigChecker configChecker){
+        configReader = new ConfigReader(configChecker);
     }
 }
