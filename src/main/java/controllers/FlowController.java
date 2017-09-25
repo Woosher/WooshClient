@@ -1,12 +1,28 @@
-import entities.Deployment;
-import entities.LoadBalancer;
-import entities.Node;
+package controllers;
+
+import entities.parsing.Deployment;
+import entities.parsing.LoadBalancer;
+import entities.parsing.Node;
 import org.json.JSONObject;
+import subcontrollers.ConnectionController;
+import subcontrollers.MemoryMapper;
+import subcontrollers.PackagingController;
+import subcontrollers.ReadController;
 
-public class PackageParser {
+public class FlowController {
 
-    public PackageParser(){
+    private ReadController readController;
+    private PackagingController packagingController;
+    private ConnectionController connectionController;
+    private MemoryMapper memoryMapper;
+
+    public FlowController(){
+        readController = new ReadController();
+        packagingController = new PackagingController();
+        connectionController = new ConnectionController();
+        memoryMapper = new MemoryMapper();
         testParsing();
+
 
     }
 
@@ -54,9 +70,5 @@ public class PackageParser {
     public void print(String text){
         System.out.println(text);
     }
-
-
-
-
 
 }

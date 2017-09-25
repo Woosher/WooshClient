@@ -1,4 +1,4 @@
-package entities;
+package entities.parsing;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
