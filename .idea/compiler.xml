@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="jsontest" />
+        <module name="wooshclient" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="jsontest" target="1.5" />
+      <module name="wooshclient" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
