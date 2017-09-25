@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/jsontest.iml" filepath="$PROJECT_DIR$/jsontest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wooshclient.iml" filepath="$PROJECT_DIR$/wooshclient.iml" />
     </modules>
   </component>
 </project>
