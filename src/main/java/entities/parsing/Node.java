@@ -2,30 +2,14 @@ package entities.parsing;
 
 import org.json.JSONObject;
 
-public class Node{
+public class Node extends System{
 
-    private String name, ip, environment, operatingSystem;
-    private int port;
+    private String environment, operatingSystem;
 
     public Node(){
 
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
 
     public String getEnvironment() {
         return environment;
@@ -43,13 +27,6 @@ public class Node{
         this.operatingSystem = operatingSystem;
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
 
     public static Node parseFromJSON(JSONObject jsonObject){
         Node node = new Node();

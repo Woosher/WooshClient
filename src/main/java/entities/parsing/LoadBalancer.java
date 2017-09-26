@@ -6,39 +6,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoadBalancer {
+public class LoadBalancer extends System {
 
-    private String name, ip, cachingAttributes;
-    private int port;
+    private String cachingAttributes;
     private List<Node> nodes;
 
     public LoadBalancer(){
         nodes = new ArrayList<Node>();
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
 
     public String getCachingAttributes() {
         return cachingAttributes;
