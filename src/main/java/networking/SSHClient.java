@@ -1,6 +1,6 @@
 package networking;
 
-import entities.Package;
+import entities.DeploymentPackage;
 import entities.parsing.Node;
 
 public class SSHClient implements networking.Interfaces.SSHClientInterface {
@@ -12,7 +12,7 @@ public class SSHClient implements networking.Interfaces.SSHClientInterface {
 
     }
 
-    public void sendPackage(Package pack){
+    public void sendPackage(DeploymentPackage pack){
 
     }
 

@@ -1,14 +1,30 @@
 package subcontrollers;
 
 
-import iohelpers.Basher;
+import entities.DeploymentPackage;
+import entities.parsing.System;
+import exceptions.WooshException;
+import iohelpers.Scripter;
+import subcontrollers.interfaces.PackagingInterface;
 
-public class PackagingController {
+public class PackagingController implements PackagingInterface {
 
-    private Basher basher;
+    private Scripter scripter;
 
     public PackagingController(){
-        basher = new Basher();
+        scripter = new Scripter();
+    }
+
+    public DeploymentPackage createPackage(System system) throws WooshException {
+        return null;
+    }
+
+    public String createBashScripts(System system) throws WooshException {
+        return null;
+    }
+
+    public String compressPackage(System system) throws WooshException {
+        return null;
     }
 
 }

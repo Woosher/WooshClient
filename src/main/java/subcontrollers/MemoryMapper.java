@@ -6,7 +6,7 @@ import entities.parsing.Node;
 import exceptions.WooshException;
 import iohelpers.ConfigChecker;
 import iohelpers.ConfigWriter;
-import subcontrollers.interfacaes.MapperInterface;
+import subcontrollers.interfaces.MapperInterface;
 
 import java.util.List;
 

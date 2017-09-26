@@ -1,6 +1,6 @@
 package networking.Interfaces;
 
-import entities.Package;
+import entities.DeploymentPackage;
 import entities.parsing.Node;
 
 public interface SSHClientInterface {
@@ -8,5 +8,5 @@ public interface SSHClientInterface {
 
     void testConnection(Node node);
 
-    void sendPackage(Package pack);
+    void sendPackage(DeploymentPackage pack);
 }
