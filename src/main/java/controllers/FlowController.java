@@ -1,8 +1,12 @@
 package controllers;
 
+import controllers.interfaces.FlowControlleInterface;
+import entities.DeploymentPackage;
+import entities.ResultsListener;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
+import exceptions.WooshException;
 import iohelpers.ConfigChecker;
 import org.json.JSONObject;
 import subcontrollers.ConnectionController;
@@ -10,7 +14,7 @@ import subcontrollers.MemoryMapper;
 import subcontrollers.PackagingController;
 import subcontrollers.ReadController;
 
-public class FlowController {
+public class FlowController implements FlowControlleInterface{
 
     private ReadController readController;
     private PackagingController packagingController;
@@ -74,4 +78,35 @@ public class FlowController {
         System.out.println(text);
     }
 
+    public Deployment loadDeployment(String path) throws WooshException {
+        return null;
+    }
+
+    public void saveDeployment(Deployment deployment) throws WooshException {
+
+    }
+
+    public Deployment clearDeployment() throws WooshException {
+        return null;
+    }
+
+    public void addNodeToDeployment(Node node) throws WooshException {
+
+    }
+
+    public void removeNodeToDeployment(Node node) throws WooshException {
+
+    }
+
+    public void addLoadBalancerToDeployment(LoadBalancer loadBalancer) throws WooshException {
+
+    }
+
+    public void removeLoadBalancerToDeployment(LoadBalancer loadBalancer) throws WooshException {
+
+    }
+
+    public void sendPackage(DeploymentPackage deploymentPackage, ResultsListener resultsListener) throws WooshException {
+
+    }
 }
