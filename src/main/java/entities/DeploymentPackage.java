@@ -1,5 +1,7 @@
 package entities;
 
+import entities.parsing.System;
+
 public class DeploymentPackage {
 
     private System system;

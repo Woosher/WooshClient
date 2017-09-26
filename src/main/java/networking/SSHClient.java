@@ -1,7 +1,7 @@
 package networking;
 
 import com.jcraft.jsch.*;
-import entities.Package;
+import entities.DeploymentPackage;
 import entities.parsing.Node;
 import exceptions.WooshException;
 
@@ -30,7 +30,7 @@ public class SSHClient implements networking.Interfaces.SSHClientInterface {
             throw new WooshException(e.getMessage());
         }
     }
-    public void addKnownHost(Node node){
+    public void addKnownHost(Node node) throws WooshException{
         try {
             setKnownHostFile(jsch);
             Session session = jsch.getSession(node.getName(), node.getIp(), node.getPort());
@@ -48,7 +48,6 @@ public class SSHClient implements networking.Interfaces.SSHClientInterface {
     public boolean testConnection(Node node){
 
         try {
-            JSch jsch = new JSch();
             setKnownHostFile(jsch);
             Session session = jsch.getSession(node.getName(), node.getIp(), node.getPort());
             session.setPassword(node.getPassword());
@@ -66,37 +65,32 @@ public class SSHClient implements networking.Interfaces.SSHClientInterface {
         }
     }
 
-    public void sendPackage(Package pack){
+    public void sendPackage(DeploymentPackage pack) throws WooshException{
         try {
-            JSch jsch = new JSch();
             setKnownHostFile(jsch);
-            Session session = jsch.getSession(node.getName(), node.getIp(), node.getPort());
-            session.setPassword(node.getPassword());
-            java.util.Properties config = new java.util.Properties();
-            //config.put("StrictHostKeyChecking", "no");
-            session.setConfig(config);
+            Session session = jsch.getSession(pack.getSystem().getName(), pack.getSystem().getIp(), pack.getSystem().getPort());
+            session.setPassword(pack.getSystem().getPassword());
 
             session.connect();
             System.out.println(session.getHostKey().getKey());
 
             Channel channel = session.openChannel("sftp");
             channel.connect();
-            channelSftp = (ChannelSftp) channel;
-            channelSftp.cd(SFTPWORKINGDIR);
+            ChannelSftp channelSftp = (ChannelSftp) channel;
+            channelSftp.cd("/etc/woosh/package/wooshserver/");
 
-            File f = new File("C:\\Users\\pet_n\\Desktop\\test1.txt");
+            File f = new File(pack.getSystem().getPath());
             channelSftp.put(new FileInputStream(f), f.getName());
 
             channel.disconnect();
             session.disconnect();
         }catch (JSchException e) {
             e.printStackTrace();
-            if(e.getMessage().contains("UnknownHostKey")){
-                addHostKey(SFTPUSER,SFTPHOST,SFTPPORT, SFTPPASS);
-            }
+            throw new WooshException(e.getMessage());
         }
         catch (Exception ex) {
             ex.printStackTrace();
+            throw new WooshException(ex.getMessage());
         }
     }
 

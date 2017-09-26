@@ -2,8 +2,16 @@ package entities.parsing;
 
 abstract public class System {
 
-    private String name, ip, password;
+    private String name,ip,password, path;
     private int port;
+
+    final public String getPath() {
+        return path;
+    }
+
+    final public void setPath(String path) {
+        this.path = path;
+    }
 
     final public String getName() {
         return name;

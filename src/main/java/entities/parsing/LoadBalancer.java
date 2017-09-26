@@ -40,6 +40,7 @@ public class LoadBalancer extends System {
         loadBalancer.setIp(jsonObject.getString("ip"));
         loadBalancer.setPort(jsonObject.getInt("port"));
         loadBalancer.setCachingAttributes(jsonObject.getString("caching_attributes"));
+        loadBalancer.setPassword(jsonObject.getString("password"));
 
         JSONArray JSONnodes = jsonObject.getJSONArray("nodes");
         for(int i = 0; i<JSONnodes.length(); i++){
@@ -59,6 +60,7 @@ public class LoadBalancer extends System {
         jsonObject.put("ip", this.getIp());
         jsonObject.put("port", this.getPort());
         jsonObject.put("caching_attributes", this.getCachingAttributes());
+        jsonObject.put("password", this.getPassword());
 
         for(Node node : this.getNodes()){
             JSONObject jsonNodeInfo = node.parseToJSON();

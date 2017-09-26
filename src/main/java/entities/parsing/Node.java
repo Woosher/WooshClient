@@ -35,6 +35,7 @@ public class Node extends System{
         node.setName(jsonObject.getString("name"));
         node.setEnvironment(jsonObject.getString("software_environment"));
         node.setOperatingSystem(jsonObject.getString("operating_system"));
+        node.setPassword(jsonObject.getString("password"));
         return node;
     }
 
@@ -45,6 +46,7 @@ public class Node extends System{
         jsonObject.put("name", this.getName());
         jsonObject.put("software_environment", this.getEnvironment());
         jsonObject.put("operating_system", this.getOperatingSystem());
+        jsonObject.put("password",this.getPassword());
         return jsonObject;
     }
 }
