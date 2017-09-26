@@ -79,7 +79,7 @@ public class SSHClient implements networking.Interfaces.SSHClientInterface {
             session.connect();
             System.out.println(session.getHostKey().getKey());
 
-            channel = session.openChannel("sftp");
+            Channel channel = session.openChannel("sftp");
             channel.connect();
             channelSftp = (ChannelSftp) channel;
             channelSftp.cd(SFTPWORKINGDIR);
