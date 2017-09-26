@@ -1,4 +1,4 @@
-package subcontrollers.interfacaes;
+package subcontrollers.interfaces;
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
