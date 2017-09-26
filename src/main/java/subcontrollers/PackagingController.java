@@ -5,11 +5,12 @@ import entities.DeploymentPackage;
 import entities.parsing.System;
 import exceptions.WooshException;
 import iohelpers.Scripter;
+import iohelpers.interfaces.ScripterInterface;
 import subcontrollers.interfaces.PackagingInterface;
 
 public class PackagingController implements PackagingInterface {
 
-    private Scripter scripter;
+    private ScripterInterface scripter;
 
     public PackagingController(){
         scripter = new Scripter();
@@ -24,6 +25,7 @@ public class PackagingController implements PackagingInterface {
     }
 
     public String compressPackage(System system) throws WooshException {
+        scripter.compressPackage("po");
         return null;
     }
 
