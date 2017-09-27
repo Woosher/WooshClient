@@ -25,7 +25,7 @@ public class PackagingController implements PackagingInterface {
     }
 
     public String compressPackage(System system) throws WooshException {
-        scripter.compressPackage("po");
+        scripter.compressPackage(null,null,null);
         return null;
     }
 

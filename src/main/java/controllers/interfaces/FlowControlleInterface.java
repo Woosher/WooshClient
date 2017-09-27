@@ -23,7 +23,7 @@ public interface FlowControlleInterface {
 
     void removeLoadBalancerToDeployment(LoadBalancer loadBalancer) throws WooshException;
 
-    void sendPackage(DeploymentPackage deploymentPackage, ResultsListener resultsListener) throws WooshException;
+    void sendPackage(DeploymentPackage deploymentPackage, ResultsListener<String> resultsListener) ;
 
 
 }

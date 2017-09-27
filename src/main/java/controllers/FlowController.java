@@ -14,6 +14,12 @@ import subcontrollers.MemoryMapper;
 import subcontrollers.PackagingController;
 import subcontrollers.ReadController;
 
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+
 public class FlowController implements FlowControlleInterface{
 
     private ReadController readController;
@@ -29,13 +35,6 @@ public class FlowController implements FlowControlleInterface{
         memoryMapper = new MemoryMapper(configChecker);
         readController = new ReadController(configChecker);
         //testParsing();
-
-        try {
-            packagingController.compressPackage(null);
-        } catch (WooshException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public void testParsing(){
@@ -111,8 +110,43 @@ public class FlowController implements FlowControlleInterface{
 
     }
 
-    public void sendPackage(DeploymentPackage deploymentPackage, ResultsListener resultsListener) throws WooshException {
-
+    public void sendPackage(DeploymentPackage deploymentPackage,final ResultsListener<String> resultsListener) {
+        supplyAsync(this::createId).
+                        thenApply(this::convert).
+                        thenAccept(a -> store(a, resultsListener));
 
     }
+
+    void store(String message, ResultsListener<String> resultsListener) {
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        resultsListener.onCompletion("LISTENER COMPLETE");
+        System.out.println("THREAD message = " + message);
+    }
+
+
+    String convert(UUID input) {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("THREAD convert");
+        return input.toString();
+    }
+
+    UUID createId() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("THREAD createId");
+        return UUID.randomUUID();
+    }
+
+
 }
