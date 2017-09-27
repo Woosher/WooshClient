@@ -1,4 +1,4 @@
-package controllers.interfaces;
+package modellers.interfaces;
 
 import entities.DeploymentPackage;
 import entities.ResultsListener;
@@ -7,7 +7,7 @@ import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
 import exceptions.WooshException;
 
-public interface FlowControlleInterface {
+public interface FlowModelInterface {
 
     Deployment loadDeployment(String path) throws WooshException;
 
@@ -23,7 +23,7 @@ public interface FlowControlleInterface {
 
     void removeLoadBalancerToDeployment(LoadBalancer loadBalancer) throws WooshException;
 
-    void sendPackage(DeploymentPackage deploymentPackage, ResultsListener<String> resultsListener) ;
+    void sendPackage(DeploymentPackage deploymentPackage,  ResultsListener<String> resultsListener) ;
 
 
 }

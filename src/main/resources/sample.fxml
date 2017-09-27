@@ -6,15 +6,19 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="center" hgap="10" vgap="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="controllers.FlowController">
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ViewController">
     <padding><Insets bottom="10" left="25" right="25" top="25" /></padding>
    <children>
-      <Button mnemonicParsing="false" text="Button" />
+      <Button fx:id="centerButton" mnemonicParsing="false" text="THREAD BUTTON" />
+      <Button fx:id="secondButton" mnemonicParsing="false" text="SECOND" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
    </children>
    <columnConstraints>
       <ColumnConstraints />
+      <ColumnConstraints />
    </columnConstraints>
    <rowConstraints>
+      <RowConstraints />
       <RowConstraints />
    </rowConstraints>
 </GridPane>

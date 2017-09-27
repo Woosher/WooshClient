@@ -1,11 +1,12 @@
-package view;
 
+import controller.ViewController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import modellers.FlowModeller;
+import modellers.interfaces.FlowModelInterface;
 
 public class Main extends Application{
     /**
@@ -28,7 +29,10 @@ public class Main extends Application{
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("sample.fxml"));
         BorderPane root = new BorderPane();
         root.setCenter(loader.load());
-        loader.getController();
+        ViewController controller = loader.getController();
+        FlowModelInterface flowModel = new FlowModeller();
+        controller.initModel(flowModel);
+
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();

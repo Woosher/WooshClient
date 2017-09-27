@@ -1,6 +1,6 @@
-package controllers;
+package modellers;
 
-import controllers.interfaces.FlowControlleInterface;
+import modellers.interfaces.FlowModelInterface;
 import entities.DeploymentPackage;
 import entities.ResultsListener;
 import entities.parsing.Deployment;
@@ -15,20 +15,19 @@ import subcontrollers.PackagingController;
 import subcontrollers.ReadController;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-public class FlowController implements FlowControlleInterface{
+public class FlowModeller implements FlowModelInterface {
 
     private ReadController readController;
     private PackagingController packagingController;
     private ConnectionController connectionController;
     private MemoryMapper memoryMapper;
     private ConfigChecker configChecker;
+    private int counter = 0;
 
-    public FlowController(){
+    public FlowModeller(){
         configChecker = new ConfigChecker();
         packagingController = new PackagingController();
         connectionController = new ConnectionController();
@@ -96,6 +95,7 @@ public class FlowController implements FlowControlleInterface{
 
     public void addNodeToDeployment(Node node) throws WooshException {
 
+
     }
 
     public void removeNodeToDeployment(Node node) throws WooshException {
@@ -125,7 +125,6 @@ public class FlowController implements FlowControlleInterface{
             e.printStackTrace();
         }
         resultsListener.onCompletion("LISTENER COMPLETE");
-        System.out.println("THREAD message = " + message);
     }
 
 
@@ -135,7 +134,6 @@ public class FlowController implements FlowControlleInterface{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("THREAD convert");
         return input.toString();
     }
 
@@ -145,7 +143,6 @@ public class FlowController implements FlowControlleInterface{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("THREAD createId");
         return UUID.randomUUID();
     }
 
