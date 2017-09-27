@@ -1,6 +1,6 @@
 package entities.parsing;
 
-abstract public class System {
+abstract public class Machine {
 
     private String name,ip,password, path;
     private int port;

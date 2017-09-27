@@ -2,7 +2,7 @@ package entities.parsing;
 
 import org.json.JSONObject;
 
-public class Node extends System{
+public class Node extends Machine {
 
     private String environment, operatingSystem;
 
