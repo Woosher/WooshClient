@@ -28,8 +28,13 @@ public class FlowController implements FlowControlleInterface{
         connectionController = new ConnectionController();
         memoryMapper = new MemoryMapper(configChecker);
         readController = new ReadController(configChecker);
-        testParsing();
+        //testParsing();
 
+        try {
+            packagingController.compressPackage(null);
+        } catch (WooshException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -107,6 +112,7 @@ public class FlowController implements FlowControlleInterface{
     }
 
     public void sendPackage(DeploymentPackage deploymentPackage, ResultsListener resultsListener) throws WooshException {
+
 
     }
 }
