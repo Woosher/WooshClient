@@ -2,7 +2,7 @@ package subcontrollers;
 
 
 import entities.DeploymentPackage;
-import entities.parsing.System;
+import entities.parsing.Machine;
 import exceptions.WooshException;
 import iohelpers.Scripter;
 import iohelpers.interfaces.ScripterInterface;
@@ -16,15 +16,15 @@ public class PackagingController implements PackagingInterface {
         scripter = new Scripter();
     }
 
-    public DeploymentPackage createPackage(System system) throws WooshException {
+    public DeploymentPackage createPackage(Machine machine) throws WooshException {
         return null;
     }
 
-    public String createBashScripts(System system) throws WooshException {
+    public String createBashScripts(Machine machine) throws WooshException {
         return null;
     }
 
-    public String compressPackage(System system) throws WooshException {
+    public String compressPackage(Machine machine) throws WooshException {
         scripter.compressPackage(null,null,null);
         return null;
     }

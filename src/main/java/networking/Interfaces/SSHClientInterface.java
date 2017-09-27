@@ -1,13 +1,13 @@
 package networking.Interfaces;
 
 import entities.DeploymentPackage;
-import entities.parsing.Node;
+import entities.parsing.Machine;
 import exceptions.WooshException;
 
 public interface SSHClientInterface {
-    void addKnownHost(Node node) throws WooshException;
+    void addKnownHost(Machine machine) throws WooshException;
 
-    boolean testConnection(Node node);
+    boolean testConnection(Machine machine);
 
     void sendPackage(DeploymentPackage pack) throws WooshException;
 }

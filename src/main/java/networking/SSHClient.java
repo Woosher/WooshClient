@@ -3,20 +3,17 @@ package networking;
 import com.jcraft.jsch.*;
 import entities.DeploymentPackage;
 import entities.parsing.Node;
+import entities.parsing.Machine;
 import exceptions.WooshException;
 
 import java.io.File;
 import java.io.FileInputStream;
 
-public class SSHClient implements networking.Interfaces.SSHClientInterface {
+public final class SSHClient{
 
-    private JSch jsch = null;
 
-    public SSHClient(){
-        jsch = new JSch();
-    }
 
-    private void setKnownHostFile(JSch jsch) throws WooshException{
+    private static void setKnownHostFile(JSch jsch) throws WooshException{
         try {
             File file = new File(System.getProperty("user.home") + "\\.ssh\\known_hosts");
             if (!file.isFile()) {
@@ -30,11 +27,15 @@ public class SSHClient implements networking.Interfaces.SSHClientInterface {
             throw new WooshException(e.getMessage());
         }
     }
-    public void addKnownHost(Node node) throws WooshException{
+
+
+
+    public static void addKnownHost(Machine machine) throws WooshException{
         try {
+            JSch jsch = new JSch();
             setKnownHostFile(jsch);
-            Session session = jsch.getSession(node.getName(), node.getIp(), node.getPort());
-            session.setPassword(node.getPassword());
+            Session session = jsch.getSession(machine.getName(), machine.getIp(), machine.getPort());
+            session.setPassword(machine.getPassword());
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setConfig(config);
@@ -45,12 +46,13 @@ public class SSHClient implements networking.Interfaces.SSHClientInterface {
         }
     }
 
-    public boolean testConnection(Node node){
+    public static boolean testConnection(Machine machine){
 
         try {
+            JSch jsch = new JSch();
             setKnownHostFile(jsch);
-            Session session = jsch.getSession(node.getName(), node.getIp(), node.getPort());
-            session.setPassword(node.getPassword());
+            Session session = jsch.getSession(machine.getName(), machine.getIp(), machine.getPort());
+            session.setPassword(machine.getPassword());
             session.connect();
             session.disconnect();
             return true;
@@ -65,21 +67,21 @@ public class SSHClient implements networking.Interfaces.SSHClientInterface {
         }
     }
 
-    public void sendPackage(DeploymentPackage pack) throws WooshException{
+    public static void sendPackage(DeploymentPackage pack) throws WooshException{
         try {
+            JSch jsch = new JSch();
             setKnownHostFile(jsch);
-            Session session = jsch.getSession(pack.getSystem().getName(), pack.getSystem().getIp(), pack.getSystem().getPort());
-            session.setPassword(pack.getSystem().getPassword());
+            Session session = jsch.getSession(pack.getMachine().getName(), pack.getMachine().getIp(), pack.getMachine().getPort());
+            session.setPassword(pack.getMachine().getPassword());
 
             session.connect();
-            System.out.println(session.getHostKey().getKey());
 
             Channel channel = session.openChannel("sftp");
             channel.connect();
             ChannelSftp channelSftp = (ChannelSftp) channel;
             channelSftp.cd("/etc/woosh/package/wooshserver/");
 
-            File f = new File(pack.getSystem().getPath());
+            File f = new File(pack.getMachine().getPath());
             channelSftp.put(new FileInputStream(f), f.getName());
 
             channel.disconnect();

@@ -1,16 +1,16 @@
 package subcontrollers.interfaces;
 
 import entities.DeploymentPackage;
-import entities.parsing.System;
+import entities.parsing.Machine;
 import exceptions.WooshException;
 
 public interface PackagingInterface {
 
-    DeploymentPackage createPackage(System system) throws WooshException;
+    DeploymentPackage createPackage(Machine machine) throws WooshException;
 
-    String createBashScripts(System system) throws WooshException;
+    String createBashScripts(Machine machine) throws WooshException;
 
-    String compressPackage(System system) throws WooshException;
+    String compressPackage(Machine machine) throws WooshException;
 
 
 

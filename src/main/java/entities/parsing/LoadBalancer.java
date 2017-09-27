@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoadBalancer extends System {
+public class LoadBalancer extends Machine {
 
     private String cachingAttributes;
     private List<Node> nodes;

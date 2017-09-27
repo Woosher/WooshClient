@@ -1,22 +1,22 @@
 package entities;
 
-import entities.parsing.System;
+import entities.parsing.Machine;
 
 public class DeploymentPackage {
 
-    private System system;
+    private Machine machine;
     private String pathBash, pathCompressed;
 
-    public DeploymentPackage(System system){
-        this.system = system;
+    public DeploymentPackage(Machine machine){
+        this.machine = machine;
     }
 
-    public System getSystem() {
-        return system;
+    public Machine getMachine() {
+        return machine;
     }
 
-    public void setSystem(System system) {
-        this.system = system;
+    public void setMachine(Machine machine) {
+        this.machine = machine;
     }
 
     public String getPathBash() {
