@@ -2,6 +2,8 @@ package controller;
 
 import entities.ResultsListener;
 import entities.parsing.Deployment;
+import entities.parsing.LoadBalancer;
+import entities.parsing.Node;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -55,13 +57,10 @@ public class ViewController {
         secondButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                model.loadDeployment("asdko", new ResultsListener<Deployment>() {
+                model.loadDeployment("/home/toby/Desktop/deploymenttest.txt", new ResultsListener<Deployment>() {
                     @Override
                     public void onCompletion(Deployment result) {
-                        print("complete");
-                        if(result == null){
-                            print("null result");
-                        }
+                        printDeployMent(result);
                     }
 
                     @Override
@@ -74,6 +73,27 @@ public class ViewController {
         });
 
 
+    }
+
+    public void printDeployMent(Deployment deployment){
+        print("NAME OF DEPLOYMENT: " + deployment.getName());
+        print("SSL PATH: " + deployment.getSsl_path());
+        print("LOADBALANCERS: ");
+        for(LoadBalancer loadBalancer : deployment.getLoadBalancers()){
+            print("");
+            print("\tNAME OF LB: " + loadBalancer.getName());
+            print("\tIP OF LB: " + loadBalancer.getPort());
+            print("\tCATCHE OF LB: " + loadBalancer.getCachingAttributes());
+            print("\tNODES");
+            for(Node node : loadBalancer.getNodes()){
+                print("");
+                print("\t\tNAME OF NODE: " + node.getName());
+                print("\t\tIP OF NODE: " + node.getIp());
+                print("\t\tPORT OF NODE: " + node.getPort());
+                print("\t\tSE OF NODE: " + node.getEnvironment());
+                print("\t\tOS OF NODE: " + node.getOperatingSystem());
+            }
+        }
     }
 
     private void print(String args){

@@ -41,7 +41,6 @@ public class LoadBalancer extends Machine {
         loadBalancer.setPort(jsonObject.getInt("port"));
         loadBalancer.setCachingAttributes(jsonObject.getString("caching_attributes"));
         loadBalancer.setPassword(jsonObject.getString("password"));
-
         JSONArray JSONnodes = jsonObject.getJSONArray("nodes");
         for(int i = 0; i<JSONnodes.length(); i++){
             JSONObject JSONnode = JSONnodes.getJSONObject(i);
