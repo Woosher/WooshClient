@@ -36,77 +36,69 @@ public class ViewController {
     }
 
     private void initLayout(){
-        deployButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        deployButton.setOnMouseClicked(event -> handleDeploy());
+        loadButton.setOnMouseClicked(event -> handleLoad());
+        saveButton.setOnMouseClicked(event -> handleSave());
+    }
+
+    public void handleDeploy(){
+        model.sendPackage(null, new ResultsListener<String>() {
             @Override
-            public void handle(MouseEvent event) {
-                model.sendPackage(null, new ResultsListener<String>() {
+            public void onCompletion(String result) {
+                Platform.runLater(new Runnable() {
                     @Override
-                    public void onCompletion(String result) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                deployButton.setText(result);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-
+                    public void run() {
+                        deployButton.setText(result);
                     }
                 });
             }
-        });
 
-        loadButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(MouseEvent event) {
-                FileChooser chooser = new FileChooser();
-                chooser.setTitle("Open File");
-                File file = chooser.showOpenDialog(new Stage());
-                String path = file.getAbsolutePath();
-                if(path != null){
-                    pathField.setText(path);
-                    model.loadDeployment(pathField.getText(), new ResultsListener<Deployment>() {
-                        @Override
-                        public void onCompletion(Deployment result) {
-                            printDeployMent(result);
-                        }
-
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            print(throwable.getMessage());
-                        }
-                    });
-                }
-            }
-        });
-
-        saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                FileChooser chooser = new FileChooser();
-                chooser.setTitle("Save File");
-                File file = chooser.showSaveDialog(new Stage());
-                String path = file.getAbsolutePath();
-                if (path != null) {
-                    savePathField.setText(path);
-                    model.saveDeployment(null, savePathField.getText(), new ResultsListener<Void>() {
-                        @Override
-                        public void onCompletion(Void result) {
-                        }
-
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            print(throwable.getMessage());
-                        }
-                    });
-                }
+            public void onFailure(Throwable throwable) {
 
             }
         });
+    }
 
+    public void handleLoad(){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Open File");
+        File file = chooser.showOpenDialog(new Stage());
+        String path = file.getAbsolutePath();
+        if(path != null){
+            pathField.setText(path);
+            model.loadDeployment(pathField.getText(), new ResultsListener<Deployment>() {
+                @Override
+                public void onCompletion(Deployment result) {
+                    printDeployMent(result);
+                }
 
+                @Override
+                public void onFailure(Throwable throwable) {
+                    print(throwable.getMessage());
+                }
+            });
+        }
+    }
+
+    public void handleSave(){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Save File");
+        File file = chooser.showSaveDialog(new Stage());
+        String path = file.getAbsolutePath();
+        if (path != null) {
+            savePathField.setText(path);
+            model.saveDeployment(null, savePathField.getText(), new ResultsListener<Void>() {
+                @Override
+                public void onCompletion(Void result) {
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    print(throwable.getMessage());
+                }
+            });
+        }
     }
 
     public void printDeployMent(Deployment deployment){
