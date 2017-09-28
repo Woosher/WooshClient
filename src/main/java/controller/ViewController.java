@@ -88,7 +88,7 @@ public class ViewController {
         String path = file.getAbsolutePath();
         if (path != null) {
             savePathField.setText(path);
-            model.saveDeployment(null, savePathField.getText(), new ResultsListener<Void>() {
+            model.saveDeployment(savePathField.getText(), new ResultsListener<Void>() {
                 @Override
                 public void onCompletion(Void result) {
                 }

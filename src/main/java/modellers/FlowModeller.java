@@ -61,7 +61,7 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void saveDeployment(Deployment deployment, String path, ResultsListener<Void> resultsListener) {
+    public void saveDeployment(String path, ResultsListener<Void> resultsListener) {
         supplyAsync(() -> {
             try {
                 return memoryMapper.formatToConfigFile(this.deployment,path);
