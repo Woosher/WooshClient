@@ -9,7 +9,7 @@ public interface FlowModelInterface {
 
     void loadDeployment(String path,final ResultsListener<Deployment> resultsListener) ;
 
-    void saveDeployment(Deployment deployment,final ResultsListener<Void> resultsListener) ;
+    void saveDeployment(String path, final ResultsListener<Void> resultsListener) ;
 
     void clearDeployment(final ResultsListener<Deployment> resultsListener) ;
 

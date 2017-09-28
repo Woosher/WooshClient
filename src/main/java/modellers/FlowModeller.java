@@ -50,21 +50,25 @@ public class FlowModeller implements FlowModelInterface {
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
-        }).thenAcceptAsync(a -> answerLoad(a, resultsListener))
+        }).thenAccept(a -> {this.deployment = a; resultsListener.onCompletion(deployment);})
                 .exceptionally((t) -> {
                     resultsListener.onFailure(t); return null;});
 
     }
 
-    private void answerLoad(Deployment deployment, ResultsListener<Deployment> resultsListener){
-        this.deployment = deployment;
-        resultsListener.onCompletion(deployment);
-    }
-
     @Override
-    public void saveDeployment(Deployment deployment, ResultsListener<Void> resultsListener) {
-
+    public void saveDeployment(String path, ResultsListener<Void> resultsListener) {
+        supplyAsync(() -> {
+            try {
+                return memoryMapper.formatToConfigFile(this.deployment,path);
+            } catch (WooshException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }).thenAccept(a -> { resultsListener.onCompletion(null);}).exceptionally((t) -> {
+            resultsListener.onFailure(t); return null;
+        });
     }
+
 
     @Override
     public void clearDeployment(ResultsListener<Deployment> resultsListener) {

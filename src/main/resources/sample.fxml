@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Ellipse?>
 
-<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ViewController">
-    <padding><Insets bottom="10" left="25" right="25" top="25" /></padding>
-   <children>
-      <Button fx:id="deployButton" mnemonicParsing="false" text="Deploy" />
-      <Button fx:id="loadButton" mnemonicParsing="false" text="Load" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <TextField fx:id="pathField" GridPane.rowIndex="1" />
+<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ViewController">
+   <center>
+   </center>
+   <left>
+   </left>
+   <top>
+   </top>
+   <right>
+      <VBox  BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="deployButton"  mnemonicParsing="false" text="Deploy" />
+            <HBox>
+               <children>
+                  <Button fx:id="loadButton"  mnemonicParsing="false" text="Load" />
+                  <TextField fx:id="pathField" />
+               </children>
+            </HBox>
+            <HBox >
+               <children>
+                  <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
+                  <TextField fx:id="savePathField" />
+               </children>
+            </HBox>
 
-   </children>
-   <columnConstraints>
-      <ColumnConstraints />
-      <ColumnConstraints />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints />
-      <RowConstraints />
-   </rowConstraints>
-</GridPane>
+         </children>
+      </VBox>
+   </right>
+   <bottom>
+   </bottom>
+</BorderPane>
