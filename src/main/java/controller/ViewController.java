@@ -42,7 +42,7 @@ public class ViewController {
     }
 
     public void handleDeploy(){
-        model.sendPackage(null, new ResultsListener<String>() {
+        model.sendPackages(new ResultsListener<String>() {
             @Override
             public void onCompletion(String result) {
                 Platform.runLater(new Runnable() {
