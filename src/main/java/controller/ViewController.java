@@ -8,11 +8,9 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import modellers.FlowModeller;
 import modellers.interfaces.FlowModelInterface;
-
-import java.awt.event.ActionListener;
 
 
 public class ViewController {
@@ -20,7 +18,9 @@ public class ViewController {
     private FlowModelInterface model;
 
     @FXML
-    Button centerButton, secondButton;
+    Button deployButton, loadButton;
+    @FXML
+    TextField pathField;
 
 
     public void initModel(FlowModelInterface model) {
@@ -32,7 +32,7 @@ public class ViewController {
     }
 
     private void initLayout(){
-        centerButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        deployButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 model.sendPackage(null, new ResultsListener<String>() {
@@ -41,7 +41,7 @@ public class ViewController {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                centerButton.setText(result);
+                                deployButton.setText(result);
                             }
                         });
                     }
@@ -54,7 +54,7 @@ public class ViewController {
             }
         });
 
-        secondButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        loadButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 model.loadDeployment("/home/toby/Desktop/deploymenttest.txt", new ResultsListener<Deployment>() {
