@@ -1,6 +1,7 @@
 package iohelpers;
 
 import entities.parsing.LoadBalancer;
+import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import iohelpers.interfaces.ScripterInterface;
@@ -14,15 +15,16 @@ import java.io.IOException;
 
 public class Scripter implements ScripterInterface {
 
-    public DeploymentPackage packNode(Node node){
+    public Machine packNode(Node node){
         return null;
     }
 
-    public DeploymentPackage packLoadBalancer(LoadBalancer lb){
+    public Machine packLoadBalancer(LoadBalancer lb){
         return null;
     }
 
     public String compressPackage(String bashPath, String folderPath, String destinationPath, String archiveName) throws WooshException {
+        System.out.println("SCRIPTER BEGUN");
         File destination = new File(destinationPath);
         File source = new File(folderPath);
         File archive = null;
@@ -33,6 +35,7 @@ public class Scripter implements ScripterInterface {
         } catch (IOException e) {
             throw new WooshException("Could not compressed archive");
         }
+        System.out.println("SCRIPTER DONE");
         return archive.getAbsolutePath();
     }
 }

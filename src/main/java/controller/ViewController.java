@@ -55,6 +55,7 @@ public class ViewController {
 
             @Override
             public void onFailure(Throwable throwable) {
+                print(throwable.getMessage());
 
             }
         });
@@ -70,7 +71,7 @@ public class ViewController {
             model.loadDeployment(pathField.getText(), new ResultsListener<Deployment>() {
                 @Override
                 public void onCompletion(Deployment result) {
-                    printDeployMent(result);
+
                 }
 
                 @Override

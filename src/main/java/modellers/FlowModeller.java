@@ -60,10 +60,11 @@ public class FlowModeller implements FlowModelInterface {
     public void saveDeployment(String path, ResultsListener<Void> resultsListener) {
         supplyAsync(() -> {
             try {
-                return memoryMapper.formatToConfigFile(this.deployment,path);
+                memoryMapper.formatToConfigFile(this.deployment,path);
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
+            return  null;
         }).thenAccept(a -> { resultsListener.onCompletion(null);}).exceptionally((t) -> {
             resultsListener.onFailure(t); return null;
         });
@@ -117,12 +118,12 @@ public class FlowModeller implements FlowModelInterface {
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
             try {
                 loadBalancer.setPathBash(packagingController.createBashScripts(loadBalancer));
-                loadBalancer.setPathBash(packagingController.compressPackage(loadBalancer));
+                loadBalancer.setPathBash("");
                 //Nodes
                 for (Node node: loadBalancer.getNodes()) {
                     try {
                         node.setPathBash(packagingController.createBashScripts(node));
-                        node.setPathBash(packagingController.compressPackage(node));
+                        node.setPathCompressed(packagingController.compressPackage(node));
                     }catch (WooshException e) {
                         e.printStackTrace();
                     }

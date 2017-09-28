@@ -39,8 +39,7 @@ public class ConnectionController implements ConnectionControllerInterface {
     public void sendPackages(Deployment deployment) throws WooshException{
         //LoadBalancers
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
-            try {
-                SSHClient.sendPackage(loadBalancer);
+              //  SSHClient.sendPackage(loadBalancer);
                 //Nodes
                 for (Node node: loadBalancer.getNodes()) {
                     try {
@@ -49,9 +48,6 @@ public class ConnectionController implements ConnectionControllerInterface {
                         e.printStackTrace();
                     }
                 }
-            } catch (WooshException e) {
-                e.printStackTrace();
-            }
 
         }
     }

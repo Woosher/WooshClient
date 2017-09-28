@@ -34,11 +34,10 @@ public class MemoryMapper implements MapperInterface{
     }
 
     @Override
-    public String formatToConfigFile(Deployment deployment, String path) throws WooshException {
+    public void formatToConfigFile(Deployment deployment, String path) throws WooshException {
         JSONObject jsonObject = deployment.parseToJSON();
         String plainText = jsonObject.toString();
         configWriter.saveConfig(plainText,path);
-        return null;
     }
 
 

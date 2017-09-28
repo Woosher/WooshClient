@@ -70,6 +70,7 @@ public final class SSHClient{
     }
 
     public static void sendPackage(Machine machine) throws WooshException{
+        System.out.println(machine.getName());
         try {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
@@ -81,11 +82,11 @@ public final class SSHClient{
             Channel channel = session.openChannel("sftp");
             channel.connect();
             ChannelSftp channelSftp = (ChannelSftp) channel;
-            channelSftp.cd("/etc/woosh/package/wooshserver/");
+            channelSftp.cd("/etc/wooshtest/packages/wooshserver/");
 
             File f = new File(machine.getPathCompressed());
             channelSftp.put(new FileInputStream(f), f.getName());
-
+            System.out.println(machine.getName());
             channel.disconnect();
             session.disconnect();
         }catch (JSchException e) {
