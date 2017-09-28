@@ -97,17 +97,21 @@ public class FlowModeller implements FlowModelInterface {
 
     @Override
     public void sendPackages(final ResultsListener<String> resultsListener) {
-        supplyAsync(()->{deploy(resultsListener); return null;}).
-                        thenAccept(() -> {store(resultsListener);});
+        supplyAsync(()-> {
+            try {
+                deploy(resultsListener);
+            } catch (WooshException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+            return null;
+        }).thenAccept(a -> {resultsListener.onCompletion("Succes");})
+                .exceptionally((t) -> {
+                    resultsListener.onFailure(t); return null;});
     }
 
-    void deploy(ResultsListener<String> resultsListener) {
-        try {
-            connectionController.addKnownHosts(deployment);
-        } catch (WooshException e) {
-            e.printStackTrace();
-        }
+    void deploy(ResultsListener<String> resultsListener) throws WooshException{
 
+        connectionController.addKnownHosts(deployment);
 
         //LoadBalancers
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {

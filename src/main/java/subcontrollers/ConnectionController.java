@@ -16,7 +16,23 @@ public class ConnectionController implements ConnectionControllerInterface {
 
     @Override
     public void addKnownHosts(Deployment deployment){
+        //LoadBalancers
+        for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
+            try {
+                SSHClient.addKnownHost(loadBalancer);
+                //Nodes
+                for (Node node: loadBalancer.getNodes()) {
+                    try {
+                        SSHClient.addKnownHost(node);
+                    }catch (WooshException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (WooshException e) {
+                e.printStackTrace();
+            }
 
+        }
     }
 
     @Override
