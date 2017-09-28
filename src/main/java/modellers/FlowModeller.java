@@ -19,6 +19,7 @@ import subcontrollers.interfaces.PackagingInterface;
 import subcontrollers.interfaces.ReaderInterface;
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -31,6 +32,7 @@ public class FlowModeller implements FlowModelInterface {
     private ConnectionController connectionController;
     private MapperInterface memoryMapper;
     private CheckerInterface configChecker;
+    private Deployment deployment;
 
     public FlowModeller(){
         configChecker = new ConfigChecker();
@@ -38,6 +40,7 @@ public class FlowModeller implements FlowModelInterface {
         connectionController = new ConnectionController();
         memoryMapper = new MemoryMapper(configChecker);
         readController = new ReadController(configChecker);
+        deployment = null;
         //testParsing();
     }
 
@@ -63,8 +66,8 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     private void answerLoad(Deployment deployment, ResultsListener<Deployment> resultsListener){
+        this.deployment = deployment;
         resultsListener.onCompletion(deployment);
-
     }
 
     @Override
@@ -97,12 +100,18 @@ public class FlowModeller implements FlowModelInterface {
 
     }
 
+    @Override
     public void sendPackage(DeploymentPackage deploymentPackage, final ResultsListener<String> resultsListener) {
         supplyAsync(this::createId).
                         thenApply(this::convert).
                         thenAccept(a -> store(a, resultsListener));
+    }
 
+    @Override
+    public void deploy(ResultsListener<String> resultsListener) {
+        for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
 
+        }
     }
 
     void store(String message, ResultsListener<String> resultsListener) {

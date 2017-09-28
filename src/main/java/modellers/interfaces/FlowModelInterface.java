@@ -25,5 +25,6 @@ public interface FlowModelInterface {
 
     void sendPackage(DeploymentPackage deploymentPackage,final ResultsListener<String> resultsListener) ;
 
+    void deploy(final ResultsListener<String> resultsListener);
 
 }
