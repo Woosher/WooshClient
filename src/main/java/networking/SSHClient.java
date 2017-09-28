@@ -1,8 +1,6 @@
 package networking;
 
 import com.jcraft.jsch.*;
-import entities.DeploymentPackage;
-import entities.parsing.Node;
 import entities.parsing.Machine;
 import exceptions.WooshException;
 
@@ -71,12 +69,12 @@ public final class SSHClient{
         }
     }
 
-    public static void sendPackage(DeploymentPackage pack) throws WooshException{
+    public static void sendPackage(Machine machine) throws WooshException{
         try {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
-            Session session = jsch.getSession(pack.getMachine().getName(), pack.getMachine().getIp(), pack.getMachine().getPort());
-            session.setPassword(pack.getMachine().getPassword());
+            Session session = jsch.getSession(machine.getName(), machine.getIp(), machine.getPort());
+            session.setPassword(machine.getPassword());
 
             session.connect();
 
@@ -85,7 +83,7 @@ public final class SSHClient{
             ChannelSftp channelSftp = (ChannelSftp) channel;
             channelSftp.cd("/etc/woosh/package/wooshserver/");
 
-            File f = new File(pack.getMachine().getPath());
+            File f = new File(machine.getPathCompressed());
             channelSftp.put(new FileInputStream(f), f.getName());
 
             channel.disconnect();

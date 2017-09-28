@@ -1,11 +1,9 @@
 package modellers.interfaces;
 
-import entities.DeploymentPackage;
 import entities.ResultsListener;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
-import exceptions.WooshException;
 
 public interface FlowModelInterface {
 
@@ -23,8 +21,6 @@ public interface FlowModelInterface {
 
     void removeLoadBalancerToDeployment(LoadBalancer loadBalancer,final ResultsListener<String> resultsListener) ;
 
-    void sendPackage(DeploymentPackage deploymentPackage,final ResultsListener<String> resultsListener) ;
-
-    void deploy(final ResultsListener<String> resultsListener);
+    void sendPackages(final ResultsListener<String> resultsListener) ;
 
 }

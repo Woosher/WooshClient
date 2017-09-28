@@ -1,6 +1,5 @@
 package networking.Interfaces;
 
-import entities.DeploymentPackage;
 import entities.parsing.Machine;
 import exceptions.WooshException;
 

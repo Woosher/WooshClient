@@ -1,6 +1,5 @@
 package iohelpers;
 
-import entities.DeploymentPackage;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
 import exceptions.WooshException;
@@ -23,7 +22,7 @@ public class Scripter implements ScripterInterface {
         return null;
     }
 
-    public String compressPackage(String folderPath, String destinationPath, String archiveName) throws WooshException {
+    public String compressPackage(String bashPath, String folderPath, String destinationPath, String archiveName) throws WooshException {
         File destination = new File(destinationPath);
         File source = new File(folderPath);
         File archive = null;

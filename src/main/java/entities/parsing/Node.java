@@ -4,12 +4,19 @@ import org.json.JSONObject;
 
 public class Node extends Machine {
 
-    private String environment, operatingSystem;
+    private String environment, operatingSystem, path;
 
     public Node(){
 
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 
     public String getEnvironment() {
         return environment;

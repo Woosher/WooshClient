@@ -1,6 +1,5 @@
 package iohelpers.interfaces;
 
-import entities.DeploymentPackage;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
 import exceptions.WooshException;
@@ -10,5 +9,5 @@ public interface ScripterInterface {
 
     DeploymentPackage packLoadBalancer(LoadBalancer lb);
 
-    String compressPackage(String path, String destinationPath, String archiveName) throws WooshException;
+    String compressPackage(String bashPath, String path, String destinationPath, String archiveName) throws WooshException;
 }

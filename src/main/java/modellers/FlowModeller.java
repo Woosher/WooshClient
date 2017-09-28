@@ -2,26 +2,22 @@ package modellers;
 
 import iohelpers.interfaces.CheckerInterface;
 import modellers.interfaces.FlowModelInterface;
-import entities.DeploymentPackage;
 import entities.ResultsListener;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import iohelpers.ConfigChecker;
-import org.json.JSONObject;
 import subcontrollers.ConnectionController;
 import subcontrollers.MemoryMapper;
 import subcontrollers.PackagingController;
 import subcontrollers.ReadController;
+import subcontrollers.interfaces.ConnectionControllerInterface;
 import subcontrollers.interfaces.MapperInterface;
 import subcontrollers.interfaces.PackagingInterface;
 import subcontrollers.interfaces.ReaderInterface;
 
-import java.io.Reader;
-import java.util.ArrayList;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -29,7 +25,7 @@ public class FlowModeller implements FlowModelInterface {
 
     private ReaderInterface readController;
     private PackagingInterface packagingController;
-    private ConnectionController connectionController;
+    private ConnectionControllerInterface connectionController;
     private MapperInterface memoryMapper;
     private CheckerInterface configChecker;
     private Deployment deployment;
@@ -96,20 +92,48 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void sendPackage(DeploymentPackage deploymentPackage, final ResultsListener<String> resultsListener) {
-        supplyAsync(this::createId).
-                        thenApply(this::convert).
-                        thenAccept(a -> store(a, resultsListener));
+    public void sendPackages(final ResultsListener<String> resultsListener) {
+        supplyAsync(()->{deploy(resultsListener); return null;}).
+                        thenAccept(() -> {store(resultsListener);});
     }
 
-    @Override
-    public void deploy(ResultsListener<String> resultsListener) {
+    void deploy(ResultsListener<String> resultsListener) {
+        try {
+            connectionController.addKnownHosts(deployment);
+        } catch (WooshException e) {
+            e.printStackTrace();
+        }
+
+
+        //LoadBalancers
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
+            try {
+                loadBalancer.setPathBash(packagingController.createBashScripts(loadBalancer));
+                loadBalancer.setPathBash(packagingController.compressPackage(loadBalancer));
+                //Nodes
+                for (Node node: loadBalancer.getNodes()) {
+                    try {
+                        node.setPathBash(packagingController.createBashScripts(node));
+                        node.setPathBash(packagingController.compressPackage(node));
+                    }catch (WooshException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (WooshException e) {
+                e.printStackTrace();
+            }
 
         }
+
+        try {
+            connectionController.sendPackages(deployment);
+        } catch (WooshException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    void store(String message, ResultsListener<String> resultsListener) {
+    void store(ResultsListener<String> resultsListener) {
         try {
             Thread.sleep(6000);
         } catch (InterruptedException e) {
