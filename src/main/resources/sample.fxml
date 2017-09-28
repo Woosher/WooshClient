@@ -12,7 +12,9 @@
    <children>
       <Button fx:id="deployButton" mnemonicParsing="false" text="Deploy" />
       <Button fx:id="loadButton" mnemonicParsing="false" text="Load" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Button fx:id="saveButton" mnemonicParsing="false" text="Save" GridPane.columnIndex="1" GridPane.rowIndex="2" />
       <TextField fx:id="pathField" GridPane.rowIndex="1" />
+      <TextField fx:id="savePathField" GridPane.rowIndex="2" />
 
    </children>
    <columnConstraints>

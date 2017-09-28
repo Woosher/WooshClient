@@ -15,7 +15,7 @@ public interface MapperInterface {
 
     Deployment addLoadBalancers(List<LoadBalancer> loadBalancers) throws WooshException;
 
-    String formatToConfigFile(Deployment deployment) throws WooshException;
+    String formatToConfigFile(Deployment deployment, String path) throws WooshException;
 
     Deployment clearDeployment(Deployment deployment) throws WooshException;
 

@@ -6,6 +6,10 @@ import iohelpers.interfaces.CheckerInterface;
 import iohelpers.interfaces.WriterInterface;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class ConfigWriter implements WriterInterface{
 
     private CheckerInterface configChecker;
@@ -18,7 +22,20 @@ public class ConfigWriter implements WriterInterface{
         return null;
     }
 
-    public void saveConfig(String config, String path) throws WooshException {
+    public void saveConfig(String content, String path) throws WooshException {
+        FileWriter fileWriter = null;
+        System.out.println(content);
+        File file = new File(path);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fooWriter = new FileWriter(file, true);
+            fooWriter.write(content);
+            fooWriter.close();
+        } catch (IOException e) {
+            throw new WooshException("Could not create file");
+        }
 
     }
 

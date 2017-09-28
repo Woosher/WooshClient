@@ -10,7 +10,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import modellers.interfaces.FlowModelInterface;
+
+import java.io.File;
 
 
 public class ViewController {
@@ -18,9 +22,9 @@ public class ViewController {
     private FlowModelInterface model;
 
     @FXML
-    Button deployButton, loadButton;
+    Button deployButton, loadButton, saveButton;
     @FXML
-    TextField pathField;
+    TextField pathField, savePathField;
 
 
     public void initModel(FlowModelInterface model) {
@@ -57,17 +61,47 @@ public class ViewController {
         loadButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                model.loadDeployment("/home/toby/Desktop/deploymenttest.txt", new ResultsListener<Deployment>() {
-                    @Override
-                    public void onCompletion(Deployment result) {
-                        printDeployMent(result);
-                    }
+                FileChooser chooser = new FileChooser();
+                chooser.setTitle("Open File");
+                File file = chooser.showOpenDialog(new Stage());
+                String path = file.getAbsolutePath();
+                if(path != null){
+                    pathField.setText(path);
+                    model.loadDeployment(pathField.getText(), new ResultsListener<Deployment>() {
+                        @Override
+                        public void onCompletion(Deployment result) {
+                            printDeployMent(result);
+                        }
 
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        print(throwable.getMessage());
-                    }
-                });
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            print(throwable.getMessage());
+                        }
+                    });
+                }
+            }
+        });
+
+        saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                FileChooser chooser = new FileChooser();
+                chooser.setTitle("Save File");
+                File file = chooser.showSaveDialog(new Stage());
+                String path = file.getAbsolutePath();
+                if (path != null) {
+                    savePathField.setText(path);
+                    model.saveDeployment(null, savePathField.getText(), new ResultsListener<Void>() {
+                        @Override
+                        public void onCompletion(Void result) {
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            print(throwable.getMessage());
+                        }
+                    });
+                }
 
             }
         });
