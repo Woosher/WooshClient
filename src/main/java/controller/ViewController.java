@@ -1,6 +1,7 @@
 package controller;
 
 import entities.ResultsListener;
+import entities.parsing.Deployment;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -54,11 +55,29 @@ public class ViewController {
         secondButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                model.loadDeployment("asdko", new ResultsListener<Deployment>() {
+                    @Override
+                    public void onCompletion(Deployment result) {
+                        print("complete");
+                        if(result == null){
+                            print("null result");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        print(throwable.getMessage());
+                    }
+                });
 
             }
         });
 
 
+    }
+
+    private void print(String args){
+        System.out.println(args);
     }
 
 }

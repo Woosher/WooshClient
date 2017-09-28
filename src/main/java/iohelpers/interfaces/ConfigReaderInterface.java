@@ -4,7 +4,7 @@ import entities.parsing.Deployment;
 import exceptions.WooshException;
 import org.json.JSONObject;
 
-public interface ReaderInterface {
+public interface ConfigReaderInterface {
 
     Deployment parseConfig(JSONObject jsonObject) throws WooshException;
 

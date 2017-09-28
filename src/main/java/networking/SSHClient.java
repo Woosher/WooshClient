@@ -50,7 +50,11 @@ public final class SSHClient{
 
         try {
             JSch jsch = new JSch();
-            setKnownHostFile(jsch);
+            try {
+                setKnownHostFile(jsch);
+            } catch (WooshException e) {
+                e.printStackTrace();
+            }
             Session session = jsch.getSession(machine.getName(), machine.getIp(), machine.getPort());
             session.setPassword(machine.getPassword());
             session.connect();

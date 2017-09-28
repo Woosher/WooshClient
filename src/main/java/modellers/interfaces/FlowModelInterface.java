@@ -9,21 +9,21 @@ import exceptions.WooshException;
 
 public interface FlowModelInterface {
 
-    Deployment loadDeployment(String path) throws WooshException;
+    void loadDeployment(String path,final ResultsListener<Deployment> resultsListener) ;
 
-    void saveDeployment(Deployment deployment) throws WooshException;
+    void saveDeployment(Deployment deployment,final ResultsListener<Void> resultsListener) ;
 
-    Deployment clearDeployment() throws WooshException;
+    void clearDeployment(final ResultsListener<Deployment> resultsListener) ;
 
-    void addNodeToDeployment(Node node) throws WooshException;
+    void addNodeToDeployment(Node node,final ResultsListener<String> resultsListener) ;
 
-    void removeNodeToDeployment(Node node) throws WooshException;
+    void removeNodeToDeployment(Node node,final ResultsListener<String> resultsListener) ;
 
-    void addLoadBalancerToDeployment(LoadBalancer loadBalancer) throws WooshException;
+    void addLoadBalancerToDeployment(LoadBalancer loadBalancer,final ResultsListener<String> resultsListener) ;
 
-    void removeLoadBalancerToDeployment(LoadBalancer loadBalancer) throws WooshException;
+    void removeLoadBalancerToDeployment(LoadBalancer loadBalancer,final ResultsListener<String> resultsListener) ;
 
-    void sendPackage(DeploymentPackage deploymentPackage,  ResultsListener<String> resultsListener) ;
+    void sendPackage(DeploymentPackage deploymentPackage,final ResultsListener<String> resultsListener) ;
 
 
 }

@@ -6,6 +6,7 @@ import entities.parsing.Node;
 import exceptions.WooshException;
 import iohelpers.ConfigChecker;
 import iohelpers.ConfigWriter;
+import iohelpers.interfaces.CheckerInterface;
 import subcontrollers.interfaces.MapperInterface;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class MemoryMapper implements MapperInterface{
 
     ConfigWriter configWriter;
 
-    public MemoryMapper(ConfigChecker configChecker){
+    public MemoryMapper(CheckerInterface configChecker){
         configWriter = new ConfigWriter(configChecker);
 
     }

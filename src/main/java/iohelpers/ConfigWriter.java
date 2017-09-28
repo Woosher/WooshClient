@@ -2,14 +2,15 @@ package iohelpers;
 
 import entities.parsing.Deployment;
 import exceptions.WooshException;
+import iohelpers.interfaces.CheckerInterface;
 import iohelpers.interfaces.WriterInterface;
 import org.json.JSONObject;
 
 public class ConfigWriter implements WriterInterface{
 
-    private ConfigChecker configChecker;
+    private CheckerInterface configChecker;
 
-    public ConfigWriter(ConfigChecker configChecker){
+    public ConfigWriter(CheckerInterface configChecker){
         this.configChecker = configChecker;
     }
 

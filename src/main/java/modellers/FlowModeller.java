@@ -1,5 +1,6 @@
 package modellers;
 
+import iohelpers.interfaces.CheckerInterface;
 import modellers.interfaces.FlowModelInterface;
 import entities.DeploymentPackage;
 import entities.ResultsListener;
@@ -13,19 +14,23 @@ import subcontrollers.ConnectionController;
 import subcontrollers.MemoryMapper;
 import subcontrollers.PackagingController;
 import subcontrollers.ReadController;
+import subcontrollers.interfaces.MapperInterface;
+import subcontrollers.interfaces.PackagingInterface;
+import subcontrollers.interfaces.ReaderInterface;
 
+import java.io.Reader;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class FlowModeller implements FlowModelInterface {
 
-    private ReadController readController;
-    private PackagingController packagingController;
+    private ReaderInterface readController;
+    private PackagingInterface packagingController;
     private ConnectionController connectionController;
-    private MemoryMapper memoryMapper;
-    private ConfigChecker configChecker;
-    private int counter = 0;
+    private MapperInterface memoryMapper;
+    private CheckerInterface configChecker;
 
     public FlowModeller(){
         configChecker = new ConfigChecker();
@@ -35,6 +40,100 @@ public class FlowModeller implements FlowModelInterface {
         readController = new ReadController(configChecker);
         //testParsing();
     }
+
+
+
+    @Override
+    public void loadDeployment(String path,final ResultsListener<Deployment> resultsListener) {
+
+
+
+
+
+        supplyAsync(()-> {
+            try {
+                return readController.readConfigFile(path);
+            } catch (WooshException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }).thenAcceptAsync(a -> answerLoad(a, resultsListener))
+                .exceptionally((t) -> {
+                    resultsListener.onFailure(t); return null;});
+
+    }
+
+    private void answerLoad(Deployment deployment, ResultsListener<Deployment> resultsListener){
+        resultsListener.onCompletion(deployment);
+
+    }
+
+    @Override
+    public void saveDeployment(Deployment deployment, ResultsListener<Void> resultsListener) {
+
+    }
+
+    @Override
+    public void clearDeployment(ResultsListener<Deployment> resultsListener) {
+
+    }
+
+    @Override
+    public void addNodeToDeployment(Node node, ResultsListener<String> resultsListener) {
+
+    }
+
+    @Override
+    public void removeNodeToDeployment(Node node, ResultsListener<String> resultsListener) {
+
+    }
+
+    @Override
+    public void addLoadBalancerToDeployment(LoadBalancer loadBalancer, ResultsListener<String> resultsListener) {
+
+    }
+
+    @Override
+    public void removeLoadBalancerToDeployment(LoadBalancer loadBalancer, ResultsListener<String> resultsListener) {
+
+    }
+
+    public void sendPackage(DeploymentPackage deploymentPackage, final ResultsListener<String> resultsListener) {
+        supplyAsync(this::createId).
+                        thenApply(this::convert).
+                        thenAccept(a -> store(a, resultsListener));
+
+
+    }
+
+    void store(String message, ResultsListener<String> resultsListener) {
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        resultsListener.onCompletion("LISTENER COMPLETE");
+    }
+
+
+    String convert(UUID input) {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return input.toString();
+    }
+
+    UUID createId() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return UUID.randomUUID();
+    }
+
+
 
     public void testParsing(){
         String scriptTest = "{ \"deployment_name\": \"demoname\", \"ssl_path\": \"/testpath/stuff\", \"loadbalancers\": [{ \"name\": \"lb1\", \"ip\": \"127.0.0.1\", \"port\": 8000, \"caching_attributes\": \"/testpath/stuff\", \"nodes\": [{ \"node\": { \"ip\": \"127.0.1.1\", \"port\": 8000, \"name\": \"NAME1\", \"software_environment\": \"JAVA\", \"operating_system\": \"ubuntu_xenial_16\" } }, { \"node\": { \"ip\": \"127.0.1.2\", \"port\": 8000, \"name\": \"NAME2\", \"software_environment\": \"JAVA\", \"operating_system\": \"ubuntu_xenial_16\" } }] }, { \"name\": \"lb2\", \"ip\": \"127.0.1.4\", \"port\": 8000, \"caching_attributes\": \"/testpath/stuff\", \"nodes\": [{ \"node\": { \"ip\": \"127.0.1.3\", \"port\": 8000, \"name\": \"NAME\", \"software_environment\": \"JAVA\", \"operating_system\": \"ubuntu_xenial_16\" } }] }] }";
@@ -81,70 +180,6 @@ public class FlowModeller implements FlowModelInterface {
         System.out.println(text);
     }
 
-    public Deployment loadDeployment(String path) throws WooshException {
-        return null;
-    }
-
-    public void saveDeployment(Deployment deployment) throws WooshException {
-
-    }
-
-    public Deployment clearDeployment() throws WooshException {
-        return null;
-    }
-
-    public void addNodeToDeployment(Node node) throws WooshException {
-
-
-    }
-
-    public void removeNodeToDeployment(Node node) throws WooshException {
-
-    }
-
-    public void addLoadBalancerToDeployment(LoadBalancer loadBalancer) throws WooshException {
-
-    }
-
-    public void removeLoadBalancerToDeployment(LoadBalancer loadBalancer) throws WooshException {
-
-    }
-
-    public void sendPackage(DeploymentPackage deploymentPackage,final ResultsListener<String> resultsListener) {
-        supplyAsync(this::createId).
-                        thenApply(this::convert).
-                        thenAccept(a -> store(a, resultsListener));
-
-
-    }
-
-    void store(String message, ResultsListener<String> resultsListener) {
-        try {
-            Thread.sleep(6000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        resultsListener.onCompletion("LISTENER COMPLETE");
-    }
-
-
-    String convert(UUID input) {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return input.toString();
-    }
-
-    UUID createId() {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return UUID.randomUUID();
-    }
 
 
 }

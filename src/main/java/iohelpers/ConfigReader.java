@@ -2,14 +2,15 @@ package iohelpers;
 
 import entities.parsing.Deployment;
 import exceptions.WooshException;
-import iohelpers.interfaces.ReaderInterface;
+import iohelpers.interfaces.CheckerInterface;
+import iohelpers.interfaces.ConfigReaderInterface;
 import org.json.JSONObject;
 
-public class ConfigReader implements ReaderInterface {
+public class ConfigReader implements ConfigReaderInterface {
 
-    private ConfigChecker configChecker;
+    private CheckerInterface configChecker;
 
-    public ConfigReader(ConfigChecker configChecker){
+    public ConfigReader(CheckerInterface configChecker){
         this.configChecker = configChecker;
     }
 
