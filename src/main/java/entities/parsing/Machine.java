@@ -2,16 +2,8 @@ package entities.parsing;
 
 abstract public class Machine {
 
-    private String name,ip,password,pathBash, pathCompressed;
+    private String name,ip,password, pathCompressed;
     private int port;
-
-    public String getPathBash() {
-        return pathBash;
-    }
-
-    public void setPathBash(String pathBash) {
-        this.pathBash = pathBash;
-    }
 
     public String getPathCompressed() {
         return pathCompressed;
