@@ -119,17 +119,18 @@ public class FlowModeller implements FlowModelInterface {
         //LoadBalancers
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
             try {
-                loadBalancer.setPathBash(packagingController.createBashScripts(loadBalancer));
-                loadBalancer.setPathBash("");
+               // loadBalancer.setPathBash(packagingController.createBashScripts(loadBalancer));
+              //  loadBalancer.setPathBash("");
+                throw new WooshException("");
                 //Nodes
-                for (Machine node: loadBalancer.getNodes()) {
-                    try {
-                        node.setPathBash(packagingController.createBashScripts(node));
-                        node.setPathCompressed(packagingController.compressPackage(node));
-                    }catch (WooshException e) {
-                        e.printStackTrace();
-                    }
-                }
+//                for (Machine node: loadBalancer.getNodes()) {
+//                    try {
+//                      //  node.setPathBash(packagingController.createBashScripts(node));
+//                        node.setPathCompressed(packagingController.compressPackage(node));
+//                    }catch (WooshException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             } catch (WooshException e) {
                 e.printStackTrace();
             }

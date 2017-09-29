@@ -4,6 +4,7 @@ public class Constants {
 
     public static final String EVENTS = "events";
     public static final String WORKERPROCESSES = "worker_processes";
+    public static final String WORKERCONNECTIONS = "worker_connections";
     public static final String HTTP = "http";
     public static final String STARTBRACKET = " { ";
     public static final String ENDBRAACKET = " } ";

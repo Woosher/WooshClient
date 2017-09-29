@@ -10,7 +10,7 @@ import static values.Constants.*;
 public class ScriptHelper {
 
     private String createWorkerConnections(int number){
-        return EVENTS + STARTBRACKET + number + ";" + ENDBRAACKET;
+        return EVENTS + STARTBRACKET + WORKERCONNECTIONS + " " + number + ";" + ENDBRAACKET;
     }
 
     private String createWorkerProcess(int number){
@@ -38,7 +38,7 @@ public class ScriptHelper {
 
     private String createServer(Machine machine, int listenport, String upstreamName){
         String serverString = SERVER + STARTBRACKET + LISTEN + " " + listenport + ";" + SERVERNAME + " " +
-                machine.getIp() + ";" + " " + LOCATION + " / " + STARTBRACKET + PROXYPASS + " " + STARTURL + upstreamName +";" + ENDBRAACKET;
+                machine.getIp() + ";" + " " + LOCATION + " / " + STARTBRACKET + PROXYPASS + " " + STARTURL + upstreamName +";" + ENDBRAACKET + ENDBRAACKET;
         return serverString;
 
     }
