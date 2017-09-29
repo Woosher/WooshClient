@@ -26,8 +26,6 @@ public final class SSHClient{
         }
     }
 
-
-
     public static void addKnownHost(Machine machine) throws WooshException{
         try {
             JSch jsch = new JSch();
