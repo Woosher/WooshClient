@@ -9,10 +9,10 @@ import java.util.List;
 public class LoadBalancer extends Machine {
 
     private String cachingAttributes;
-    private List<Node> nodes;
+    private List<Machine> nodes;
 
     public LoadBalancer(){
-        nodes = new ArrayList<Node>();
+        nodes = new ArrayList<Machine>();
     }
 
 
@@ -24,18 +24,18 @@ public class LoadBalancer extends Machine {
         this.cachingAttributes = cachingAttributes;
     }
 
-    public List<Node> getNodes() {
+    public List<Machine> getNodes() {
         return nodes;
     }
 
-    public void setNodes(List<Node> nodes) {
+    public void setNodes(List<Machine> nodes) {
         this.nodes.clear();
         this.nodes.addAll(nodes);
     }
 
     public static LoadBalancer parseFromJSON(JSONObject jsonObject){
         LoadBalancer loadBalancer = new LoadBalancer();
-        List<Node> nodes = new ArrayList<Node>();
+        List<Machine> nodes = new ArrayList<Machine>();
         loadBalancer.setName(jsonObject.getString("name"));
         loadBalancer.setIp(jsonObject.getString("ip"));
         loadBalancer.setPort(jsonObject.getInt("port"));
@@ -61,7 +61,8 @@ public class LoadBalancer extends Machine {
         jsonObject.put("caching_attributes", this.getCachingAttributes());
         jsonObject.put("password", this.getPassword());
 
-        for(Node node : this.getNodes()){
+        for(Machine machine : this.getNodes()){
+            Node node = (Node) machine;
             JSONObject jsonNodeInfo = node.parseToJSON();
             JSONObject jsonNode = new JSONObject();
             jsonNode.put("node", jsonNodeInfo);

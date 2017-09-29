@@ -9,8 +9,6 @@ import java.io.FileInputStream;
 
 public final class SSHClient{
 
-
-
     private static void setKnownHostFile(JSch jsch) throws WooshException{
         try {
             File file = new File(System.getProperty("user.home") + "\\.ssh\\known_hosts");
@@ -42,30 +40,6 @@ public final class SSHClient{
         }
     }
 
-    public static boolean testConnection(Machine machine){
-
-        try {
-            JSch jsch = new JSch();
-            try {
-                setKnownHostFile(jsch);
-            } catch (WooshException e) {
-                e.printStackTrace();
-            }
-            Session session = jsch.getSession(machine.getName(), machine.getIp(), machine.getPort());
-            session.setPassword(machine.getPassword());
-            session.connect();
-            session.disconnect();
-            return true;
-
-        }catch (JSchException e) {
-            e.printStackTrace();
-            return false;
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
-    }
 
     public static void sendPackage(Machine machine) throws WooshException{
         System.out.println(machine.getName());
@@ -94,6 +68,31 @@ public final class SSHClient{
         catch (Exception ex) {
             ex.printStackTrace();
             throw new WooshException(ex.getMessage());
+        }
+    }
+
+    public static boolean testConnection(Machine machine){
+
+        try {
+            JSch jsch = new JSch();
+            try {
+                setKnownHostFile(jsch);
+            } catch (WooshException e) {
+                e.printStackTrace();
+            }
+            Session session = jsch.getSession(machine.getName(), machine.getIp(), machine.getPort());
+            session.setPassword(machine.getPassword());
+            session.connect();
+            session.disconnect();
+            return true;
+
+        }catch (JSchException e) {
+            e.printStackTrace();
+            return false;
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
         }
     }
 
