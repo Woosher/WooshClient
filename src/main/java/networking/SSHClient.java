@@ -3,6 +3,7 @@ package networking;
 import com.jcraft.jsch.*;
 import entities.parsing.Machine;
 import exceptions.WooshException;
+import tools.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,14 +12,8 @@ public final class SSHClient{
 
     private static void setKnownHostFile(JSch jsch) throws WooshException{
         try {
-            File file = new File(System.getProperty("user.home") + "\\.ssh\\known_hosts");
-            if (!file.isFile()) {
-                if (!file.getParentFile().exists()) {
-                    file.getParentFile().mkdir();
-                }
-                file.createNewFile();
-            }
-            jsch.setKnownHosts(System.getProperty("user.home") + "\\.ssh\\known_hosts");
+            File file = Utils.generateFile(System.getProperty("user.home") + "\\.ssh\\known_hosts");
+            jsch.setKnownHosts(file.getAbsolutePath());
         }catch(Exception e){
             throw new WooshException(e.getMessage());
         }
