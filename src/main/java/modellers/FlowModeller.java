@@ -33,9 +33,9 @@ public class FlowModeller implements FlowModelInterface {
 
     public FlowModeller(){
         configChecker = new ConfigChecker();
-        packagingController = new PackagingController();
+        packagingController = new PackagingController(configChecker);
         connectionController = new ConnectionController();
-        memoryMapper = new MemoryMapper(configChecker);
+        memoryMapper = new MemoryMapper();
         readController = new ReadController(configChecker);
         deployment = null;
         //testParsing();
@@ -61,8 +61,8 @@ public class FlowModeller implements FlowModelInterface {
     public void saveDeployment(String path, ResultsListener<Void> resultsListener) {
         supplyAsync(() -> {
             try {
-                memoryMapper.formatToConfigFile(this.deployment,path);
-                packagingController.createNginxScript(deployment.getLoadBalancers());
+                packagingController.readyDeployment(this.deployment);
+                packagingController.formatToConfigFile(this.deployment,path);
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }

@@ -16,6 +16,9 @@ public class Constants {
     public static final String PROXYPASS = "proxy_pass";
     public static final String STARTURL = "http://";
 
+    public static final String TEMPPATH = "/woosh/packages/wooshclient/";
+    public static final String FULLTEMPPATH = System.getProperty("user.home") + TEMPPATH;
+
 
 
 }

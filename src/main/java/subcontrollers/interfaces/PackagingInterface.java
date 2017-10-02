@@ -1,5 +1,6 @@
 package subcontrollers.interfaces;
 
+import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Machine;
 import entities.parsing.Node;
@@ -16,6 +17,10 @@ public interface PackagingInterface {
 
     String compressPackage(LoadBalancer loadBalancer) throws WooshException;
 
-    String createNginxScript(List<LoadBalancer> loadBalancer) throws WooshException;
+    String createNginxScript(LoadBalancer loadBalancer) throws WooshException;
+
+    String readyDeployment(Deployment deployment) throws WooshException;
+
+    void formatToConfigFile(Deployment deployment, String path) throws WooshException;
 
 }
