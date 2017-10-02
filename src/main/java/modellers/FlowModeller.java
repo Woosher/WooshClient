@@ -18,6 +18,7 @@ import subcontrollers.interfaces.MapperInterface;
 import subcontrollers.interfaces.PackagingInterface;
 import subcontrollers.interfaces.ReaderInterface;
 
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -99,14 +100,14 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void testConnections(final ResultsListener<String> resultsListener) {
+    public void testConnections(final ResultsListener<List<String>> resultsListener) {
         supplyAsync(()-> {
             try {
                 return connectionController.testConnections(deployment);
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
-        }).thenAccept(a -> {resultsListener.onCompletion((String)a);})
+        }).thenAccept(a -> {resultsListener.onCompletion(a);})
                 .exceptionally((t) -> {
                     resultsListener.onFailure(t); return null;});
     }
@@ -129,6 +130,7 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     private void deploy(ResultsListener<String> resultsListener) throws WooshException{
+
 
         //LoadBalancers
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {

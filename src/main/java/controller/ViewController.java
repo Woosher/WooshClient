@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import modellers.interfaces.FlowModelInterface;
 
 import java.io.File;
+import java.util.List;
 
 
 public class ViewController {
@@ -39,16 +40,17 @@ public class ViewController {
         deployButton.setOnMouseClicked(event -> handleDeploy());
         loadButton.setOnMouseClicked(event -> handleLoad());
         saveButton.setOnMouseClicked(event -> handleSave());
+        testConnectionsButton.setOnMouseClicked(event -> testConnections());
     }
 
     public void testConnections(){
-        model.sendPackages(new ResultsListener<String>() {
+        model.testConnections(new ResultsListener<List<String>>() {
             @Override
-            public void onCompletion(String result) {
+            public void onCompletion(List<String> result) {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        deployButton.setText(result);
+                        deployButton.setText(result.get(0));
                     }
                 });
             }

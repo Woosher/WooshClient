@@ -8,11 +8,21 @@ import exceptions.WooshException;
 import networking.SSHClient;
 import subcontrollers.interfaces.ConnectionControllerInterface;
 
+import java.util.List;
+
 public class ConnectionController implements ConnectionControllerInterface {
 
     @Override
-    public String testConnections(Deployment deployment){
+    public List<String> testConnections(Deployment deployment){
+        for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
+            System.out.println(SSHClient.testConnection(loadBalancer));
+            //Nodes
+            for (Node node: loadBalancer.getNodes()) {
+                System.out.println(SSHClient.testConnection(node));
+            }
 
+        }
+        return null;
     }
 
     @Override

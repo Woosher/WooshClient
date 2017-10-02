@@ -5,6 +5,8 @@ import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
 
+import java.util.List;
+
 public interface FlowModelInterface {
 
     void loadDeployment(String path,final ResultsListener<Deployment> resultsListener) ;
@@ -23,6 +25,6 @@ public interface FlowModelInterface {
 
     void sendPackages(final ResultsListener<String> resultsListener) ;
 
-    void testConnections(final ResultsListener<String> resultsListener) ;
+    void testConnections(final ResultsListener<List<String>> resultsListener) ;
 
 }
