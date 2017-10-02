@@ -8,6 +8,8 @@ import tools.Utils;
 import java.io.File;
 import java.io.FileInputStream;
 
+import static values.Constants.SERVERPATH;
+
 public final class SSHClient{
 
     private static void setKnownHostFile(JSch jsch) throws WooshException{
@@ -73,7 +75,7 @@ public final class SSHClient{
             Channel channel = session.openChannel("sftp");
             channel.connect();
             ChannelSftp channelSftp = (ChannelSftp) channel;
-            channelSftp.cd("/etc/wooshtest/packages/wooshserver/");
+            channelSftp.cd(SERVERPATH);
 
             File f = new File(machine.getPathCompressed());
             channelSftp.put(new FileInputStream(f), f.getName());

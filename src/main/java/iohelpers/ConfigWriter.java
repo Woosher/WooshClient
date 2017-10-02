@@ -25,7 +25,6 @@ public class ConfigWriter implements WriterInterface{
 
     public void saveConfig(String content, String path) throws WooshException {
         FileWriter fileWriter = null;
-        System.out.println(content);
         File file = null;
         try {
             file = Utils.generateFile(path);

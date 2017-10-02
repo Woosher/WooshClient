@@ -18,7 +18,20 @@ public class Constants {
 
     public static final String TEMPPATH = "/woosh/packages/wooshclient/";
     public static final String FULLTEMPPATH = System.getProperty("user.home") + TEMPPATH;
+    public static final String SERVERPATH = "/etc/woosh/packages/wooshserver/";
+    public static final String NGINXCONF = "nginx.conf";
+    public static final String EXESCRIPT = "executescript.sh";
+    public static final String BASHSTART = "#!/bin/bash";
+    public static final String INSTALLJAVA = "sudo apt-get install default-jre -y";
+    public static final String INSTALLNGINX = "sudo apt-get install nginx";
+    public static final String NGINXPATH = "/etc/nginx/";
+    public static final String RESTARTNGINX = "service nginx restart";
 
+
+    public static final String ENVIRONMENT_JAVA = "JAVA";
+    public static final String ENVIRONMENT_PYTHON = "PYTHON";
+    public static final String ENVIRONMENT_CSHARP = "CSHARP";
+    public static final String ENVIRONMENT_RUBY = "RUBY";
 
 
 }
