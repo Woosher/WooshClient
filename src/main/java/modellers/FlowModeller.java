@@ -1,5 +1,6 @@
 package modellers;
 
+import entities.parsing.Machine;
 import iohelpers.interfaces.CheckerInterface;
 import modellers.interfaces.FlowModelInterface;
 import entities.ResultsListener;
@@ -50,7 +51,7 @@ public class FlowModeller implements FlowModelInterface {
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
-        }).thenAccept(a -> {this.deployment = a; resultsListener.onCompletion(deployment);})
+        }).thenAccept(a -> {this.deployment = a;  resultsListener.onCompletion(deployment);})
                 .exceptionally((t) -> {
                     resultsListener.onFailure(t); return null;});
 
@@ -61,6 +62,7 @@ public class FlowModeller implements FlowModelInterface {
         supplyAsync(() -> {
             try {
                 memoryMapper.formatToConfigFile(this.deployment,path);
+                packagingController.createNginxScript(deployment.getLoadBalancers());
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -154,8 +156,6 @@ public class FlowModeller implements FlowModelInterface {
             e.printStackTrace();
         }
     }
-
-
 
     void store(ResultsListener<String> resultsListener) {
         try {

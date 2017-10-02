@@ -12,8 +12,15 @@ import org.rauschig.jarchivelib.CompressionType;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class Scripter implements ScripterInterface {
+
+    public ScriptHelper scriptHelper;
+
+    public Scripter(){
+        scriptHelper = new ScriptHelper();
+    }
 
     public Machine packNode(Node node){
         return null;
@@ -37,5 +44,18 @@ public class Scripter implements ScripterInterface {
         }
         System.out.println("SCRIPTER DONE");
         return archive.getAbsolutePath();
+    }
+
+    @Override
+    public String createLoadBalancerScript(List<LoadBalancer> loadBalancers) throws WooshException {
+        StringBuilder sb = new StringBuilder();
+        for(LoadBalancer lb: loadBalancers){
+            String nginxScript = scriptHelper.createNginxScript(lb,lb.getNodes(),"server",1, 1024, 80);
+            sb.append(lb.getName());
+            sb.append("\n");
+            sb.append(nginxScript);
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }

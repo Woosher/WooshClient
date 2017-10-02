@@ -123,24 +123,24 @@ public class ViewController {
     }
 
     public void printDeployMent(Deployment deployment){
-        print("NAME OF DEPLOYMENT: " + deployment.getName());
-        print("SSL PATH: " + deployment.getSsl_path());
-        print("LOADBALANCERS: ");
-        for(LoadBalancer loadBalancer : deployment.getLoadBalancers()){
-            print("");
-            print("\tNAME OF LB: " + loadBalancer.getName());
-            print("\tIP OF LB: " + loadBalancer.getPort());
-            print("\tCATCHE OF LB: " + loadBalancer.getCachingAttributes());
-            print("\tNODES");
-            for(Node node : loadBalancer.getNodes()){
-                print("");
-                print("\t\tNAME OF NODE: " + node.getName());
-                print("\t\tIP OF NODE: " + node.getIp());
-                print("\t\tPORT OF NODE: " + node.getPort());
-                print("\t\tSE OF NODE: " + node.getEnvironment());
-                print("\t\tOS OF NODE: " + node.getOperatingSystem());
-            }
-        }
+//        print("NAME OF DEPLOYMENT: " + deployment.getName());
+//        print("SSL PATH: " + deployment.getSsl_path());
+//        print("LOADBALANCERS: ");
+//        for(LoadBalancer loadBalancer : deployment.getLoadBalancers()){
+//            print("");
+//            print("\tNAME OF LB: " + loadBalancer.getName());
+//            print("\tIP OF LB: " + loadBalancer.getPort());
+//            print("\tCATCHE OF LB: " + loadBalancer.getCachingAttributes());
+//            print("\tNODES");
+//            for(Node node : loadBalancer.getNodes()){
+//                print("");
+//                print("\t\tNAME OF NODE: " + node.getName());
+//                print("\t\tIP OF NODE: " + node.getIp());
+//                print("\t\tPORT OF NODE: " + node.getPort());
+//                print("\t\tSE OF NODE: " + node.getEnvironment());
+//                print("\t\tOS OF NODE: " + node.getOperatingSystem());
+//            }
+//        }
     }
 
     private void print(String args){

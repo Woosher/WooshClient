@@ -12,7 +12,7 @@ public class ConnectionController implements ConnectionControllerInterface {
 
     @Override
     public String testConnections(Deployment deployment){
-        
+
     }
 
     @Override
