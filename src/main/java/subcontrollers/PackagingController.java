@@ -23,13 +23,12 @@ public class PackagingController implements PackagingInterface {
 
     @Override
     public String compressPackage(Node node) throws WooshException {
-        return scripter.compressPackage(node.getPathBash(), node.getPath(),"/home/toby/packages/" ,node.getName());
+        scripter.compressPackage(node.getPathBash(), node.getPath(),"/home/Toby/packages/" ,node.getName());
     }
 
     @Override
     public String compressPackage(LoadBalancer loadBalancer) throws WooshException {
-        return scripter.compressPackage(loadBalancer.getPathBash(), loadBalancer.getPathBash(),"/home/toby/packages/" ,loadBalancer.getName());
-
+        scripter.compressPackage(loadBalancer.getPathBash(), null,"/home/Toby/packages/" ,loadBalancer.getName());
     }
 
 }

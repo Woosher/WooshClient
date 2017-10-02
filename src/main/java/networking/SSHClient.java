@@ -42,7 +42,7 @@ public final class SSHClient{
         }
     }
 
-    public static boolean testConnection(Machine machine){
+    public static String testConnection(Machine machine){
 
         try {
             JSch jsch = new JSch();
@@ -55,16 +55,16 @@ public final class SSHClient{
             session.setPassword(machine.getPassword());
             session.connect();
             session.disconnect();
-            return true;
 
+            return "Succes!";
         }catch (JSchException e) {
-            e.printStackTrace();
-            return false;
+            return e.getMessage();
         }
         catch (Exception ex) {
             ex.printStackTrace();
-            return false;
+            return "Error with " + machine.getIp();
         }
+
     }
 
     public static void sendPackage(Machine machine) throws WooshException{

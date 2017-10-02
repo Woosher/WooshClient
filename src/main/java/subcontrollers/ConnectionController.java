@@ -2,6 +2,7 @@ package subcontrollers;
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
+import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import networking.SSHClient;
@@ -10,29 +11,13 @@ import subcontrollers.interfaces.ConnectionControllerInterface;
 public class ConnectionController implements ConnectionControllerInterface {
 
     @Override
-    public void testConnections(Deployment deployment){
-
+    public String testConnections(Deployment deployment){
+        
     }
 
     @Override
-    public void addKnownHosts(Deployment deployment){
-        //LoadBalancers
-        for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
-            try {
-                SSHClient.addKnownHost(loadBalancer);
-                //Nodes
-                for (Node node: loadBalancer.getNodes()) {
-                    try {
-                        SSHClient.addKnownHost(node);
-                    }catch (WooshException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (WooshException e) {
-                e.printStackTrace();
-            }
-
-        }
+    public void addKnownHost(Machine machine)throws WooshException{
+        SSHClient.addKnownHost(machine);
     }
 
     @Override

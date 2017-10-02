@@ -22,7 +22,7 @@ public class ViewController {
     private FlowModelInterface model;
 
     @FXML
-    Button deployButton, loadButton, saveButton;
+    Button deployButton, loadButton, saveButton, testConnectionsButton;
     @FXML
     TextField pathField, savePathField;
 
@@ -39,6 +39,26 @@ public class ViewController {
         deployButton.setOnMouseClicked(event -> handleDeploy());
         loadButton.setOnMouseClicked(event -> handleLoad());
         saveButton.setOnMouseClicked(event -> handleSave());
+    }
+
+    public void testConnections(){
+        model.sendPackages(new ResultsListener<String>() {
+            @Override
+            public void onCompletion(String result) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        deployButton.setText(result);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                print(throwable.getMessage());
+
+            }
+        });
     }
 
     public void handleDeploy(){

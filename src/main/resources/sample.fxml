@@ -30,7 +30,11 @@
                   <TextField fx:id="savePathField" />
                </children>
             </HBox>
-
+            <HBox >
+               <children>
+                  <Button fx:id="testConnectionsButton" mnemonicParsing="false" text="Test connections" />
+               </children>
+            </HBox>
          </children>
       </VBox>
    </right>

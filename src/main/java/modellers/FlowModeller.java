@@ -97,6 +97,22 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
+    public void testConnections(final ResultsListener<String> resultsListener) {
+        supplyAsync(()-> {
+            try {
+                return connectionController.testConnections(deployment);
+            } catch (WooshException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }).thenAccept(a -> {resultsListener.onCompletion((String)a);})
+                .exceptionally((t) -> {
+                    resultsListener.onFailure(t); return null;});
+    }
+
+
+
+
+    @Override
     public void sendPackages(final ResultsListener<String> resultsListener) {
         supplyAsync(()-> {
             try {
@@ -110,19 +126,17 @@ public class FlowModeller implements FlowModelInterface {
                     resultsListener.onFailure(t); return null;});
     }
 
-    void deploy(ResultsListener<String> resultsListener) throws WooshException{
-
-        connectionController.addKnownHosts(deployment);
+    private void deploy(ResultsListener<String> resultsListener) throws WooshException{
 
         //LoadBalancers
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
             try {
-                loadBalancer.setPathBash(packagingController.createBashScripts(loadBalancer));
-                loadBalancer.setPathBash("");
+                packagingController.createBashScripts(loadBalancer);
+                loadBalancer.setPathCompressed(packagingController.compressPackage(loadBalancer));
                 //Nodes
                 for (Node node: loadBalancer.getNodes()) {
                     try {
-                        node.setPathBash(packagingController.createBashScripts(node));
+                        packagingController.createBashScripts(node);
                         node.setPathCompressed(packagingController.compressPackage(node));
                     }catch (WooshException e) {
                         e.printStackTrace();
@@ -139,8 +153,9 @@ public class FlowModeller implements FlowModelInterface {
         } catch (WooshException e) {
             e.printStackTrace();
         }
-
     }
+
+
 
     void store(ResultsListener<String> resultsListener) {
         try {
