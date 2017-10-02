@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import modellers.interfaces.FlowModelInterface;
 
 import java.io.File;
+import java.util.List;
 
 
 public class ViewController {
@@ -22,7 +23,7 @@ public class ViewController {
     private FlowModelInterface model;
 
     @FXML
-    Button deployButton, loadButton, saveButton;
+    Button deployButton, loadButton, saveButton, testConnectionsButton;
     @FXML
     TextField pathField, savePathField;
 
@@ -39,6 +40,27 @@ public class ViewController {
         deployButton.setOnMouseClicked(event -> handleDeploy());
         loadButton.setOnMouseClicked(event -> handleLoad());
         saveButton.setOnMouseClicked(event -> handleSave());
+        testConnectionsButton.setOnMouseClicked(event -> testConnections());
+    }
+
+    public void testConnections(){
+        model.testConnections(new ResultsListener<List<String>>() {
+            @Override
+            public void onCompletion(List<String> result) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        deployButton.setText(result.get(0));
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                print(throwable.getMessage());
+
+            }
+        });
     }
 
     public void handleDeploy(){

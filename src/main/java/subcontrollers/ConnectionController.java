@@ -8,32 +8,26 @@ import exceptions.WooshException;
 import networking.SSHClient;
 import subcontrollers.interfaces.ConnectionControllerInterface;
 
+import java.util.List;
+
 public class ConnectionController implements ConnectionControllerInterface {
 
     @Override
-    public void testConnections(Deployment deployment){
-
-    }
-
-    @Override
-    public void addKnownHosts(Deployment deployment){
-        //LoadBalancers
+    public List<String> testConnections(Deployment deployment){
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
-            try {
-                SSHClient.addKnownHost(loadBalancer);
-                //Nodes
-                for (Machine node: loadBalancer.getNodes()) {
-                    try {
-                        SSHClient.addKnownHost(node);
-                    }catch (WooshException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (WooshException e) {
-                e.printStackTrace();
+            System.out.println(SSHClient.testConnection(loadBalancer));
+            //Nodes
+            for (Node node: loadBalancer.getNodes()) {
+                System.out.println(SSHClient.testConnection(node));
             }
 
         }
+        return null;
+    }
+
+    @Override
+    public void addKnownHost(Machine machine)throws WooshException{
+        SSHClient.addKnownHost(machine);
     }
 
     @Override
@@ -42,7 +36,7 @@ public class ConnectionController implements ConnectionControllerInterface {
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
               //  SSHClient.sendPackage(loadBalancer);
                 //Nodes
-                for (Machine node: loadBalancer.getNodes()) {
+                for (Node node: loadBalancer.getNodes()) {
                     try {
                         SSHClient.sendPackage(node);
                     }catch (WooshException e) {
