@@ -89,11 +89,10 @@ public class PackagingController implements PackagingInterface {
         String compressedPath = scripter.compressPackage(nodePath, path, node.getName());
         Utils.delete(nodePath);
         node.setPathCompressed(compressedPath);
-
     }
 
     private void updateAndSaveLb(LoadBalancer loadBalancer, String path) throws WooshException{
-        String loadBalancerPath = path  + loadBalancer.getName() + "/" ;
+        String loadBalancerPath = path  + loadBalancer.getName() + "/";
         String loadBalancerConf = loadBalancerPath + NGINXCONF;
         String content = createNginxScript(loadBalancer);
         configWriter.saveConfig(content,loadBalancerConf);

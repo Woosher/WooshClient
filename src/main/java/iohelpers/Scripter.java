@@ -34,12 +34,16 @@ public class Scripter implements ScripterInterface {
         File destination = new File(destinationPath);
         File source = new File(folderPath);
         File archive = null;
-
         Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.TAR, CompressionType.GZIP);
         try {
             archive = archiver.create(archiveName, destination, source);
         } catch (IOException e) {
             throw new WooshException("Could not compressed archive");
+        }
+        try {
+            Runtime.getRuntime().exec("sudo chmod u+x " + archive.getAbsolutePath());
+        } catch (IOException e) {
+            throw new WooshException(e.getMessage());
         }
         return archive.getAbsolutePath();
     }

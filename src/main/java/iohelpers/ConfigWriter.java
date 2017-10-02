@@ -31,6 +31,7 @@ public class ConfigWriter implements WriterInterface{
             FileWriter fooWriter = new FileWriter(file, true);
             fooWriter.write(content);
             fooWriter.close();
+            Runtime.getRuntime().exec("sudo chmod u+x " + path);
         } catch (IOException e) {
             throw new WooshException("Could not create file");
         }
