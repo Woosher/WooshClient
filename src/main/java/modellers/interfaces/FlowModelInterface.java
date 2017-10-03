@@ -25,7 +25,7 @@ public interface FlowModelInterface {
 
     void removeLoadBalancerToDeployment(LoadBalancer loadBalancer,final ResultsListener<String> resultsListener) ;
 
-    void addKnownHost(Machine machine, final ResultsListener<Boolean> resultsListener);
+    void addKnownHosts(List<Machine> macs, final ResultsListener<Boolean> resultsListener);
 
     void sendPackages(final ResultsListener<String> resultsListener) ;
 

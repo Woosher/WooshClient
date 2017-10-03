@@ -31,8 +31,11 @@ public class ConnectionController implements ConnectionControllerInterface {
     }
 
     @Override
-    public void addKnownHost(Machine machine)throws WooshException{
-        SSHClient.addKnownHost(machine);
+    public void addKnownHosts(List<Machine> macs)throws WooshException{
+        for(Machine machine : macs){
+            SSHClient.addKnownHost(machine);
+        }
+
     }
 
     @Override

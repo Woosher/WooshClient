@@ -10,7 +10,7 @@ import java.util.List;
 public interface ConnectionControllerInterface {
     List<ConnectionInfo> testConnections(Deployment deployment) throws WooshException;
 
-    void addKnownHost(Machine machine) throws WooshException;
+    void addKnownHosts(List<Machine> macs) throws WooshException;
 
     void sendPackages(Deployment deployment) throws WooshException;
 }

@@ -114,11 +114,11 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void addKnownHost(Machine machine,ResultsListener<Boolean> resultsListener){
+    public void addKnownHosts(List<Machine> macs,ResultsListener<Boolean> resultsListener){
 
         supplyAsync(()-> {
             try {
-                connectionController.addKnownHost(machine);
+                connectionController.addKnownHosts(macs);
                 return true;
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());

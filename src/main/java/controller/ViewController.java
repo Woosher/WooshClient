@@ -5,6 +5,7 @@ import entities.ConnectionInfo;
 import entities.ResultsListener;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
+import entities.parsing.Machine;
 import entities.parsing.Node;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -24,6 +25,7 @@ import javafx.stage.Stage;
 import modellers.interfaces.FlowModelInterface;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -82,28 +84,32 @@ public class ViewController {
 
                     private void addKnownHosts(List<ConnectionInfo> result) {
                         ObservableList list = dialogScene.getRoot().getChildrenUnmodifiable();
+                        List<Machine> hosts = new ArrayList<>();
                         int i = 0;
                         for(Object box : list){
-                            i++;
                             if(box instanceof HBox){
                                 HBox vBox = (HBox) box;
                                 CheckBox cb = (CheckBox)vBox.getChildren().get(1);
                                 if(cb.isSelected()){
-                                    model.addKnownHost(result.get(i - 1).getMachine(), new ResultsListener<Boolean>() {
-                                        @Override
-                                        public void onCompletion(Boolean result) {
-                                            print(result.toString());
-                                            connectionStage.close();
-                                        }
+                                    hosts.add(result.get(i).getMachine());
 
-                                        @Override
-                                        public void onFailure(Throwable throwable) {
-
-                                        }
-                                    });
                                 }
                             }
+                        i++;
                         }
+                        model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
+                            @Override
+                            public void onCompletion(Boolean result) {
+                                print(result.toString());
+                                //connectionStage.close();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                print("meh");
+                                print(throwable.getMessage());
+                            }
+                        });
                     }
                 });
             }
