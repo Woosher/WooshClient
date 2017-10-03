@@ -26,6 +26,12 @@ public class ConfigWriter implements WriterInterface{
     public void saveConfig(String content, String path) throws WooshException {
         FileWriter fileWriter = null;
         File file = null;
+
+         /* TODO
+            Brug ConfigChecker til at checke deployment for fejl
+            Hvis alt går godt så save filen, ellers send fejl tilbage.
+         */
+
         try {
             file = Utils.generateFile(path);
             FileWriter fooWriter = new FileWriter(file, true);

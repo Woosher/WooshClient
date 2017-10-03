@@ -175,10 +175,7 @@ public class PackagingController implements PackagingInterface {
 
     public void formatToConfigFile(Deployment deployment, String path) throws WooshException {
         JSONObject jsonObject = deployment.parseToJSON();
-        /* TODO
-            Brug ConfigChecker til at checke deployment for fejl
-            Hvis alt går godt så save filen, ellers send fejl tilbage.
-         */
+
         String plainText = jsonObject.toString();
         configWriter.saveConfig(plainText,path);
     }

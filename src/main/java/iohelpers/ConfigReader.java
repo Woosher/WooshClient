@@ -41,6 +41,13 @@ public class ConfigReader implements ConfigReaderInterface {
             throw new WooshException("Could not open file: " + path);
         }
 
+           /*TODO
+            Ryk JSON Parsing ud fra entitetsklasserne
+            --- CONFIGCHECKER STUFF --
+            1. Smid JSON ind i configchecker
+            2. hvis configchecker ikke returnere nogle fejl så parse alt json til et deployment og returner dette
+         */
+
         return everything;
     }
 

@@ -20,12 +20,7 @@ public class ReadController implements ReaderInterface {
         String configText = configReader.loadConfig(path);
         JSONObject jsonObject= null;
         try{
-            /*TODO
-            Ryk JSON Parsing ud fra entitetsklasserne
-            --- CONFIGCHECKER STUFF --
-            1. Smid JSON ind i configchecker
-            2. hvis configchecker ikke returnere nogle fejl så parse alt json til et deployment og returner dette
-         */
+
             jsonObject = new JSONObject(configText);
         }catch (JSONException e){
             throw new WooshException("Wrong JSON");
