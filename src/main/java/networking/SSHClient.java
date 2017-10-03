@@ -25,7 +25,7 @@ public final class SSHClient{
         try {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
-            Session session = jsch.getSession(machine.getName(), machine.getIp(), machine.getPort());
+            Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getPort());
             session.setPassword(machine.getPassword());
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");
@@ -46,7 +46,7 @@ public final class SSHClient{
             } catch (WooshException e) {
                 e.printStackTrace();
             }
-            Session session = jsch.getSession(machine.getName(), machine.getIp(), machine.getPort());
+            Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getPort());
             session.setPassword(machine.getPassword());
             session.connect();
             session.disconnect();
@@ -66,7 +66,7 @@ public final class SSHClient{
         try {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
-            Session session = jsch.getSession(machine.getName(), machine.getIp(), machine.getPort());
+            Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getPort());
             session.setPassword(machine.getPassword());
 
             session.connect();

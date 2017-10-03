@@ -40,11 +40,6 @@ public class Scripter implements ScripterInterface {
         } catch (IOException e) {
             throw new WooshException("Could not compressed archive");
         }
-        try {
-            Runtime.getRuntime().exec("sudo chmod u+x " + archive.getAbsolutePath());
-        } catch (IOException e) {
-            throw new WooshException(e.getMessage());
-        }
         return archive.getAbsolutePath();
     }
 

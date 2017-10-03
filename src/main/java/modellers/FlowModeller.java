@@ -146,8 +146,8 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     private void deploy(ResultsListener<String> resultsListener) throws WooshException{
-        packagingController.readyDeployment(deployment);
         try {
+            packagingController.readyDeployment(deployment);
             connectionController.sendPackages(deployment);
         } catch (WooshException e) {
             e.printStackTrace();

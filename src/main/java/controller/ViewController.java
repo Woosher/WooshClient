@@ -137,7 +137,6 @@ public class ViewController {
             @Override
             public void onFailure(Throwable throwable) {
                 print(throwable.getMessage());
-
             }
         });
     }

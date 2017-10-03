@@ -40,6 +40,7 @@ public class Node extends Machine {
         node.setIp(jsonObject.getString("ip"));
         node.setPort(jsonObject.getInt("port"));
         node.setName(jsonObject.getString("name"));
+        node.setUsername(jsonObject.getString("username"));
         node.setEnvironment(jsonObject.getString("software_environment"));
         node.setOperatingSystem(jsonObject.getString("operating_system"));
         node.setPassword(jsonObject.getString("password"));
@@ -52,6 +53,7 @@ public class Node extends Machine {
         jsonObject.put("ip", this.getIp());
         jsonObject.put("port", this.getPort());
         jsonObject.put("name", this.getName());
+        jsonObject.put("username",this.getUsername());
         jsonObject.put("software_environment", this.getEnvironment());
         jsonObject.put("operating_system", this.getOperatingSystem());
         jsonObject.put("password",this.getPassword());

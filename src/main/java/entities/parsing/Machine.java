@@ -2,8 +2,16 @@ package entities.parsing;
 
 abstract public class Machine {
 
-    private String name,ip,password, pathCompressed;
+    private String name,username,ip,password, pathCompressed;
     private int port;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getPathCompressed() {
         return pathCompressed;

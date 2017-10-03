@@ -89,6 +89,7 @@ public class PackagingController implements PackagingInterface {
         String compressedPath = scripter.compressPackage(nodePath, path, node.getName());
         Utils.delete(nodePath);
         node.setPathCompressed(compressedPath);
+        System.out.println(node.getIp() + " " + node.getPathCompressed());
     }
 
     private void updateAndSaveLb(LoadBalancer loadBalancer, String path) throws WooshException{
@@ -100,6 +101,7 @@ public class PackagingController implements PackagingInterface {
         String compressedPath = scripter.compressPackage(loadBalancerPath, path, loadBalancer.getName());
         Utils.delete(loadBalancerPath);
         loadBalancer.setPathCompressed(compressedPath);
+        System.out.println(loadBalancer.getIp() + " " + loadBalancer.getPathCompressed());
     }
 
     private void createLoadBalancerBashScript(String path, String confPath, LoadBalancer loadBalancer) throws WooshException {

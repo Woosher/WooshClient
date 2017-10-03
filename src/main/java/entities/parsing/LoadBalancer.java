@@ -37,6 +37,7 @@ public class LoadBalancer extends Machine {
         LoadBalancer loadBalancer = new LoadBalancer();
         List<Node> nodes = new ArrayList<Node>();
         loadBalancer.setName(jsonObject.getString("name"));
+        loadBalancer.setUsername(jsonObject.getString("username"));
         loadBalancer.setIp(jsonObject.getString("ip"));
         loadBalancer.setPort(jsonObject.getInt("port"));
         loadBalancer.setCachingAttributes(jsonObject.getString("caching_attributes"));
@@ -56,6 +57,7 @@ public class LoadBalancer extends Machine {
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         jsonObject.put("name",this.getName());
+        jsonObject.put("username",this.getUsername());
         jsonObject.put("ip", this.getIp());
         jsonObject.put("port", this.getPort());
         jsonObject.put("caching_attributes", this.getCachingAttributes());
