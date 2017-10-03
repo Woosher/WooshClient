@@ -57,18 +57,5 @@ public class Deployment {
         return deployment;
     }
 
-    public JSONObject parseToJSON(){
-        JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        jsonObject.put("deployment_name", this.getName());
-        jsonObject.put("ssl_path", this.getSsl_path());
 
-        for(LoadBalancer loadBalancer : this.getLoadBalancers()){
-            JSONObject loadBalancerJson = loadBalancer.parseToJSON();
-            jsonArray.put(loadBalancerJson);
-        }
-
-        jsonObject.put("loadbalancers", jsonArray);
-        return jsonObject;
-    }
 }

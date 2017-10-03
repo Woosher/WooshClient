@@ -2,10 +2,16 @@ package iohelpers;
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
+import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import iohelpers.interfaces.CheckerInterface;
 import org.json.JSONObject;
+
+import javax.crypto.Mac;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 public class ConfigChecker implements CheckerInterface {
 
@@ -17,15 +23,114 @@ public class ConfigChecker implements CheckerInterface {
 
     @Override
     public void checkDeploymentObject(Deployment deployment) throws WooshException {
+        checkDeploymentAttributes(deployment);
+        checkDeploymentDuplicates(deployment);
+    }
+
+    private void checkDeploymentDuplicates(Deployment deployment) throws WooshException{
+        /*TODO
+            Udbyg så den kan tjekke en node stack også
+         */
+        Stack<Machine> machines = new Stack<>();
+        machines.addAll(deployment.getLoadBalancers());
+        for(LoadBalancer loadBalancer: deployment.getLoadBalancers()){
+            machines.addAll(loadBalancer.getNodes());
+        }
+        Machine firstMachine = machines.pop();
+        checkMachineStack(firstMachine, machines);
 
     }
 
-    private void checkLoadBalancerObject(LoadBalancer loadBalancer) throws WooshException{
-
+    private void checkMachineStack(Machine machine, Stack<Machine> machines) throws WooshException{
+        for(Machine tempMachine : machines){
+            if(tempMachine.getName().equals(machine.getName())){
+                throw new WooshException("You can't have the same name twice in a deployment");
+            }
+        }
+        if(!machines.isEmpty()){
+            Machine nextMachine = machines.pop();
+            checkMachineStack(nextMachine, machines);
+        }
     }
 
-    private void checkNodeObject(Node node){
+    private void checkDeploymentAttributes(Deployment deployment)throws WooshException{
+        String errorMsg = "";
+        if(deployment.getName() == null){
+            errorMsg += "You have no deployment name \n";
+        }
+        if(deployment.getSsl_path() == null){
+            errorMsg += "You have no SSL path \n";
+        }
+        if(deployment.getLoadBalancers() != null){
+            if(deployment.getLoadBalancers().isEmpty()){
+                errorMsg += "You have no loadbalancers \n";
+            }else {
+                for(LoadBalancer loadBalancer : deployment.getLoadBalancers()){
+                    errorMsg += checkLoadBalancerAttributes(loadBalancer);
+                }
+            }
+        }
+        if(!errorMsg.equals("")){
+            throw new WooshException(errorMsg);
+        }
+    }
 
+    private String checkLoadBalancerAttributes(LoadBalancer loadBalancer) throws WooshException{
+        String errorMsg = "";
+        if(loadBalancer.getCachingAttributes() == null){
+            errorMsg += "You have no caching attributes \n";
+        }
+        if(loadBalancer.getName() == null){
+            errorMsg += "You have no name for a loadbalancer \n";
+        }
+        if(loadBalancer.getUsername() == null){
+            errorMsg += "You have no username in a loadbalancer \n";
+        }
+        if(loadBalancer.getIp() == null) {
+            errorMsg += "You are missing an ip in a loadbalancer \n";
+        }
+        if(loadBalancer.getPort() == 0){
+            errorMsg += "You are missing a port in a loadbalancer \n";
+        }
+        if(loadBalancer.getPassword() == null){
+            errorMsg += "You are missing a password in a loadbalancer \n";
+        }
+        if(loadBalancer.getNodes() != null){
+            if(loadBalancer.getNodes().isEmpty()){
+                errorMsg += " You are missing nodes behind your loadbalancer \n";
+            }else {
+                for(Node node : loadBalancer.getNodes()){
+                    errorMsg += checkNodeAttributes(node);
+                }
+            }
+        }
+        return errorMsg;
+    }
+
+    private String checkNodeAttributes(Node node){
+        String errorMsg = "";
+        if(node.getEnvironment() == null){
+            errorMsg += "You are missing environment in a node  \n";
+        }
+        if(node.getName() == null){
+            errorMsg += "You are missing a name in a node \n";
+        }
+        if(node.getPath() == null){
+            errorMsg += "You are missing a path in a node \n";
+        }
+        if(node.getOperatingSystem() == null){
+            errorMsg += "You are missing OS in a node \n";
+        }
+        if(node.getIp() == null){
+            errorMsg += "You are missing an IP in a node \n";
+        }
+        if(node.getPort() == 0){
+            errorMsg += "You are missing a port in a node \n";
+        }
+        if(node.getPassword() == null){
+            errorMsg += "You are missing a password in a node\n";
+        }
+        return errorMsg;
     }
 
 }

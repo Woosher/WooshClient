@@ -6,8 +6,9 @@ import org.json.JSONObject;
 
 public interface WriterInterface {
 
-    JSONObject parseDeployment(Deployment deployment) throws WooshException;
 
-    void saveConfig(String config, String path) throws WooshException;
+    void saveDeployment(Deployment deployment, String path) throws WooshException;
+
+    void saveFile(String content, String path) throws WooshException;
 
 }

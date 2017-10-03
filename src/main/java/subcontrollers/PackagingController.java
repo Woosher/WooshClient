@@ -10,6 +10,7 @@ import iohelpers.ConfigWriter;
 import iohelpers.Scripter;
 import iohelpers.interfaces.CheckerInterface;
 import iohelpers.interfaces.ScripterInterface;
+import iohelpers.interfaces.WriterInterface;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import subcontrollers.interfaces.PackagingInterface;
@@ -19,12 +20,11 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static values.Constants.*;
 
 public class PackagingController implements PackagingInterface {
 
-    private ConfigWriter configWriter;
+    private WriterInterface configWriter;
     private ScripterInterface scripter;
 
     public PackagingController(CheckerInterface configChecker){
@@ -106,7 +106,7 @@ public class PackagingController implements PackagingInterface {
         String loadBalancerPath = path  + loadBalancer.getName() + "/";
         String loadBalancerConf = loadBalancerPath + NGINXCONF;
         String content = createNginxScript(loadBalancer);
-        configWriter.saveConfig(content,loadBalancerConf);
+        configWriter.saveFile(content,loadBalancerConf);
         createLoadBalancerBashScript(loadBalancerPath, loadBalancerConf, loadBalancer);
         String compressedPath = scripter.compressPackage(loadBalancerPath, path, loadBalancer.getName());
         Utils.delete(loadBalancerPath);
@@ -126,7 +126,7 @@ public class PackagingController implements PackagingInterface {
         sb.append("\n");
         sb.append(RESTARTNGINX);
         System.out.println(sb.toString());
-        configWriter.saveConfig(sb.toString(),bashScript);
+        configWriter.saveFile(sb.toString(),bashScript);
     }
 
     private void createNodeBashScript(String path, Node node) throws WooshException {
@@ -135,7 +135,7 @@ public class PackagingController implements PackagingInterface {
         sb.append(BASHSTART);
         String content = getBashForEnvironment(path, node);
         System.out.println(content);
-        configWriter.saveConfig(content,bashScript);
+        configWriter.saveFile(content,bashScript);
     }
 
     private String getBashForEnvironment(String path, Node node){
@@ -174,10 +174,7 @@ public class PackagingController implements PackagingInterface {
     }
 
     public void formatToConfigFile(Deployment deployment, String path) throws WooshException {
-        JSONObject jsonObject = deployment.parseToJSON();
-
-        String plainText = jsonObject.toString();
-        configWriter.saveConfig(plainText,path);
+        configWriter.saveDeployment(deployment,path);
     }
 
 }

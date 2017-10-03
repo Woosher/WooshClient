@@ -63,8 +63,8 @@ public class FlowModeller implements FlowModelInterface {
     public void saveDeployment(String path, ResultsListener<Void> resultsListener) {
         supplyAsync(() -> {
             try {
-                packagingController.readyDeployment(this.deployment);
                 packagingController.formatToConfigFile(this.deployment,path);
+               // packagingController.readyDeployment(this.deployment);
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }

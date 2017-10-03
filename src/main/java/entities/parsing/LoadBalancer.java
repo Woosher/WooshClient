@@ -53,24 +53,5 @@ public class LoadBalancer extends Machine {
         return loadBalancer;
     }
 
-    public JSONObject parseToJSON(){
-        JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        jsonObject.put("name",this.getName());
-        jsonObject.put("username",this.getUsername());
-        jsonObject.put("ip", this.getIp());
-        jsonObject.put("port", this.getPort());
-        jsonObject.put("caching_attributes", this.getCachingAttributes());
-        jsonObject.put("password", this.getPassword());
 
-        for(Node node : this.getNodes()){
-            JSONObject jsonNodeInfo = node.parseToJSON();
-            JSONObject jsonNode = new JSONObject();
-            jsonNode.put("node", jsonNodeInfo);
-            jsonArray.put(jsonNode);
-        }
-
-        jsonObject.put("nodes", jsonArray);
-        return jsonObject;
-    }
 }

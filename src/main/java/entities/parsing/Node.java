@@ -48,16 +48,5 @@ public class Node extends Machine {
         return node;
     }
 
-    public JSONObject parseToJSON(){
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("ip", this.getIp());
-        jsonObject.put("port", this.getPort());
-        jsonObject.put("name", this.getName());
-        jsonObject.put("username",this.getUsername());
-        jsonObject.put("software_environment", this.getEnvironment());
-        jsonObject.put("operating_system", this.getOperatingSystem());
-        jsonObject.put("password",this.getPassword());
-        jsonObject.put("path", this.getPath());
-        return jsonObject;
-    }
+
 }
