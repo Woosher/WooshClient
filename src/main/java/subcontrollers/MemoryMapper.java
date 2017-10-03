@@ -14,10 +14,8 @@ import java.util.List;
 
 public class MemoryMapper implements MapperInterface{
 
-    ConfigWriter configWriter;
 
-    public MemoryMapper(CheckerInterface configChecker){
-        configWriter = new ConfigWriter(configChecker);
+    public MemoryMapper(){
 
     }
 
@@ -33,12 +31,7 @@ public class MemoryMapper implements MapperInterface{
         return null;
     }
 
-    @Override
-    public void formatToConfigFile(Deployment deployment, String path) throws WooshException {
-        JSONObject jsonObject = deployment.parseToJSON();
-        String plainText = jsonObject.toString();
-        configWriter.saveConfig(plainText,path);
-    }
+
 
 
     public Deployment clearDeployment(Deployment deployment) throws WooshException {

@@ -12,9 +12,9 @@ public interface ScripterInterface {
 
     Machine packLoadBalancer(LoadBalancer lb);
 
-    String compressPackage(String bashPath, String path, String destinationPath, String archiveName) throws WooshException;
+    String compressPackage(String path, String destinationPath, String archiveName) throws WooshException;
 
-    String createLoadBalancerScript(List<LoadBalancer> lb) throws WooshException;
+    String createLoadBalancerScript(LoadBalancer lb) throws WooshException;
 
 
 }

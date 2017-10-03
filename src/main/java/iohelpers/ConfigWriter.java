@@ -5,6 +5,7 @@ import exceptions.WooshException;
 import iohelpers.interfaces.CheckerInterface;
 import iohelpers.interfaces.WriterInterface;
 import org.json.JSONObject;
+import tools.Utils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,15 +25,13 @@ public class ConfigWriter implements WriterInterface{
 
     public void saveConfig(String content, String path) throws WooshException {
         FileWriter fileWriter = null;
-        System.out.println(content);
-        File file = new File(path);
+        File file = null;
         try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            file = Utils.generateFile(path);
             FileWriter fooWriter = new FileWriter(file, true);
             fooWriter.write(content);
             fooWriter.close();
+            Runtime.getRuntime().exec("sudo chmod u+x " + path);
         } catch (IOException e) {
             throw new WooshException("Could not create file");
         }

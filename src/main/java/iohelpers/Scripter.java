@@ -30,32 +30,27 @@ public class Scripter implements ScripterInterface {
         return null;
     }
 
-    public String compressPackage(String bashPath, String folderPath, String destinationPath, String archiveName) throws WooshException {
-        System.out.println("SCRIPTER BEGUN");
+    public String compressPackage( String folderPath, String destinationPath, String archiveName) throws WooshException {
         File destination = new File(destinationPath);
         File source = new File(folderPath);
         File archive = null;
-
         Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.TAR, CompressionType.GZIP);
         try {
             archive = archiver.create(archiveName, destination, source);
         } catch (IOException e) {
             throw new WooshException("Could not compressed archive");
         }
-        System.out.println("SCRIPTER DONE");
+        try {
+            Runtime.getRuntime().exec("sudo chmod u+x " + archive.getAbsolutePath());
+        } catch (IOException e) {
+            throw new WooshException(e.getMessage());
+        }
         return archive.getAbsolutePath();
     }
 
     @Override
-    public String createLoadBalancerScript(List<LoadBalancer> loadBalancers) throws WooshException {
-        StringBuilder sb = new StringBuilder();
-        for(LoadBalancer lb: loadBalancers){
-            String nginxScript = scriptHelper.createNginxScript(lb,lb.getNodes(),"server",1, 1024, 80);
-            sb.append(lb.getName());
-            sb.append("\n");
-            sb.append(nginxScript);
-            sb.append("\n");
-        }
-        return sb.toString();
+    public String createLoadBalancerScript(LoadBalancer lb) throws WooshException {
+        String nginxScript = scriptHelper.createNginxScript(lb,lb.getNodes(),"server",1, 1024, 80);
+        return nginxScript;
     }
 }
