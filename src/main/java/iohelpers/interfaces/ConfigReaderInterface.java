@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 public interface ConfigReaderInterface {
 
-    Deployment parseConfig(JSONObject jsonObject) throws WooshException;
+    Deployment parseFromJSON(JSONObject jsonObject) throws WooshException;
 
     String loadConfig(String path) throws WooshException;
 
