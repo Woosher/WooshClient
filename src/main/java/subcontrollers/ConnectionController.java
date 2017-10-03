@@ -42,7 +42,7 @@ public class ConnectionController implements ConnectionControllerInterface {
     public void sendPackages(Deployment deployment) throws WooshException{
         //LoadBalancers
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
-              //  SSHClient.sendPackage(loadBalancer);
+                SSHClient.sendPackage(loadBalancer);
                 //Nodes
                 for (Node node: loadBalancer.getNodes()) {
                     try {

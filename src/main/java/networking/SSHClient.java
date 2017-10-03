@@ -50,7 +50,6 @@ public final class SSHClient{
             session.setPassword(machine.getPassword());
             session.connect();
             session.disconnect();
-
             return "Succes!";
         }catch (JSchException e) {
             return e.getMessage();
@@ -90,6 +89,8 @@ public final class SSHClient{
             ex.printStackTrace();
             throw new WooshException(ex.getMessage());
         }
+        System.out.println(machine.getName() + " DONE");
+
     }
 
 

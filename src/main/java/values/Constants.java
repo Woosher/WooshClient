@@ -23,9 +23,9 @@ public class Constants {
     public static final String EXESCRIPT = "executescript.sh";
     public static final String BASHSTART = "#!/bin/bash";
     public static final String INSTALLJAVA = "sudo apt-get install default-jre -y";
-    public static final String INSTALLNGINX = "sudo apt-get install nginx";
+    public static final String INSTALLNGINX = "sudo apt-get install nginx -y";
     public static final String NGINXPATH = "/etc/nginx/";
-    public static final String RESTARTNGINX = "service nginx restart";
+    public static final String RESTARTNGINX = "sudo service nginx restart";
 
 
     public static final String ENVIRONMENT_JAVA = "JAVA";

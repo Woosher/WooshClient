@@ -110,9 +110,10 @@ public class PackagingController implements PackagingInterface {
         sb.append("\n");
         sb.append(INSTALLNGINX);
         sb.append("\n");
-        sb.append("sudo ").append("cp ").append(SERVERPATH).append(file.getName()).append(" ").append(NGINXPATH);
+        sb.append("sudo ").append("cp ").append(SERVERPATH).append(loadBalancer.getName()).append("/nginx.conf").append(" ").append(NGINXPATH);
         sb.append("\n");
         sb.append(RESTARTNGINX);
+        System.out.println(sb.toString());
         configWriter.saveConfig(sb.toString(),bashScript);
     }
 

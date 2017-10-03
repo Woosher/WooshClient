@@ -146,28 +146,7 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     private void deploy(ResultsListener<String> resultsListener) throws WooshException{
-
-
-        //LoadBalancers
-        for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
-            try {
-                packagingController.createBashScripts(loadBalancer);
-                loadBalancer.setPathCompressed(packagingController.compressPackage(loadBalancer));
-                //Nodes
-                for (Node node: loadBalancer.getNodes()) {
-                    try {
-                        packagingController.createBashScripts(node);
-                        node.setPathCompressed(packagingController.compressPackage(node));
-                    }catch (WooshException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (WooshException e) {
-                e.printStackTrace();
-            }
-
-        }
-
+        packagingController.readyDeployment(deployment);
         try {
             connectionController.sendPackages(deployment);
         } catch (WooshException e) {
