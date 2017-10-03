@@ -1,5 +1,6 @@
 package subcontrollers;
 
+import entities.ConnectionInfo;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Machine;
@@ -8,21 +9,25 @@ import exceptions.WooshException;
 import networking.SSHClient;
 import subcontrollers.interfaces.ConnectionControllerInterface;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConnectionController implements ConnectionControllerInterface {
 
     @Override
-    public List<String> testConnections(Deployment deployment){
+    public List<ConnectionInfo> testConnections(Deployment deployment){
+        List<ConnectionInfo> list = new ArrayList<>();
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
-            System.out.println(SSHClient.testConnection(loadBalancer));
+            String lb = SSHClient.testConnection(loadBalancer);
+            list.add(new ConnectionInfo(loadBalancer,lb.substring(lb.lastIndexOf(" ")+1)));
             //Nodes
             for (Node node: loadBalancer.getNodes()) {
-                System.out.println(SSHClient.testConnection(node));
+                String n = SSHClient.testConnection(node);
+                list.add(new ConnectionInfo(node,n.substring(n.lastIndexOf(" ")+1)));
             }
 
         }
-        return null;
+        return list;
     }
 
     @Override

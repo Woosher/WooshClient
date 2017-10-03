@@ -1,16 +1,25 @@
 package controller;
 
+import com.sun.jndi.ldap.Connection;
+import entities.ConnectionInfo;
 import entities.ResultsListener;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import modellers.interfaces.FlowModelInterface;
 
@@ -21,6 +30,8 @@ import java.util.List;
 public class ViewController {
 
     private FlowModelInterface model;
+    private Scene dialogScene;
+    private Stage connectionStage;
 
     @FXML
     Button deployButton, loadButton, saveButton, testConnectionsButton;
@@ -44,13 +55,55 @@ public class ViewController {
     }
 
     public void testConnections(){
-        model.testConnections(new ResultsListener<List<String>>() {
+        model.testConnections(new ResultsListener<List<ConnectionInfo>>() {
             @Override
-            public void onCompletion(List<String> result) {
+            public void onCompletion(List<ConnectionInfo> result) {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        deployButton.setText(result.get(0));
+                        connectionStage = new Stage();
+                        connectionStage.initModality(Modality.APPLICATION_MODAL);
+                        connectionStage.initOwner(new Stage());
+                        VBox dialogVbox = new VBox(20);
+                        for (ConnectionInfo s : result) {
+                            HBox hb = new HBox();
+                            ObservableList hbChildren = hb.getChildren();
+                            hbChildren.add(new Text("IP: " + s.getMachine().getIp() + " Fingerprint: " + s.getInfo()));
+                            hbChildren.add(new CheckBox());
+                            dialogVbox.getChildren().add(hb);
+                        }
+                        Button ok = new Button("OK");
+                        ok.setOnMouseClicked(event -> addKnownHosts(result));
+                        dialogVbox.getChildren().add(ok);
+                        dialogScene = new Scene(dialogVbox, 600, 200);
+                        connectionStage.setScene(dialogScene);
+                        connectionStage.show();
+                    }
+
+                    private void addKnownHosts(List<ConnectionInfo> result) {
+                        ObservableList list = dialogScene.getRoot().getChildrenUnmodifiable();
+                        int i = 0;
+                        for(Object box : list){
+                            i++;
+                            if(box instanceof HBox){
+                                HBox vBox = (HBox) box;
+                                CheckBox cb = (CheckBox)vBox.getChildren().get(1);
+                                if(cb.isSelected()){
+                                    model.addKnownHost(result.get(i - 1).getMachine(), new ResultsListener<Boolean>() {
+                                        @Override
+                                        public void onCompletion(Boolean result) {
+                                            print(result.toString());
+                                            connectionStage.close();
+                                        }
+
+                                        @Override
+                                        public void onFailure(Throwable throwable) {
+
+                                        }
+                                    });
+                                }
+                            }
+                        }
                     }
                 });
             }

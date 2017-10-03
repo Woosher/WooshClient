@@ -1,5 +1,6 @@
 package modellers;
 
+import entities.ConnectionInfo;
 import entities.parsing.Machine;
 import iohelpers.interfaces.CheckerInterface;
 import modellers.interfaces.FlowModelInterface;
@@ -100,10 +101,25 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void testConnections(final ResultsListener<List<String>> resultsListener) {
+    public void testConnections(final ResultsListener<List<ConnectionInfo>> resultsListener) {
         supplyAsync(()-> {
             try {
                 return connectionController.testConnections(deployment);
+            } catch (WooshException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }).thenAccept(a -> {resultsListener.onCompletion(a);})
+                .exceptionally((t) -> {
+                    resultsListener.onFailure(t); return null;});
+    }
+
+    @Override
+    public void addKnownHost(Machine machine,ResultsListener<Boolean> resultsListener){
+
+        supplyAsync(()-> {
+            try {
+                connectionController.addKnownHost(machine);
+                return true;
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }

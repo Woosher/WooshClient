@@ -1,8 +1,10 @@
 package modellers.interfaces;
 
+import entities.ConnectionInfo;
 import entities.ResultsListener;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
+import entities.parsing.Machine;
 import entities.parsing.Node;
 
 import java.util.List;
@@ -23,8 +25,10 @@ public interface FlowModelInterface {
 
     void removeLoadBalancerToDeployment(LoadBalancer loadBalancer,final ResultsListener<String> resultsListener) ;
 
+    void addKnownHost(Machine machine, final ResultsListener<Boolean> resultsListener);
+
     void sendPackages(final ResultsListener<String> resultsListener) ;
 
-    void testConnections(final ResultsListener<List<String>> resultsListener) ;
+    void testConnections(final ResultsListener<List<ConnectionInfo>> resultsListener) ;
 
 }
