@@ -101,6 +101,7 @@ public class ConfigChecker implements CheckerInterface {
             Machine nextMachine = machines.pop();
             checkMachineStack(nextMachine, machines);
         }
+
     }
 
     private void checkDeploymentAttributes(Deployment deployment)throws WooshException{
