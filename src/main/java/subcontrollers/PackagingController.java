@@ -33,6 +33,16 @@ public class PackagingController implements PackagingInterface {
     }
 
     public String createBashScripts(Machine machine) throws WooshException {
+        String errorMsg = "";
+        JSONObject jsonObject = new JSONObject();
+        if(jsonObject.has("port")){
+            int port = jsonObject.getInt("port");
+            //check om port er sat
+        }else {
+
+        }
+
+
         return null;
     }
 
@@ -124,6 +134,7 @@ public class PackagingController implements PackagingInterface {
         StringBuilder sb = new StringBuilder();
         sb.append(BASHSTART);
         String content = getBashForEnvironment(path, node);
+        System.out.println(content);
         configWriter.saveConfig(content,bashScript);
     }
 
@@ -164,6 +175,10 @@ public class PackagingController implements PackagingInterface {
 
     public void formatToConfigFile(Deployment deployment, String path) throws WooshException {
         JSONObject jsonObject = deployment.parseToJSON();
+        /* TODO
+            Brug ConfigChecker til at checke deployment for fejl
+            Hvis alt går godt så save filen, ellers send fejl tilbage.
+         */
         String plainText = jsonObject.toString();
         configWriter.saveConfig(plainText,path);
     }

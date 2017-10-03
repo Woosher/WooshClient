@@ -37,7 +37,4 @@ public class ConfigWriter implements WriterInterface{
 
     }
 
-    public boolean checkDeployment(Deployment deployment) throws WooshException {
-        return false;
-    }
 }

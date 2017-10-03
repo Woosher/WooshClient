@@ -10,5 +10,4 @@ public interface WriterInterface {
 
     void saveConfig(String config, String path) throws WooshException;
 
-    boolean checkDeployment(Deployment deployment) throws WooshException;
 }

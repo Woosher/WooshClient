@@ -6,9 +6,8 @@ import org.json.JSONObject;
 
 public interface CheckerInterface {
 
-    boolean isValidConfig(JSONObject jsonObject);
+    void checkDeploymentJSON(JSONObject jsonObject) throws WooshException;
 
-    boolean checkConfigAttributes(JSONObject jsonObject) throws WooshException;
-
+    void checkDeploymentObject(Deployment deployment) throws WooshException;
 
 }
