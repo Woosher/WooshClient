@@ -34,19 +34,4 @@ public class Node extends Machine {
         this.operatingSystem = operatingSystem;
     }
 
-
-    public static Node parseFromJSON(JSONObject jsonObject){
-        Node node = new Node();
-        node.setIp(jsonObject.getString("ip"));
-        node.setPort(jsonObject.getInt("port"));
-        node.setName(jsonObject.getString("name"));
-        node.setUsername(jsonObject.getString("username"));
-        node.setEnvironment(jsonObject.getString("software_environment"));
-        node.setOperatingSystem(jsonObject.getString("operating_system"));
-        node.setPassword(jsonObject.getString("password"));
-        node.setPath(jsonObject.getString("path"));
-        return node;
-    }
-
-
 }

@@ -25,6 +25,6 @@ public class ReadController implements ReaderInterface {
         }catch (JSONException e){
             throw new WooshException("Wrong JSON");
         }
-        return Deployment.parseFromJSON(jsonObject);
+        return configReader.parseFromJSON(jsonObject);
     }
 }

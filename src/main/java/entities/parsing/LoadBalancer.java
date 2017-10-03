@@ -33,25 +33,6 @@ public class LoadBalancer extends Machine {
         this.nodes.addAll(nodes);
     }
 
-    public static LoadBalancer parseFromJSON(JSONObject jsonObject){
-        LoadBalancer loadBalancer = new LoadBalancer();
-        List<Node> nodes = new ArrayList<Node>();
-        loadBalancer.setName(jsonObject.getString("name"));
-        loadBalancer.setUsername(jsonObject.getString("username"));
-        loadBalancer.setIp(jsonObject.getString("ip"));
-        loadBalancer.setPort(jsonObject.getInt("port"));
-        loadBalancer.setCachingAttributes(jsonObject.getString("caching_attributes"));
-        loadBalancer.setPassword(jsonObject.getString("password"));
-        JSONArray JSONnodes = jsonObject.getJSONArray("nodes");
-        for(int i = 0; i<JSONnodes.length(); i++){
-            JSONObject JSONnode = JSONnodes.getJSONObject(i);
-            Node node = Node.parseFromJSON(JSONnode.getJSONObject("node"));
-            nodes.add(node);
-        }
-        loadBalancer.setNodes(nodes);
-
-        return loadBalancer;
-    }
 
 
 }

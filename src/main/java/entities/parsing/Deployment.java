@@ -41,21 +41,7 @@ public class Deployment {
         this.loadBalancers.addAll(loadBalancers);
     }
 
-    public static Deployment parseFromJSON(JSONObject jsonObject){
-        Deployment deployment = new Deployment();
-        List<LoadBalancer> loadBalancers = new ArrayList<LoadBalancer>();
-        deployment.setName(jsonObject.getString("deployment_name"));
-        deployment.setSsl_path(jsonObject.getString("ssl_path"));
-        JSONArray loadBalancersJson = jsonObject.getJSONArray("loadbalancers");
-        for(int i = 0; i<loadBalancersJson.length(); i++){
-            JSONObject loadBalancerJSON = loadBalancersJson.getJSONObject(i);
-            LoadBalancer loadBalancer = LoadBalancer.parseFromJSON(loadBalancerJSON);
-            loadBalancers.add(loadBalancer);
-        }
-        deployment.setLoadBalancers(loadBalancers);
 
-        return deployment;
-    }
 
 
 }
