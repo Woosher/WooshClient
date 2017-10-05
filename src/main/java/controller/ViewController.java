@@ -37,7 +37,10 @@ public class ViewController {
     private Stage connectionStage;
 
     @FXML
-    MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem;
+    MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem, addLoadBalancerMenuItem;
+
+    @FXML
+    VBox deploymentBox;
 
 
     public void initModel(FlowModelInterface model) {
@@ -53,6 +56,12 @@ public class ViewController {
         loadMenuItem.setOnAction(event -> handleLoad());
         deployMenuItem.setOnAction(event -> handleDeploy());
         connectionTestMenuItem.setOnAction(event -> testConnections());
+        addLoadBalancerMenuItem.setOnAction(event -> addLoadBalancer());
+    }
+
+    private void addLoadBalancer(){
+        NodeComponent nodeComponent = new NodeComponent();
+        deploymentBox.getChildren().add(nodeComponent);
 
     }
 

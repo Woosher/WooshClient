@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<Pane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="controller.NodeComponentController">
+
+    <VBox alignment="CENTER" >
+        <HBox alignment="CENTER">
+            <VBox  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"  alignment="CENTER">
+                <ImageView layoutX="5.0" >
+                    <Image  preserveRatio="true" requestedHeight="50" requestedWidth="50" url="server1600.png">
+                    </Image>
+                </ImageView>
+                <TextField fx:id="textField"   layoutY="49.0" maxWidth="80" />
+                <padding>
+                    <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                </padding>
+            </VBox>
+        </HBox>
+    </VBox>
+</Pane>
