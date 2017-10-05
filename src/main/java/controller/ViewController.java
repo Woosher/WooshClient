@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -36,27 +37,26 @@ public class ViewController {
     private Stage connectionStage;
 
     @FXML
-    Button deployButton, loadButton, saveButton, testConnectionsButton;
-    @FXML
-    TextField pathField, savePathField;
+    MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem;
 
 
     public void initModel(FlowModelInterface model) {
         if (this.model != null) {
             throw new IllegalStateException("Model can only be initialized once");
         }
-        this.model = model ;
+        this.model = model;
         initLayout();
     }
 
-    private void initLayout(){
-        deployButton.setOnMouseClicked(event -> handleDeploy());
-        loadButton.setOnMouseClicked(event -> handleLoad());
-        saveButton.setOnMouseClicked(event -> handleSave());
-        testConnectionsButton.setOnMouseClicked(event -> testConnections());
+    private void initLayout() {
+        saveMenuItem.setOnAction(event -> handleSave());
+        loadMenuItem.setOnAction(event -> handleLoad());
+        deployMenuItem.setOnAction(event -> handleDeploy());
+        connectionTestMenuItem.setOnAction(event -> testConnections());
+
     }
 
-    public void testConnections(){
+    public void testConnections() {
         model.testConnections(new ResultsListener<List<ConnectionInfo>>() {
             @Override
             public void onCompletion(List<ConnectionInfo> result) {
@@ -86,16 +86,16 @@ public class ViewController {
                         ObservableList list = dialogScene.getRoot().getChildrenUnmodifiable();
                         List<Machine> hosts = new ArrayList<>();
                         int i = 0;
-                        for(Object box : list){
-                            if(box instanceof HBox){
+                        for (Object box : list) {
+                            if (box instanceof HBox) {
                                 HBox vBox = (HBox) box;
-                                CheckBox cb = (CheckBox)vBox.getChildren().get(1);
-                                if(cb.isSelected()){
+                                CheckBox cb = (CheckBox) vBox.getChildren().get(1);
+                                if (cb.isSelected()) {
                                     hosts.add(result.get(i).getMachine());
 
                                 }
                             }
-                        i++;
+                            i++;
                         }
                         model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
                             @Override
@@ -122,16 +122,11 @@ public class ViewController {
         });
     }
 
-    public void handleDeploy(){
+    public void handleDeploy() {
         model.sendPackages(new ResultsListener<String>() {
             @Override
             public void onCompletion(String result) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        deployButton.setText(result);
-                    }
-                });
+
             }
 
             @Override
@@ -141,48 +136,51 @@ public class ViewController {
         });
     }
 
-    public void handleLoad(){
+    public void handleLoad() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Open File");
         File file = chooser.showOpenDialog(new Stage());
-        String path = file.getAbsolutePath();
-        if(path != null){
-            pathField.setText(path);
-            model.loadDeployment(pathField.getText(), new ResultsListener<Deployment>() {
-                @Override
-                public void onCompletion(Deployment result) {
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            if (path != null) {
+                model.loadDeployment(path, new ResultsListener<Deployment>() {
+                    @Override
+                    public void onCompletion(Deployment result) {
 
-                }
+                    }
 
-                @Override
-                public void onFailure(Throwable throwable) {
-                    print(throwable.getMessage());
-                }
-            });
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        print(throwable.getMessage());
+                    }
+                });
+            }
         }
     }
 
-    public void handleSave(){
+    public void handleSave() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save File");
         File file = chooser.showSaveDialog(new Stage());
-        String path = file.getAbsolutePath();
-        if (path != null) {
-            savePathField.setText(path);
-            model.saveDeployment(savePathField.getText(), new ResultsListener<Void>() {
-                @Override
-                public void onCompletion(Void result) {
-                }
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            if (path != null) {
+                model.saveDeployment(path, new ResultsListener<Void>() {
+                    @Override
+                    public void onCompletion(Void result) {
+                    }
 
-                @Override
-                public void onFailure(Throwable throwable) {
-                    print(throwable.getMessage());
-                }
-            });
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        print(throwable.getMessage());
+                    }
+                });
+            }
         }
+
     }
 
-    public void printDeployMent(Deployment deployment){
+    public void printDeployMent(Deployment deployment) {
 //        print("NAME OF DEPLOYMENT: " + deployment.getName());
 //        print("SSL PATH: " + deployment.getSsl_path());
 //        print("LOADBALANCERS: ");
@@ -203,7 +201,7 @@ public class ViewController {
 //        }
     }
 
-    private void print(String args){
+    private void print(String args) {
         System.out.println(args);
     }
 

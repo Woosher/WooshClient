@@ -33,7 +33,7 @@ public class Main extends Application{
         FlowModelInterface flowModel = new FlowModeller();
         controller.initModel(flowModel);
 
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Woosh Deployment");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
     }

@@ -1,43 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Ellipse?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ViewController">
-   <center>
-   </center>
-   <left>
-   </left>
-   <top>
-   </top>
-   <right>
-      <VBox  BorderPane.alignment="CENTER">
-         <children>
-            <Button fx:id="deployButton"  mnemonicParsing="false" text="Deploy" />
-            <HBox>
-               <children>
-                  <Button fx:id="loadButton"  mnemonicParsing="false" text="Load" />
-                  <TextField fx:id="pathField" />
-               </children>
-            </HBox>
-            <HBox >
-               <children>
-                  <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
-                  <TextField fx:id="savePathField" />
-               </children>
-            </HBox>
-            <HBox >
-               <children>
-                  <Button fx:id="testConnectionsButton" mnemonicParsing="false" text="Test connections" />
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </right>
-   <bottom>
-   </bottom>
+<?import javafx.scene.control.ScrollPane?>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.ViewController">
+    <center>
+        <ScrollPane>
+            <Button  mnemonicParsing="false" text="Deploy" />
+            <Button  mnemonicParsing="false" text="Deploy" />
+            <Button mnemonicParsing="false" text="Deploy" />
+        </ScrollPane>
+
+    </center>
+    <left>
+        <ScrollPane>
+            <Button  mnemonicParsing="false" text="Deploy" />
+            <Button  mnemonicParsing="false" text="Deploy" />
+            <Button mnemonicParsing="false" text="Deploy" />
+        </ScrollPane>
+    </left>
+    <top>
+        <MenuBar>
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save"/>
+                        <MenuItem fx:id="loadMenuItem" mnemonicParsing="false" text="Load"/>
+                        <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="Close"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem fx:id="connectionTestMenuItem" mnemonicParsing="false" text="Test Connections"/>
+                        <MenuItem fx:id="deployMenuItem" mnemonicParsing="false" text="Deploy system"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <right>
+
+        <ScrollPane>
+            <Button  mnemonicParsing="false" text="Deploy" />
+            <Button  mnemonicParsing="false" text="Deploy" />
+            <Button mnemonicParsing="false" text="Deploy" />
+        </ScrollPane>
+
+        <!--<VBox BorderPane.alignment="CENTER">-->
+        <!--<children>-->
+        <!--<Button fx:id="deployButton" mnemonicParsing="false" text="Deploy" />-->
+        <!--<HBox>-->
+        <!--<children>-->
+        <!--<Button fx:id="loadButton" mnemonicParsing="false" text="Load" />-->
+        <!--<TextField fx:id="pathField" />-->
+        <!--</children>-->
+        <!--</HBox>-->
+        <!--<HBox>-->
+        <!--<children>-->
+        <!--<Button fx:id="saveButton" mnemonicParsing="false" text="Save" />-->
+        <!--<TextField fx:id="savePathField" />-->
+        <!--</children>-->
+        <!--</HBox>-->
+        <!--<HBox>-->
+        <!--<children>-->
+        <!--<Button fx:id="testConnectionsButton" mnemonicParsing="false" text="Test connections" />-->
+        <!--</children>-->
+        <!--</HBox>-->
+        <!--</children>-->
+        <!--</VBox>-->
+    </right>
+    <bottom>
+        <ScrollPane>
+            <Button  mnemonicParsing="false" text="Deploy" />
+            <Button  mnemonicParsing="false" text="Deploy" />
+            <Button mnemonicParsing="false" text="Deploy" />
+        </ScrollPane>
+    </bottom>
 </BorderPane>
