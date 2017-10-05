@@ -1,6 +1,8 @@
 package entities.parsing;
 
-abstract public class Machine {
+import java.util.Observable;
+
+abstract public class Machine extends Observable {
 
     private String name,username,ip,password, pathCompressed;
     private int port;

@@ -1,19 +1,21 @@
 package entities.parsing;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
-public class Deployment {
+public class Deployment extends Observable {
 
     private String name, ssl_path;
-    private List<LoadBalancer> loadBalancers;
+    private ObservableList<LoadBalancer> loadBalancers;
 
     public Deployment(){
-        loadBalancers = new ArrayList<LoadBalancer>();
-
+        loadBalancers = FXCollections.observableArrayList();
     }
 
     public String getName() {
@@ -32,7 +34,7 @@ public class Deployment {
         this.ssl_path = ssl_path;
     }
 
-    public List<LoadBalancer> getLoadBalancers() {
+    public ObservableList<LoadBalancer> getLoadBalancers() {
         return loadBalancers;
     }
 
@@ -40,8 +42,5 @@ public class Deployment {
         this.loadBalancers.clear();
         this.loadBalancers.addAll(loadBalancers);
     }
-
-
-
 
 }
