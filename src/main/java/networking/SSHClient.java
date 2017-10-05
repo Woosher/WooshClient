@@ -52,7 +52,13 @@ public final class SSHClient{
             session.disconnect();
             return "Succes!";
         }catch (JSchException e) {
-            return e.getMessage();
+            System.out.println(e.getMessage());
+            if(e.getMessage().contains("UnknownHostKey")){
+                return " Unknown host, fingerprint: " + e.getMessage().substring(e.getMessage().lastIndexOf(" ")+1);
+            }else if(e.getMessage().contains("Connection refused")){
+                return " Connection refused!";
+            }
+            return "Failed";
         }
         catch (Exception ex) {
             ex.printStackTrace();

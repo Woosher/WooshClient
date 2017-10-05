@@ -158,7 +158,7 @@ public class ViewController {
                         for (ConnectionInfo s : result) {
                             HBox hb = new HBox();
                             ObservableList hbChildren = hb.getChildren();
-                            hbChildren.add(new Text("IP: " + s.getMachine().getIp() + " Fingerprint: " + s.getInfo()));
+                            hbChildren.add(new Text("IP: " + s.getMachine().getIp() + s.getInfo()));
                             hbChildren.add(new CheckBox());
                             dialogVbox.getChildren().add(hb);
                         }
