@@ -8,15 +8,14 @@ import entities.parsing.LoadBalancer;
 import entities.parsing.Machine;
 import entities.parsing.Node;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -28,6 +27,7 @@ import modellers.interfaces.FlowModelInterface;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 
 public class ViewController {
@@ -35,12 +35,19 @@ public class ViewController {
     private FlowModelInterface model;
     private Scene dialogScene;
     private Stage connectionStage;
+    ListView<LoadBalancer> loadBalancerListView;
+    ListView<Node> nodesListView;
 
     @FXML
     MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem, addLoadBalancerMenuItem;
 
     @FXML
     VBox deploymentBox;
+
+    @FXML
+    GridPane gridPane;
+
+    private Deployment deployment;
 
 
     public void initModel(FlowModelInterface model) {
@@ -49,20 +56,50 @@ public class ViewController {
         }
         this.model = model;
         initLayout();
+
     }
 
     private void initLayout() {
+        loadBalancerListView = new ListView<>();
+        nodesListView = new ListView<>();
         saveMenuItem.setOnAction(event -> handleSave());
         loadMenuItem.setOnAction(event -> handleLoad());
         deployMenuItem.setOnAction(event -> handleDeploy());
         connectionTestMenuItem.setOnAction(event -> testConnections());
         addLoadBalancerMenuItem.setOnAction(event -> addLoadBalancer());
+        loadBalancerListView.setOnMouseClicked(event -> loadBalancerClick());
     }
 
-    private void addLoadBalancer(){
-        NodeComponent nodeComponent = new NodeComponent();
-        deploymentBox.getChildren().add(nodeComponent);
+    private void loadBalancerClick(){
+        LoadBalancer loadBalancer = loadBalancerListView.getSelectionModel().getSelectedItem();
+        ObservableList<Node> nodes = loadBalancer.getNodes();
+        nodesListView.setItems(nodes);
+    }
 
+    private void addLoadBalancer() {
+        LoadBalancer loadBalancer = new LoadBalancer();
+        List<Node> nodes = new ArrayList<>();
+        Node node = new Node();
+        node.setEnvironment("JAVA");
+        node.setOperatingSystem("WIN");
+        node.setPath("/path/to/stuff");
+        node.setIp("192.168.0.1");
+        node.setName("bestnode");
+        node.setPassword("noed");
+        node.setPathCompressed("naosd");
+        node.setPort(22);
+        node.setUsername("USERNAME");
+        nodes.add(node);
+        loadBalancer.setCachingAttributes("asd");
+        loadBalancer.setIp("asodkaos");
+        loadBalancer.setName("oaskdoaskd");
+        loadBalancer.setPort(22);
+        loadBalancer.setPassword("aoskdoaskd");
+        loadBalancer.setPathCompressed("oaksdoaksodk");
+        loadBalancer.setUsername("oaksdoaksdokzxc");
+        loadBalancer.setNodes(nodes);
+        deployment.getLoadBalancers().add(loadBalancer);
+        printDeployMent(deployment);
     }
 
     public void testConnections() {
@@ -155,7 +192,8 @@ public class ViewController {
                 model.loadDeployment(path, new ResultsListener<Deployment>() {
                     @Override
                     public void onCompletion(Deployment result) {
-
+                        deployment = result;
+                        setupDeploymentInGui();
                     }
 
                     @Override
@@ -167,9 +205,22 @@ public class ViewController {
         }
     }
 
+    private void setupDeploymentInGui() {
+        loadBalancerListView.setItems(deployment.getLoadBalancers());
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gridPane.add(loadBalancerListView, 0, 0);
+                gridPane.add(nodesListView, 1,0);
+
+            }
+        });
+    }
+
     public void handleSave() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save File");
+        chooser.setInitialFileName("deploymentsave.txt");
         File file = chooser.showSaveDialog(new Stage());
         if (file != null) {
             String path = file.getAbsolutePath();
@@ -190,24 +241,24 @@ public class ViewController {
     }
 
     public void printDeployMent(Deployment deployment) {
-//        print("NAME OF DEPLOYMENT: " + deployment.getName());
-//        print("SSL PATH: " + deployment.getSsl_path());
-//        print("LOADBALANCERS: ");
-//        for(LoadBalancer loadBalancer : deployment.getLoadBalancers()){
-//            print("");
-//            print("\tNAME OF LB: " + loadBalancer.getName());
-//            print("\tIP OF LB: " + loadBalancer.getPort());
-//            print("\tCATCHE OF LB: " + loadBalancer.getCachingAttributes());
-//            print("\tNODES");
-//            for(Node node : loadBalancer.getNodes()){
-//                print("");
-//                print("\t\tNAME OF NODE: " + node.getName());
-//                print("\t\tIP OF NODE: " + node.getIp());
-//                print("\t\tPORT OF NODE: " + node.getPort());
-//                print("\t\tSE OF NODE: " + node.getEnvironment());
-//                print("\t\tOS OF NODE: " + node.getOperatingSystem());
-//            }
-//        }
+        print("NAME OF DEPLOYMENT: " + deployment.getName());
+        print("SSL PATH: " + deployment.getSsl_path());
+        print("LOADBALANCERS: ");
+        for (LoadBalancer loadBalancer : deployment.getLoadBalancers()) {
+            print("");
+            print("\tNAME OF LB: " + loadBalancer.getName());
+            print("\tIP OF LB: " + loadBalancer.getPort());
+            print("\tCATCHE OF LB: " + loadBalancer.getCachingAttributes());
+            print("\tNODES");
+            for (Node node : loadBalancer.getNodes()) {
+                print("");
+                print("\t\tNAME OF NODE: " + node.getName());
+                print("\t\tIP OF NODE: " + node.getIp());
+                print("\t\tPORT OF NODE: " + node.getPort());
+                print("\t\tSE OF NODE: " + node.getEnvironment());
+                print("\t\tOS OF NODE: " + node.getOperatingSystem());
+            }
+        }
     }
 
     private void print(String args) {

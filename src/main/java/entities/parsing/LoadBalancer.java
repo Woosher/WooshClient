@@ -1,5 +1,7 @@
 package entities.parsing;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -9,10 +11,10 @@ import java.util.List;
 public class LoadBalancer extends Machine {
 
     private String cachingAttributes;
-    private List<Node> nodes;
+    private ObservableList<Node> nodes;
 
     public LoadBalancer(){
-        nodes = new ArrayList<Node>();
+        nodes = FXCollections.observableArrayList();
     }
 
 
@@ -24,7 +26,7 @@ public class LoadBalancer extends Machine {
         this.cachingAttributes = cachingAttributes;
     }
 
-    public List<Node> getNodes() {
+    public ObservableList<Node> getNodes() {
         return nodes;
     }
 

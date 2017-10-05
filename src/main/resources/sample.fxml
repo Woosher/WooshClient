@@ -13,6 +13,7 @@
 <?import controller.NodeComponent?>
 <?import javafx.scene.web.WebView?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
 <BorderPane fx:id="parent" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.ViewController">
     <center>
@@ -20,6 +21,8 @@
             <VBox alignment="CENTER" >
                 <HBox alignment="CENTER">
                     <VBox  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" fx:id="deploymentBox" alignment="CENTER">
+                        <GridPane fx:id="gridPane"></GridPane>
+                        <GridPane fx:id="gridPaneNodes"></GridPane>
                         <padding>
                             <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                         </padding>
