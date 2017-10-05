@@ -84,6 +84,14 @@
                 <Label fx:id="passwordLabel" text="Password"></Label>
                 <TextField fx:id="passwordTxt" ></TextField>
 
+                <Label fx:id="pathLabel" text="Program"></Label>
+                <TextField fx:id="pathTxt" ></TextField>
+
+                <Label fx:id="osLabel" text="Operating System"></Label>
+                <TextField fx:id="osTxt" ></TextField>
+
+                <Button alignment="CENTER" fx:id="addNodeButton" text="Add node" visible="true"></Button>
+
                 <Button alignment="CENTER" fx:id="saveInfoButton" text="Save Info"></Button>
 
             </VBox>

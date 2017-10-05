@@ -48,13 +48,13 @@ public class ViewController {
     ListView<Node> nodeListView;
 
     @FXML
-    TextField nameTxt, usernameTxt, ipTxt, portTxt, passwordTxt;
+    TextField nameTxt, usernameTxt, ipTxt, portTxt, passwordTxt, pathTxt, osTxt;
 
     @FXML
     VBox infoLayout;
 
     @FXML
-    Button saveInfoButton;
+    Button saveInfoButton, addNodeButton;
 
     private Machine currentMachine;
     private Deployment deployment;
@@ -77,12 +77,12 @@ public class ViewController {
         loadBalancerListView.setOnMouseClicked(event -> loadBalancerClick());
         nodeListView.setOnMouseClicked(event -> handleNodeClick() );
         saveInfoButton.setOnMouseClicked(event -> saveInfo());
-
-        //        gridPane.add(loadBalancerListView, 2, 0);
-//        gridPane.add(nodesListView, 3,0);
+        addNodeButton.setOnMouseClicked(event -> addNode());
         setupLists();
 
     }
+
+
 
     private void handleNodeClick(){
         Node node = nodeListView.getSelectionModel().getSelectedItem();
@@ -95,6 +95,7 @@ public class ViewController {
         ObservableList<Node> nodes = loadBalancer.getNodes();
         updateInfoLayout(loadBalancer);
         nodeListView.setItems(nodes);
+
     }
 
     private void updateInfoLayout(Machine machine){
@@ -107,6 +108,13 @@ public class ViewController {
         ipTxt.setText(machine.getIp());
         portTxt.setText(machine.getPort() + "");
         passwordTxt.setText(machine.getPassword());
+
+
+        if(machine instanceof LoadBalancer){
+            addNodeButton.setVisible(true);
+        }else {
+            addNodeButton.setVisible(false);
+        }
     }
 
     private void saveInfo(){
@@ -118,97 +126,27 @@ public class ViewController {
         setupLists();
     }
 
-    private void addLoadBalancer() {
-        LoadBalancer loadBalancer = new LoadBalancer();
-        List<Node> nodes = new ArrayList<>();
+    private void addNode(){
+        LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
         Node node = new Node();
-        node.setEnvironment("JAVA");
+        node.setName("New Node");
         node.setOperatingSystem("WIN");
         node.setPath("/path/to/stuff");
-        node.setIp("192.168.0.1");
-        node.setName("bestnode");
-        node.setPassword("noed");
-        node.setPathCompressed("naosd");
-        node.setPort(22);
-        node.setUsername("USERNAME");
-        nodes.add(node);
-        loadBalancer.setCachingAttributes("asd");
-        loadBalancer.setIp("asodkaos");
-        loadBalancer.setName("oaskdoaskd");
-        loadBalancer.setPort(22);
-        loadBalancer.setPassword("aoskdoaskd");
-        loadBalancer.setPathCompressed("oaksdoaksodk");
-        loadBalancer.setUsername("oaksdoaksdokzxc");
+        node.setEnvironment("JAVA");
+        loadBalancer.getNodes().add(node);
+        printDeployMent(deployment);
+    }
+
+    private void addLoadBalancer() {
+        LoadBalancer loadBalancer = new LoadBalancer();
+        loadBalancer.setName("New loadbalancer");
+        loadBalancer.setCachingAttributes("aoskdoaskd");
+        List<Node> nodes = new ArrayList<>();
         loadBalancer.setNodes(nodes);
         deployment.getLoadBalancers().add(loadBalancer);
         printDeployMent(deployment);
     }
 
-    public void testConnections() {
-        model.testConnections(new ResultsListener<List<ConnectionInfo>>() {
-            @Override
-            public void onCompletion(List<ConnectionInfo> result) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        connectionStage = new Stage();
-                        connectionStage.initModality(Modality.APPLICATION_MODAL);
-                        connectionStage.initOwner(new Stage());
-                        VBox dialogVbox = new VBox(20);
-                        for (ConnectionInfo s : result) {
-                            HBox hb = new HBox();
-                            ObservableList hbChildren = hb.getChildren();
-                            hbChildren.add(new Text("IP: " + s.getMachine().getIp() + s.getInfo()));
-                            hbChildren.add(new CheckBox());
-                            dialogVbox.getChildren().add(hb);
-                        }
-                        Button ok = new Button("OK");
-                        ok.setOnMouseClicked(event -> addKnownHosts(result));
-                        dialogVbox.getChildren().add(ok);
-                        dialogScene = new Scene(dialogVbox, 600, 200);
-                        connectionStage.setScene(dialogScene);
-                        connectionStage.show();
-                    }
-
-                    private void addKnownHosts(List<ConnectionInfo> result) {
-                        ObservableList list = dialogScene.getRoot().getChildrenUnmodifiable();
-                        List<Machine> hosts = new ArrayList<>();
-                        int i = 0;
-                        for (Object box : list) {
-                            if (box instanceof HBox) {
-                                HBox vBox = (HBox) box;
-                                CheckBox cb = (CheckBox) vBox.getChildren().get(1);
-                                if (cb.isSelected()) {
-                                    hosts.add(result.get(i).getMachine());
-
-                                }
-                            }
-                            i++;
-                        }
-                        model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
-                            @Override
-                            public void onCompletion(Boolean result) {
-                                print(result.toString());
-                                //connectionStage.close();
-                            }
-
-                            @Override
-                            public void onFailure(Throwable throwable) {
-                                print("meh");
-                                print(throwable.getMessage());
-                            }
-                        });
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                print(throwable.getMessage());
-
-            }
-        });
-    }
 
     public void handleDeploy() {
         model.sendPackages(new ResultsListener<String>() {
@@ -235,6 +173,7 @@ public class ViewController {
                     @Override
                     public void onCompletion(Deployment result) {
                         deployment = result;
+                       // deployment.getLoadBalancers().get(0).addObserver(new Observer());
                         setupDeploymentInGui();
                     }
 
@@ -251,9 +190,8 @@ public class ViewController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                setupLists();
                 loadBalancerListView.setItems(deployment.getLoadBalancers());
-
+                setupLists();
             }
         });
     }
@@ -323,6 +261,72 @@ public class ViewController {
         });
     }
 
+    public void testConnections() {
+        model.testConnections(new ResultsListener<List<ConnectionInfo>>() {
+            @Override
+            public void onCompletion(List<ConnectionInfo> result) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        connectionStage = new Stage();
+                        connectionStage.initModality(Modality.APPLICATION_MODAL);
+                        connectionStage.initOwner(new Stage());
+                        VBox dialogVbox = new VBox(20);
+                        for (ConnectionInfo s : result) {
+                            HBox hb = new HBox();
+                            ObservableList hbChildren = hb.getChildren();
+                            hbChildren.add(new Text("IP: " + s.getMachine().getIp() + s.getInfo()));
+                            hbChildren.add(new CheckBox());
+                            dialogVbox.getChildren().add(hb);
+                        }
+                        Button ok = new Button("OK");
+                        ok.setOnMouseClicked(event -> addKnownHosts(result));
+                        dialogVbox.getChildren().add(ok);
+                        dialogScene = new Scene(dialogVbox, 600, 200);
+                        connectionStage.setScene(dialogScene);
+                        connectionStage.show();
+                    }
+
+                    private void addKnownHosts(List<ConnectionInfo> result) {
+                        ObservableList list = dialogScene.getRoot().getChildrenUnmodifiable();
+                        List<Machine> hosts = new ArrayList<>();
+                        int i = 0;
+                        for (Object box : list) {
+                            if (box instanceof HBox) {
+                                HBox vBox = (HBox) box;
+                                CheckBox cb = (CheckBox) vBox.getChildren().get(1);
+                                if (cb.isSelected()) {
+                                    hosts.add(result.get(i).getMachine());
+
+                                }
+                            }
+                            i++;
+                        }
+                        model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
+                            @Override
+                            public void onCompletion(Boolean result) {
+                                print(result.toString());
+                                //connectionStage.close();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                print("meh");
+                                print(throwable.getMessage());
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                print(throwable.getMessage());
+
+            }
+        });
+    }
+
 
     public void printDeployMent(Deployment deployment) {
         print("NAME OF DEPLOYMENT: " + deployment.getName());
@@ -347,6 +351,15 @@ public class ViewController {
 
     private void print(String args) {
         System.out.println(args);
+    }
+
+    class Observer implements java.util.Observer {
+
+        @Override
+        public void update(Observable o, Object arg) {
+            System.out.println("asdasda");
+            setupLists();
+        }
     }
 
 }
