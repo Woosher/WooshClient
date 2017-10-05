@@ -22,12 +22,14 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import modellers.interfaces.FlowModelInterface;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
 
 
 public class ViewController {
@@ -35,20 +37,27 @@ public class ViewController {
     private FlowModelInterface model;
     private Scene dialogScene;
     private Stage connectionStage;
-    ListView<LoadBalancer> loadBalancerListView;
-    ListView<Node> nodesListView;
 
     @FXML
     MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem, addLoadBalancerMenuItem;
 
     @FXML
-    VBox deploymentBox;
+    ListView<LoadBalancer> loadBalancerListView;
 
     @FXML
-    GridPane gridPane;
+    ListView<Node> nodeListView;
 
+    @FXML
+    TextField nameTxt, usernameTxt, ipTxt, portTxt, passwordTxt;
+
+    @FXML
+    VBox infoLayout;
+
+    @FXML
+    Button saveInfoButton;
+
+    private Machine currentMachine;
     private Deployment deployment;
-
 
     public void initModel(FlowModelInterface model) {
         if (this.model != null) {
@@ -60,20 +69,53 @@ public class ViewController {
     }
 
     private void initLayout() {
-        loadBalancerListView = new ListView<>();
-        nodesListView = new ListView<>();
         saveMenuItem.setOnAction(event -> handleSave());
         loadMenuItem.setOnAction(event -> handleLoad());
         deployMenuItem.setOnAction(event -> handleDeploy());
         connectionTestMenuItem.setOnAction(event -> testConnections());
         addLoadBalancerMenuItem.setOnAction(event -> addLoadBalancer());
         loadBalancerListView.setOnMouseClicked(event -> loadBalancerClick());
+        nodeListView.setOnMouseClicked(event -> handleNodeClick() );
+        saveInfoButton.setOnMouseClicked(event -> saveInfo());
+
+        //        gridPane.add(loadBalancerListView, 2, 0);
+//        gridPane.add(nodesListView, 3,0);
+        setupLists();
+
+    }
+
+    private void handleNodeClick(){
+        Node node = nodeListView.getSelectionModel().getSelectedItem();
+        updateInfoLayout(node);
     }
 
     private void loadBalancerClick(){
+        setupNodeList();
         LoadBalancer loadBalancer = loadBalancerListView.getSelectionModel().getSelectedItem();
         ObservableList<Node> nodes = loadBalancer.getNodes();
-        nodesListView.setItems(nodes);
+        updateInfoLayout(loadBalancer);
+        nodeListView.setItems(nodes);
+    }
+
+    private void updateInfoLayout(Machine machine){
+        currentMachine = machine;
+        if(!infoLayout.isVisible()){
+            infoLayout.setVisible(true);
+        }
+        nameTxt.setText(machine.getName());
+        usernameTxt.setText(machine.getUsername());
+        ipTxt.setText(machine.getIp());
+        portTxt.setText(machine.getPort() + "");
+        passwordTxt.setText(machine.getPassword());
+    }
+
+    private void saveInfo(){
+        currentMachine.setPassword(passwordTxt.getText());
+        currentMachine.setName(nameTxt.getText());
+        currentMachine.setUsername(usernameTxt.getText());
+        currentMachine.setIp(ipTxt.getText());
+        currentMachine.setPort(Integer.parseInt(portTxt.getText()));
+        setupLists();
     }
 
     private void addLoadBalancer() {
@@ -206,12 +248,11 @@ public class ViewController {
     }
 
     private void setupDeploymentInGui() {
-        loadBalancerListView.setItems(deployment.getLoadBalancers());
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                gridPane.add(loadBalancerListView, 0, 0);
-                gridPane.add(nodesListView, 1,0);
+                setupLists();
+                loadBalancerListView.setItems(deployment.getLoadBalancers());
 
             }
         });
@@ -237,8 +278,51 @@ public class ViewController {
                 });
             }
         }
-
     }
+
+    private void setupLists(){
+        setupLoadbalancerList();
+        setupNodeList();
+    }
+
+    private void setupLoadbalancerList(){
+        loadBalancerListView.setCellFactory(new Callback<ListView<LoadBalancer>, ListCell<LoadBalancer>>() {
+            @Override
+            public ListCell<LoadBalancer> call(ListView<LoadBalancer> param) {
+                ListCell<LoadBalancer> cell = new ListCell<LoadBalancer>() {
+
+                    @Override
+                    protected void updateItem(LoadBalancer item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            setText(item.getName());
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
+    }
+
+    private void setupNodeList(){
+        nodeListView.setCellFactory(new Callback<ListView<Node>, ListCell<Node>>() {
+            @Override
+            public ListCell<Node> call(ListView<Node> param) {
+                ListCell<Node> cell = new ListCell<Node>() {
+
+                    @Override
+                    protected void updateItem(Node item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            setText(item.getName());
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
+    }
+
 
     public void printDeployMent(Deployment deployment) {
         print("NAME OF DEPLOYMENT: " + deployment.getName());

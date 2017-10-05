@@ -14,29 +14,33 @@
 <?import javafx.scene.web.WebView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <BorderPane fx:id="parent" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.ViewController">
     <center>
         <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="ALWAYS">
-            <VBox alignment="CENTER" >
+            <VBox alignment="CENTER">
                 <HBox alignment="CENTER">
-                    <VBox  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" fx:id="deploymentBox" alignment="CENTER">
-                        <GridPane fx:id="gridPane"></GridPane>
-                        <GridPane fx:id="gridPaneNodes"></GridPane>
-                        <padding>
-                            <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-                        </padding>
+                    <VBox>
+                        <Label fx:id="LoadBalancers" text="LoadBalancers"></Label>
+                        <ListView fx:id="loadBalancerListView"></ListView>
+                    </VBox>
+                    <VBox>
+                        <Label fx:id="Machines" text="Nodes"></Label>
+                        <ListView fx:id="nodeListView"></ListView>
                     </VBox>
                 </HBox>
             </VBox>
         </ScrollPane>
     </center>
     <left>
-        <ScrollPane fitToWidth="true" fitToHeight="true" >
-            <VBox alignment="CENTER" >
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox alignment="CENTER">
                 <HBox alignment="CENTER">
-                    <VBox  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"  alignment="CENTER">
-                        <Button  mnemonicParsing="false" text="TOOLS" />
+                    <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                          alignment="CENTER">
+                        <Button mnemonicParsing="false" text="TOOLS"/>
                     </VBox>
                 </HBox>
             </VBox>
@@ -47,9 +51,9 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save"/>
-                        <MenuItem fx:id="loadMenuItem" mnemonicParsing="false" text="Load"/>
-                        <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="Close"/>
+                        <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save project"/>
+                        <MenuItem fx:id="loadMenuItem" mnemonicParsing="false" text="Load project"/>
+                        <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="Close project"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
@@ -63,22 +67,38 @@
         </MenuBar>
     </top>
     <right>
-        <ScrollPane fitToWidth="true" fitToHeight="true" >
-            <VBox alignment="CENTER" >
-                <HBox alignment="CENTER">
-                    <VBox  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"  alignment="CENTER">
-                        <Button  mnemonicParsing="false" text="NODE INFO" />
-                    </VBox>
-                </HBox>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox  fx:id="infoLayout" visible="false">
+                <Label fx:id="nameLabel" text="Name"></Label>
+                <TextField fx:id="nameTxt" ></TextField>
+
+                <Label fx:id="usernameLabel" text="Username"></Label>
+                <TextField fx:id="usernameTxt" ></TextField>
+
+                <Label fx:id="ipLabel" text="IP"></Label>
+                <TextField fx:id="ipTxt" ></TextField>
+
+                <Label fx:id="portLabel" text="Port"></Label>
+                <TextField fx:id="portTxt" ></TextField>
+
+                <Label fx:id="passwordLabel" text="Password"></Label>
+                <TextField fx:id="passwordTxt" ></TextField>
+
+                <Button alignment="CENTER" fx:id="saveInfoButton" text="Save Info"></Button>
+
             </VBox>
         </ScrollPane>
     </right>
     <bottom>
-        <ScrollPane fitToWidth="true" fitToHeight="true" >
-            <VBox alignment="CENTER" >
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox alignment="CENTER">
+
+
+
                 <HBox alignment="CENTER">
-                    <VBox  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"  alignment="CENTER">
-                        <Button  mnemonicParsing="false" text="DEPLOYMENT INFO HERE" />
+                    <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                          alignment="CENTER">
+                        <Button mnemonicParsing="false" text="DEPLOYMENT INFO HERE"/>
                     </VBox>
                 </HBox>
             </VBox>
