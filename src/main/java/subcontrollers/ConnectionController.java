@@ -19,11 +19,11 @@ public class ConnectionController implements ConnectionControllerInterface {
         List<ConnectionInfo> list = new ArrayList<>();
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
             String lb = SSHClient.testConnection(loadBalancer);
-            list.add(new ConnectionInfo(loadBalancer,lb.substring(lb.lastIndexOf(" ")+1)));
+            list.add(new ConnectionInfo(loadBalancer,lb));
             //Nodes
             for (Node node: loadBalancer.getNodes()) {
                 String n = SSHClient.testConnection(node);
-                list.add(new ConnectionInfo(node,n.substring(n.lastIndexOf(" ")+1)));
+                list.add(new ConnectionInfo(node,n));
             }
 
         }
