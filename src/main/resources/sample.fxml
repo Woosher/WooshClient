@@ -19,7 +19,7 @@
 <BorderPane fx:id="parent" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.ViewController">
     <center>
-        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="ALWAYS">
+        <ScrollPane fitToWidth="true" fitToHeight="true" >
             <VBox alignment="CENTER">
                 <HBox alignment="CENTER">
                     <VBox>
