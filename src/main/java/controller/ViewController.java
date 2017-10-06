@@ -137,7 +137,6 @@ public class ViewController {
                 envTxt.setText(node.getEnvironment());
             }
         }
-
     }
 
 
