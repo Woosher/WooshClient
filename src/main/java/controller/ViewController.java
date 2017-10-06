@@ -108,8 +108,8 @@ public class ViewController {
 
     private void updateInfoLayout(Machine machine){
         currentMachine = machine;
-        if(currentMachine != null){
-            if(!infoLayout.isVisible()){
+        if(currentMachine != null) {
+            if (!infoLayout.isVisible()) {
                 infoLayout.setVisible(true);
             }
             nameTxt.setText(machine.getName());
@@ -119,14 +119,14 @@ public class ViewController {
             SSHportTxt.setText(Integer.toString(machine.getSSHPort()));
             passwordTxt.setText(machine.getPassword());
 
-            if(machine instanceof LoadBalancer){
+            if (machine instanceof LoadBalancer) {
                 LoadBalancer loadBalancer = (LoadBalancer) machine;
                 loadBalancerExtraInfo.setVisible(true);
                 loadBalancerExtraInfo.setManaged(true);
                 nodeExtraInfo.setVisible(false);
                 nodeExtraInfo.setManaged(false);
                 nodeNumberTxt.setText(loadBalancer.getNodes().size() + "");
-            }else {
+            } else {
                 Node node = (Node) machine;
                 nodeExtraInfo.setVisible(true);
                 nodeExtraInfo.setManaged(true);
@@ -137,6 +137,7 @@ public class ViewController {
                 envTxt.setText(node.getEnvironment());
             }
         }
+
     }
 
 
