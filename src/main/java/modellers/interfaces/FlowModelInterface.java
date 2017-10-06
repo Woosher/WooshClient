@@ -29,6 +29,8 @@ public interface FlowModelInterface {
 
     void sendPackages(final ResultsListener<String> resultsListener) ;
 
-    void testConnections(final ResultsListener<List<ConnectionInfo>> resultsListener) ;
+    void testConnections(final ResultsListener<List<ConnectionInfo>> resultsListener);
+
+    void createNewDeployment(String name, final ResultsListener<Deployment> resultsListener);
 
 }

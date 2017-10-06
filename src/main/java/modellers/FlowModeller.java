@@ -114,6 +114,23 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
+    public void createNewDeployment(String name, ResultsListener<Deployment> resultsListener) {
+        try{
+            this.deployment = new Deployment();
+            this.deployment.setName(name);
+        /*TODO
+            SSLPATH REMOVE
+         */
+            this.deployment.setSsl_path("oaskdo");
+            resultsListener.onCompletion(deployment);
+
+        }catch (Exception e){
+            resultsListener.onFailure(new WooshException("Could not create deployment"));
+        }
+    }
+
+
+    @Override
     public void addKnownHosts(List<Machine> macs,ResultsListener<Boolean> resultsListener){
 
         supplyAsync(()-> {

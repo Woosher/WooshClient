@@ -16,14 +16,30 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <BorderPane fx:id="parent" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.ViewController">
     <center>
         <ScrollPane fitToWidth="true" fitToHeight="true" >
-            <VBox alignment="CENTER">
+            <VBox alignment="CENTER" spacing=" 10">
                 <HBox alignment="CENTER">
                     <VBox>
-                        <Label fx:id="LoadBalancers" text="LoadBalancers"></Label>
+                    <Label fx:id="deploymentNameLabel" text="Name of deployment"></Label>
+                    <TextField fx:id="deploymentNameTxt" ></TextField>
+                    </VBox>
+                </HBox>
+
+                <HBox alignment="CENTER">
+                    <VBox>
+                        <HBox spacing="50">
+                            <Label fx:id="LoadBalancers" text="LoadBalancers"></Label>
+                            <HBox fx:id="addLoadBalancerBox">
+                                <ImageView fitHeight="15" fitWidth="15" >
+                                    <Image url="if_plus_214640.png" />
+                                </ImageView>
+                            </HBox>
+                        </HBox>
                         <ListView fx:id="loadBalancerListView"></ListView>
                     </VBox>
                     <VBox>
@@ -31,6 +47,8 @@
                         <ListView fx:id="nodeListView"></ListView>
                     </VBox>
                 </HBox>
+
+                <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
             </VBox>
         </ScrollPane>
     </center>
@@ -67,8 +85,8 @@
         </MenuBar>
     </top>
     <right>
-        <ScrollPane fitToWidth="true" fitToHeight="true">
-            <VBox  fx:id="infoLayout" visible="false">
+        <ScrollPane fitToWidth="true" fitToHeight="true" >
+            <VBox  fx:id="infoLayout" visible="false" spacing="5">
                 <Label fx:id="nameLabel" text="Name"></Label>
                 <TextField fx:id="nameTxt" ></TextField>
 
@@ -84,15 +102,32 @@
                 <Label fx:id="passwordLabel" text="Password"></Label>
                 <TextField fx:id="passwordTxt" ></TextField>
 
-                <Label fx:id="pathLabel" text="Program"></Label>
-                <TextField fx:id="pathTxt" ></TextField>
+                <VBox fx:id="nodeExtraInfo" spacing="5">
 
-                <Label fx:id="osLabel" text="Operating System"></Label>
-                <TextField fx:id="osTxt" ></TextField>
+                    <Label fx:id="pathLabel" text="Program"></Label>
+                    <TextField fx:id="pathTxt" ></TextField>
 
-                <Button alignment="CENTER" fx:id="addNodeButton" text="Add node" visible="true"></Button>
+                    <Label fx:id="osLabel" text="Operating System"></Label>
+                    <TextField fx:id="osTxt" ></TextField>
 
-                <Button alignment="CENTER" fx:id="saveInfoButton" text="Save Info"></Button>
+                    <Label fx:id="envLabel" text="Programming Environment"></Label>
+                    <TextField fx:id="envTxt" ></TextField>
+
+                </VBox>
+
+                <VBox fx:id="loadBalancerExtraInfo" spacing="5">
+                    <Label fx:id="nodeNumberLabel" text="Number of nodes"></Label>
+                    <TextField fx:id="nodeNumberTxt" disable="true" ></TextField>
+                    <HBox alignment="CENTER" fx:id="innerBox1">
+                        <Button alignment="CENTER" fx:id="addNodeButton" text="Add node"></Button>
+                    </HBox>
+                </VBox>
+
+                <HBox alignment="CENTER" fx:id="innerBox2">
+                    <Button alignment="CENTER" fx:id="saveInfoButton" text="Save Info"></Button>
+                </HBox>
+
+                <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
 
             </VBox>
         </ScrollPane>
@@ -100,9 +135,6 @@
     <bottom>
         <ScrollPane fitToWidth="true" fitToHeight="true">
             <VBox alignment="CENTER">
-
-
-
                 <HBox alignment="CENTER">
                     <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
                           alignment="CENTER">
