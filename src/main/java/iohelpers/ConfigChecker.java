@@ -9,9 +9,6 @@ import iohelpers.interfaces.CheckerInterface;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.crypto.Mac;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 public class ConfigChecker implements CheckerInterface {
@@ -30,6 +27,9 @@ public class ConfigChecker implements CheckerInterface {
             }
             if(!loadBalancerJSON.has("ip")){
                 throw new WooshException("IP is missing");
+            }
+            if(!loadBalancerJSON.has("sshport")){
+                throw new WooshException("SSHPort is missing");
             }
             if(!loadBalancerJSON.has("port")){
                 throw new WooshException("Port is missing");
@@ -51,6 +51,9 @@ public class ConfigChecker implements CheckerInterface {
                 }
                 if(!nodeJson.has("ip")){
                     throw new WooshException("IP is missing");
+                }
+                if(!nodeJson.has("sshport")){
+                    throw new WooshException("SSHPort is missing");
                 }
                 if(!nodeJson.has("port")){
                     throw new WooshException("Port is missing");
@@ -140,7 +143,7 @@ public class ConfigChecker implements CheckerInterface {
         if(loadBalancer.getIp() == null) {
             errorMsg += "You are missing an ip in a loadbalancer \n";
         }
-        if(loadBalancer.getPort() == 0){
+        if(loadBalancer.getSSHPort() == 0){
             errorMsg += "You are missing a port in a loadbalancer \n";
         }
         if(loadBalancer.getPassword() == null){
@@ -175,7 +178,7 @@ public class ConfigChecker implements CheckerInterface {
         if(node.getIp() == null){
             errorMsg += "You are missing an IP in a node \n";
         }
-        if(node.getPort() == 0){
+        if(node.getSSHPort() == 0){
             errorMsg += "You are missing a port in a node \n";
         }
         if(node.getPassword() == null){

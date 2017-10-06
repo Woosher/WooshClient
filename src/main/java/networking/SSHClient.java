@@ -25,7 +25,7 @@ public final class SSHClient{
         try {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
-            Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getPort());
+            Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
             session.setPassword(machine.getPassword());
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");
@@ -46,11 +46,11 @@ public final class SSHClient{
             } catch (WooshException e) {
                 e.printStackTrace();
             }
-            Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getPort());
+            Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
             session.setPassword(machine.getPassword());
             session.connect();
             session.disconnect();
-            return "Succes!";
+            return " Succes!";
         }catch (JSchException e) {
             System.out.println(e.getMessage());
             if(e.getMessage().contains("UnknownHostKey")){
@@ -58,11 +58,11 @@ public final class SSHClient{
             }else if(e.getMessage().contains("Connection refused")){
                 return " Connection refused!";
             }
-            return "Failed";
+            return " Failed";
         }
         catch (Exception ex) {
             ex.printStackTrace();
-            return "Error with " + machine.getIp();
+            return " Error with " + machine.getIp();
         }
 
     }
@@ -72,7 +72,7 @@ public final class SSHClient{
         try {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
-            Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getPort());
+            Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
             session.setPassword(machine.getPassword());
 
             session.connect();

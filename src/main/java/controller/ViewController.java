@@ -1,6 +1,5 @@
 package controller;
 
-import com.sun.jndi.ldap.Connection;
 import entities.ConnectionInfo;
 import entities.ResultsListener;
 import entities.parsing.Deployment;
@@ -8,14 +7,10 @@ import entities.parsing.LoadBalancer;
 import entities.parsing.Machine;
 import entities.parsing.Node;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -29,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 
 
 public class ViewController {
@@ -48,7 +42,7 @@ public class ViewController {
     ListView<Node> nodeListView;
 
     @FXML
-    TextField nameTxt, usernameTxt, ipTxt, portTxt, passwordTxt, pathTxt, osTxt;
+    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, passwordTxt, pathTxt, osTxt;
 
     @FXML
     VBox infoLayout;
@@ -106,7 +100,9 @@ public class ViewController {
         nameTxt.setText(machine.getName());
         usernameTxt.setText(machine.getUsername());
         ipTxt.setText(machine.getIp());
-        portTxt.setText(machine.getPort() + "");
+        SSHportTxt.setText(Integer.toString(machine.getSSHPort()));
+        portTxt.setText(Integer.toString(machine.getPort()));
+
         passwordTxt.setText(machine.getPassword());
 
 
@@ -122,6 +118,7 @@ public class ViewController {
         currentMachine.setName(nameTxt.getText());
         currentMachine.setUsername(usernameTxt.getText());
         currentMachine.setIp(ipTxt.getText());
+        currentMachine.setSSHPort(Integer.parseInt(SSHportTxt.getText()));
         currentMachine.setPort(Integer.parseInt(portTxt.getText()));
         setupLists();
     }
@@ -335,14 +332,15 @@ public class ViewController {
         for (LoadBalancer loadBalancer : deployment.getLoadBalancers()) {
             print("");
             print("\tNAME OF LB: " + loadBalancer.getName());
-            print("\tIP OF LB: " + loadBalancer.getPort());
+            print("\tIP OF LB: " + loadBalancer.getIp());
+            print("\tSSHPort OF LB" + loadBalancer.getSSHPort());
             print("\tCATCHE OF LB: " + loadBalancer.getCachingAttributes());
             print("\tNODES");
             for (Node node : loadBalancer.getNodes()) {
                 print("");
                 print("\t\tNAME OF NODE: " + node.getName());
                 print("\t\tIP OF NODE: " + node.getIp());
-                print("\t\tPORT OF NODE: " + node.getPort());
+                print("\t\tSSHPORT OF NODE: " + node.getSSHPort());
                 print("\t\tSE OF NODE: " + node.getEnvironment());
                 print("\t\tOS OF NODE: " + node.getOperatingSystem());
             }
