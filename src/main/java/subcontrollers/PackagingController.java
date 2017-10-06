@@ -32,31 +32,6 @@ public class PackagingController implements PackagingInterface {
         scripter = new Scripter();
     }
 
-    public String createBashScripts(Machine machine) throws WooshException {
-        String errorMsg = "";
-        JSONObject jsonObject = new JSONObject();
-        if(jsonObject.has("port")){
-            int port = jsonObject.getInt("port");
-            //check om port er sat
-        }else {
-
-        }
-
-
-        return null;
-    }
-
-    @Override
-    public String compressPackage(Machine node) throws WooshException {
-        return null; //scripter.compressPackage(node.getPathBash(), node.getPathCompressed(),"/home/toby/packages/" ,node.getName());
-    }
-
-    @Override
-    public String compressPackage(LoadBalancer loadBalancer) throws WooshException {
-        return null; //scripter.compressPackage(loadBalancer.getPathBash(), loadBalancer.getPathBash(),"/home/toby/packages/" ,loadBalancer.getName());
-
-    }
-
     @Override
     public String createNginxScript(LoadBalancer loadBalancer) throws WooshException {
         return scripter.createLoadBalancerScript(loadBalancer);

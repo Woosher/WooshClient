@@ -5,7 +5,7 @@ import java.util.Observable;
 abstract public class Machine extends Observable {
 
     private String name,username,ip,password, pathCompressed;
-    private int port;
+    private int SSHPort, port;
 
     public String getUsername() {
         return username;
@@ -35,6 +35,16 @@ abstract public class Machine extends Observable {
         notifyObservers();
     }
 
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+        setChanged();
+        notifyObservers();
+    }
+
     final public String getIp() {
         return ip;
     }
@@ -55,13 +65,13 @@ abstract public class Machine extends Observable {
         notifyObservers();
     }
 
-    final public int getPort() {
-        return port;
+    final public int getSSHPort() {
+        return SSHPort;
 
     }
 
-    final public void setPort(int port) {
-        this.port = port;
+    final public void setSSHPort(int SSHPort) {
+        this.SSHPort = SSHPort;
         setChanged();
         notifyObservers();
     }

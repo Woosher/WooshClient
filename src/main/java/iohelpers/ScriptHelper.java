@@ -32,7 +32,7 @@ public class ScriptHelper {
     private String createUpStreamServers(List<Node> nodes, String upstreamName){
         StringBuilder sb = new StringBuilder();
         for(Machine machine: nodes){
-            sb.append(SERVER + " " + machine.getIp() + ":" + machine.getPort() + ";");
+            sb.append(SERVER + " " + machine.getIp() + ":" + machine.getSSHPort() + ";");
         }
         return UPSTREAM + " " + upstreamName + STARTBRACKET + sb.toString() + ENDBRAACKET;
     }

@@ -68,6 +68,7 @@ public class ConfigWriter implements WriterInterface{
         jsonObject.put("username",loadBalancer.getUsername());
         jsonObject.put("ip", loadBalancer.getIp());
         jsonObject.put("port", loadBalancer.getPort());
+        jsonObject.put("sshport", loadBalancer.getSSHPort());
         jsonObject.put("caching_attributes", loadBalancer.getCachingAttributes());
         jsonObject.put("password", loadBalancer.getPassword());
 
@@ -86,6 +87,7 @@ public class ConfigWriter implements WriterInterface{
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ip", node.getIp());
         jsonObject.put("port", node.getPort());
+        jsonObject.put("sshport", node.getSSHPort());
         jsonObject.put("name", node.getName());
         jsonObject.put("username",node.getUsername());
         jsonObject.put("software_environment", node.getEnvironment());

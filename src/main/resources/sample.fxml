@@ -99,6 +99,9 @@
                 <Label fx:id="portLabel" text="Port"></Label>
                 <TextField fx:id="portTxt" ></TextField>
 
+                <Label fx:id="SSHportLabel" text="SSHPort"></Label>
+                <TextField fx:id="SSHportTxt" ></TextField>
+
                 <Label fx:id="passwordLabel" text="Password"></Label>
                 <TextField fx:id="passwordTxt" ></TextField>
 
