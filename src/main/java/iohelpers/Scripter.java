@@ -45,7 +45,7 @@ public class Scripter implements ScripterInterface {
 
     @Override
     public String createLoadBalancerScript(LoadBalancer lb) throws WooshException {
-        String nginxScript = scriptHelper.createNginxScript(lb,lb.getNodes(),"server",1, 1024, 80);
+        String nginxScript = scriptHelper.createNginxScript(lb,lb.getNodes(),"server",1, 1024, lb.getPort());
         return nginxScript;
     }
 }
