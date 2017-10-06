@@ -74,7 +74,6 @@ public class PackagingController implements PackagingInterface {
         String compressedPath = scripter.compressPackage(nodePath, path, node.getName());
         Utils.delete(nodePath);
         node.setPathCompressed(compressedPath);
-        System.out.println(node.getIp() + " " + node.getPathCompressed());
     }
 
     private void updateAndSaveLb(LoadBalancer loadBalancer, String path) throws WooshException{
@@ -86,7 +85,6 @@ public class PackagingController implements PackagingInterface {
         String compressedPath = scripter.compressPackage(loadBalancerPath, path, loadBalancer.getName());
         Utils.delete(loadBalancerPath);
         loadBalancer.setPathCompressed(compressedPath);
-        System.out.println(loadBalancer.getIp() + " " + loadBalancer.getPathCompressed());
     }
 
     private void createLoadBalancerBashScript(String path, String confPath, LoadBalancer loadBalancer) throws WooshException {
@@ -100,7 +98,6 @@ public class PackagingController implements PackagingInterface {
         sb.append("sudo ").append("cp ").append(SERVERPATH).append(loadBalancer.getName()).append("/nginx.conf").append(" ").append(NGINXPATH);
         sb.append("\n");
         sb.append(RESTARTNGINX);
-        System.out.println(sb.toString());
         configWriter.saveFile(sb.toString(),bashScript);
     }
 
@@ -109,7 +106,6 @@ public class PackagingController implements PackagingInterface {
         StringBuilder sb = new StringBuilder();
         sb.append(BASHSTART);
         String content = getBashForEnvironment(path, node);
-        System.out.println(content);
         configWriter.saveFile(content,bashScript);
     }
 

@@ -19,6 +19,9 @@ public class Constants {
     public static final String TEMPPATH = "/woosh/packages/wooshclient/";
     public static final String FULLTEMPPATH = System.getProperty("user.home") + TEMPPATH;
     public static final String SERVERPATH = "/etc/woosh/packages/wooshserver/";
+    public static final String SERVERPATH1 = "/etc/woosh/packages/";
+    public static final String SERVERPATH2 = "/etc/woosh/packages/wooshserver/";
+    public static final String SERVERPATH3 = "/etc/woosh/packages/wooshserver/";
     public static final String NGINXCONF = "nginx.conf";
     public static final String EXESCRIPT = "executescript.sh";
     public static final String BASHSTART = "#!/bin/bash";

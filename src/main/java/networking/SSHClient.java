@@ -5,8 +5,8 @@ import entities.parsing.Machine;
 import exceptions.WooshException;
 import tools.Utils;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
+import java.util.Vector;
 
 import static values.Constants.SERVERPATH;
 
@@ -80,11 +80,12 @@ public final class SSHClient{
             Channel channel = session.openChannel("sftp");
             channel.connect();
             ChannelSftp channelSftp = (ChannelSftp) channel;
+            mkdirs(session, SERVERPATH, machine.getPassword());
             channelSftp.cd(SERVERPATH);
-
+            giveUserRights(session, channelSftp.pwd(), machine.getPassword());
+            System.out.println("user rights done");
             File f = new File(machine.getPathCompressed());
             channelSftp.put(new FileInputStream(f), f.getName());
-            System.out.println(machine.getName());
             channel.disconnect();
             session.disconnect();
         }catch (JSchException e) {
@@ -97,6 +98,40 @@ public final class SSHClient{
         }
         System.out.println(machine.getName() + " DONE");
 
+    }
+
+    public static void giveUserRights(Session session, String path, String sudo_pass) throws JSchException, IOException {
+        String command="sudo chmod -R 777 " + path;
+        Channel channel=session.openChannel("exec");
+        ((ChannelExec)channel).setCommand(command);
+
+        InputStream in=channel.getInputStream();
+        OutputStream out=channel.getOutputStream();
+        ((ChannelExec)channel).setErrStream(System.err);
+
+        channel.connect();
+
+        out.write((sudo_pass+"\n").getBytes());
+        out.flush();
+        channel.disconnect();
+    }
+
+
+
+    public static void mkdirs(Session session, String path, String sudo_pass) throws JSchException, IOException {
+        String command="sudo mkdir -p " + path;
+        Channel channel=session.openChannel("exec");
+        ((ChannelExec)channel).setCommand(command);
+
+        InputStream in=channel.getInputStream();
+        OutputStream out=channel.getOutputStream();
+        ((ChannelExec)channel).setErrStream(System.err);
+
+        channel.connect();
+
+        out.write((sudo_pass+"\n").getBytes());
+        out.flush();
+        channel.disconnect();
     }
 
 
