@@ -71,7 +71,10 @@ public final class SSHClient {
 
     public static void sendPackage(Machine machine) throws WooshException {
 
-        printLogs(machine.getName() + " ---- STARTED \t  ---------------------------------------------------");
+        Utils.printLogs("-----------------------STARTED----------------------------");
+        Utils.printLogs("DEPLOYMENTLOG FOR: " +machine.getName());
+        Utils.printLogs("IP: " + machine.getIp());
+        Utils.printLogs("\n\n");
         try {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
@@ -101,7 +104,8 @@ public final class SSHClient {
             ex.printStackTrace();
             throw new WooshException(ex.getMessage());
         }
-        printLogs(machine.getName() + " ---- DONE \t  ---------------------------------------------------");
+        Utils.printLogs("-----------------------DONE-------------------------------");
+        Utils.printLogs("\n\n");
 
     }
 
@@ -176,15 +180,15 @@ public final class SSHClient {
                 while(stdout.available()>0){
                     int i=stdout.read(tmp, 0, 1024);
                     if(i<0)break;
-                    printLogs(new String(tmp, 0, i));
+                    Utils.printLogs(new String(tmp, 0, i));
                 }
                 while(stderr.available()>0){
                     int i=stdout.read(tmp, 0, 1024);
                     if(i<0)break;
-                    printLogs(new String(tmp, 0, i));
+                    Utils.printLogs(new String(tmp, 0, i));
                 }
                 if(channel.isClosed()){
-                    printLogs("exit-status: "+channel.getExitStatus());
+                    Utils.printLogs("exit-status: "+channel.getExitStatus());
                     break;
                 }
                Thread.sleep(500);
@@ -197,10 +201,7 @@ public final class SSHClient {
         }
     }
 
-    private static void printLogs(String text){
-        if(shouldPrintLog)
-        System.out.println(text);
-    }
+
 
 
     private static Session getSession(Machine machine) throws JSchException {

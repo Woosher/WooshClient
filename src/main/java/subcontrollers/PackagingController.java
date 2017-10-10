@@ -127,8 +127,6 @@ public class PackagingController implements PackagingInterface {
         StringBuilder sb = new StringBuilder();
         sb.append(INSTALLJAVA);
         sb.append("\n");
-        System.out.println("PATH");
-        System.out.println(path);
         File[] jarFiles = filterForExtention(path, "jar");
         for(int i = 0; i<jarFiles.length; i++){
             File jarFile = jarFiles[i];

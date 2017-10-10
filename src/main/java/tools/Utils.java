@@ -5,6 +5,8 @@ import java.io.IOException;
 
 public class Utils {
 
+    public static boolean shouldPrintLog = true;
+
     public static File generateFile(String path) throws IOException {
         File file = new File(path);
         if (!file.isFile()) {
@@ -22,6 +24,11 @@ public class Utils {
                 file.mkdirs();
         }
         return file;
+    }
+
+    public static void printLogs(String text){
+        if(shouldPrintLog)
+            System.out.println(text);
     }
 
     public static void delete(String path){

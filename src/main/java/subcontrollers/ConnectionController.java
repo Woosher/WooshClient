@@ -8,6 +8,7 @@ import entities.parsing.Node;
 import exceptions.WooshException;
 import networking.SSHClient;
 import subcontrollers.interfaces.ConnectionControllerInterface;
+import tools.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class ConnectionController implements ConnectionControllerInterface {
     @Override
     public void sendPackages(Deployment deployment) throws WooshException{
         //LoadBalancers
+        Utils.printLogs("************************* BEGIN DEPLOYMENT *************************");
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
                 SSHClient.sendPackage(loadBalancer);
                 //Nodes
@@ -53,6 +55,7 @@ public class ConnectionController implements ConnectionControllerInterface {
                 }
 
         }
+        Utils.printLogs("*************************** END DEPLOYMENT *************************");
     }
 
 }
