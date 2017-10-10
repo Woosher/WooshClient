@@ -151,8 +151,8 @@ public class ConfigChecker implements CheckerInterface {
         }
         if(loadBalancer.getNodes() != null){
             if(loadBalancer.getNodes().isEmpty()){
-                errorMsg += " You are missing nodes behind your loadbalancer \n";
-            }else {
+//                errorMsg += " You are missing nodes behind your loadbalancer \n";
+//            }else {
                 for(Node node : loadBalancer.getNodes()){
                     errorMsg += checkNodeAttributes(node);
                 }

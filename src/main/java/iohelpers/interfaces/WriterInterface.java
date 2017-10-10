@@ -9,6 +9,6 @@ public interface WriterInterface {
 
     void saveDeployment(Deployment deployment, String path) throws WooshException;
 
-    void saveFile(String content, String path) throws WooshException;
+    String saveFile(String content, String path) throws WooshException;
 
 }

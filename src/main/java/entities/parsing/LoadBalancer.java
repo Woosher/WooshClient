@@ -34,7 +34,4 @@ public class LoadBalancer extends Machine {
         this.nodes.clear();
         this.nodes.addAll(nodes);
     }
-
-
-
 }
