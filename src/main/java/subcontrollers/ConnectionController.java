@@ -39,20 +39,9 @@ public class ConnectionController implements ConnectionControllerInterface {
     }
 
     @Override
-    public void sendPackages(Deployment deployment) throws WooshException{
-        //LoadBalancers
-        for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
-                SSHClient.sendPackage(loadBalancer);
-                //Nodes
-                for (Node node: loadBalancer.getNodes()) {
-                    try {
-                        SSHClient.sendPackage(node);
-                    }catch (WooshException e) {
-                        e.printStackTrace();
-                    }
-                }
+    public void sendPackage(Machine machine) throws WooshException{
+        SSHClient.sendPackage(machine);
 
-        }
     }
 
 }
