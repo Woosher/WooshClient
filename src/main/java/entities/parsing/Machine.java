@@ -4,8 +4,16 @@ import java.util.Observable;
 
 abstract public class Machine extends Observable {
 
-    private String name,username,ip,password, pathCompressed;
+    private String name,username,ip,password, pathCompressed, bashScript;
     private int SSHPort, port;
+
+    public String getBashScript() {
+        return bashScript;
+    }
+
+    public void setBashScript(String bashScript) {
+        this.bashScript = bashScript;
+    }
 
     public String getUsername() {
         return username;

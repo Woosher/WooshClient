@@ -66,47 +66,47 @@ public class PackagingController implements PackagingInterface {
                     File tempFile = listOfFiles[i];
                     FileUtils.copyFileToDirectory(tempFile,targetDir);
                 }
+                createNodeBashScript(targetDir.getPath(), node);
             }
-            createNodeBashScript(nodePath, node);
         } catch (IOException e) {
             e.printStackTrace();
         }
         String compressedPath = scripter.compressPackage(nodePath, path, node.getName());
+
         Utils.delete(nodePath);
         node.setPathCompressed(compressedPath);
+
     }
 
     private void updateAndSaveLb(LoadBalancer loadBalancer, String path) throws WooshException{
         String loadBalancerPath = path  + loadBalancer.getName() + "/";
         String loadBalancerConf = loadBalancerPath + NGINXCONF;
         String content = createNginxScript(loadBalancer);
-        configWriter.saveFile(content,loadBalancerConf);
-        createLoadBalancerBashScript(loadBalancerPath, loadBalancerConf, loadBalancer);
-        String compressedPath = scripter.compressPackage(loadBalancerPath, path, loadBalancer.getName());
-        Utils.delete(loadBalancerPath);
-        loadBalancer.setPathCompressed(compressedPath);
+        String nginxPath = configWriter.saveFile(content,loadBalancerConf);
+        String bashScript = createLoadBalancerBashScript(nginxPath);
+        loadBalancer.setBashScript(bashScript);
+        loadBalancer.setPathCompressed(nginxPath);
     }
 
-    private void createLoadBalancerBashScript(String path, String confPath, LoadBalancer loadBalancer) throws WooshException {
+    private String createLoadBalancerBashScript(String nginxPath) throws WooshException {
         StringBuilder sb = new StringBuilder();
-        File file = new File(confPath);
-        String bashScript = path + EXESCRIPT;
-        sb.append(BASHSTART);
-        sb.append("\n");
         sb.append(INSTALLNGINX);
         sb.append("\n");
-        sb.append("sudo ").append("cp ").append(SERVERPATH).append(loadBalancer.getName()).append("/nginx.conf").append(" ").append(NGINXPATH);
+        sb.append("sudo ").append("mkdir -p ").append(SERVERPATH);
+        sb.append("\n");
+        sb.append("sudo ").append("cp ").append(SERVERPATH).append("nginx.conf").append(" ").append(NGINXPATH);
         sb.append("\n");
         sb.append(RESTARTNGINX);
-        configWriter.saveFile(sb.toString(),bashScript);
+        return sb.toString();
     }
 
     private void createNodeBashScript(String path, Node node) throws WooshException {
-        String bashScript = path + EXESCRIPT;
         StringBuilder sb = new StringBuilder();
-        sb.append(BASHSTART);
         String content = getBashForEnvironment(path, node);
-        configWriter.saveFile(content,bashScript);
+        sb.append("sudo ").append("mkdir -p ").append(SERVERPATH).append(node.getName()).append("\n");
+        sb.append("sudo ").append("tar -xvzf ").append(SERVERPATH).append(node.getName()).append(".tar.gz ").append("-C ").append(SERVERPATH).append(node.getName()).append("\n");
+        sb.append(content);
+        node.setBashScript(sb.toString());
     }
 
     private String getBashForEnvironment(String path, Node node){
@@ -130,7 +130,7 @@ public class PackagingController implements PackagingInterface {
         File[] jarFiles = filterForExtention(path, "jar");
         for(int i = 0; i<jarFiles.length; i++){
             File jarFile = jarFiles[i];
-            sb.append("sudo java -jar ").append(" ").append(SERVERPATH).append(node.getName()).append("/").append(jarFile.getName());
+            sb.append("sudo java -jar ").append(SERVERPATH).append(node.getName()).append("/").append(jarFile.getName());
             sb.append("\n");
         }
         return sb.toString();

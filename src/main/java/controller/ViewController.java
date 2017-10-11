@@ -71,7 +71,6 @@ public class ViewController {
         }
         this.model = model;
         initLayout();
-
     }
 
     private void initLayout() {
@@ -86,10 +85,7 @@ public class ViewController {
         saveInfoButton.setOnMouseClicked(event -> saveInfo());
         addNodeButton.setOnMouseClicked(event -> addNode());
         setupLists();
-
     }
-
-
 
     private void handleNodeClick(){
         Node node = nodeListView.getSelectionModel().getSelectedItem();
