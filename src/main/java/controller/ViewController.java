@@ -12,6 +12,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -23,10 +25,12 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import modellers.interfaces.FlowModelInterface;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +68,8 @@ public class ViewController {
 
     private Machine currentMachine;
     private Deployment deployment;
+    private Stage popupStage;
+    private PopupController popupController;
 
     public void initModel(FlowModelInterface model) {
         if (this.model != null) {
@@ -85,6 +91,7 @@ public class ViewController {
         saveInfoButton.setOnMouseClicked(event -> saveInfo());
         addNodeButton.setOnMouseClicked(event -> addNode());
         setupLists();
+        createPopup();
     }
 
     private void handleNodeClick(){
@@ -305,6 +312,22 @@ public class ViewController {
         });
     }
 
+    private void createPopup(){
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("popup.fxml"));
+        Parent root1 = null;
+        try {
+            root1 = (Parent) fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.setTitle("Connection info");
+        popupStage.setScene(new Scene(root1));
+        popupController = (PopupController) fxmlLoader.getController();
+
+    }
+
     public void testConnections() {
         model.testConnections(new ResultsListener<List<ConnectionInfo>>() {
             @Override
@@ -312,53 +335,10 @@ public class ViewController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        connectionStage = new Stage();
-                        connectionStage.initModality(Modality.APPLICATION_MODAL);
-                        connectionStage.initOwner(new Stage());
-                        VBox dialogVbox = new VBox(20);
-                        for (ConnectionInfo s : result) {
-                            HBox hb = new HBox();
-                            ObservableList hbChildren = hb.getChildren();
-                            hbChildren.add(new Text("IP: " + s.getMachine().getIp() + s.getInfo()));
-                            hbChildren.add(new CheckBox());
-                            dialogVbox.getChildren().add(hb);
-                        }
-                        Button ok = new Button("OK");
-                        ok.setOnMouseClicked(event -> addKnownHosts(result));
-                        dialogVbox.getChildren().add(ok);
-                        dialogScene = new Scene(dialogVbox, 600, 200);
-                        connectionStage.setScene(dialogScene);
-                        connectionStage.show();
-                    }
-
-                    private void addKnownHosts(List<ConnectionInfo> result) {
-                        ObservableList list = dialogScene.getRoot().getChildrenUnmodifiable();
-                        List<Machine> hosts = new ArrayList<>();
-                        int i = 0;
-                        for (Object box : list) {
-                            if (box instanceof HBox) {
-                                HBox vBox = (HBox) box;
-                                CheckBox cb = (CheckBox) vBox.getChildren().get(1);
-                                if (cb.isSelected()) {
-                                    hosts.add(result.get(i).getMachine());
-
-                                }
-                            }
-                            i++;
-                        }
-                        model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
-                            @Override
-                            public void onCompletion(Boolean result) {
-                                print(result.toString());
-                                //connectionStage.close();
-                            }
-
-                            @Override
-                            public void onFailure(Throwable throwable) {
-                                print("meh");
-                                print(throwable.getMessage());
-                            }
-                        });
+                        ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
+                        observableList.addAll(result);
+                        popupController.addInfo(observableList);
+                        popupStage.show();
                     }
                 });
             }
@@ -396,6 +376,55 @@ public class ViewController {
 
     private void print(String args) {
         System.out.println(args);
+    }
+
+    private void oldPopup(List<ConnectionInfo> result){
+        connectionStage = new Stage();
+        connectionStage.initModality(Modality.APPLICATION_MODAL);
+        connectionStage.initOwner(new Stage());
+        VBox dialogVbox = new VBox(20);
+        for (ConnectionInfo s : result) {
+            HBox hb = new HBox();
+            ObservableList hbChildren = hb.getChildren();
+            hbChildren.add(new Text("IP: " + s.getMachine().getIp() + s.getInfo()));
+            hbChildren.add(new CheckBox());
+            dialogVbox.getChildren().add(hb);
+        }
+        Button ok = new Button("OK");
+        ok.setOnMouseClicked(event -> addKnownHosts(result));
+        dialogVbox.getChildren().add(ok);
+        dialogScene = new Scene(dialogVbox, 600, 200);
+        connectionStage.setScene(dialogScene);
+        connectionStage.show();
+    }
+
+    private void addKnownHosts(List<ConnectionInfo> result) {
+        ObservableList list = dialogScene.getRoot().getChildrenUnmodifiable();
+        List<Machine> hosts = new ArrayList<>();
+        int i = 0;
+        for (Object box : list) {
+            if (box instanceof HBox) {
+                HBox vBox = (HBox) box;
+                CheckBox cb = (CheckBox) vBox.getChildren().get(1);
+                if (cb.isSelected()) {
+                    hosts.add(result.get(i).getMachine());
+
+                }
+            }
+            i++;
+        }
+        model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
+            @Override
+            public void onCompletion(Boolean result) {
+                print(result.toString());
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                print("meh");
+                print(throwable.getMessage());
+            }
+        });
     }
 
 }

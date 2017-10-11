@@ -2,6 +2,8 @@ package entities;
 
 import entities.parsing.Machine;
 
+import java.util.Observable;
+
 public class ConnectionInfo {
 
     public ConnectionInfo(Machine machine, String info){
