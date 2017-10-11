@@ -40,8 +40,12 @@ public class ConnectionController implements ConnectionControllerInterface {
     }
 
     @Override
-    public void sendPackage(Machine machine) throws WooshException{
-        SSHClient.sendPackage(machine);
+    public String sendPackage(Machine machine){
+        try {
+            return SSHClient.sendPackage(machine);
+        } catch (WooshException e) {
+            return e.getMessage();
+        }
 
     }
 
