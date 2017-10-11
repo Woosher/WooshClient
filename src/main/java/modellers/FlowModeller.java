@@ -18,6 +18,7 @@ import subcontrollers.interfaces.ConnectionControllerInterface;
 import subcontrollers.interfaces.MapperInterface;
 import subcontrollers.interfaces.PackagingInterface;
 import subcontrollers.interfaces.ReaderInterface;
+import tools.Utils;
 
 import java.util.List;
 import java.util.Stack;
@@ -152,47 +153,51 @@ public class FlowModeller implements FlowModelInterface {
 
     @Override
     public void sendPackages(final ResultsListener<String> resultsListener) {
+
         try {
             packagingController.readyDeployment(deployment);
         } catch (WooshException e) {
             e.printStackTrace();
         }
+
         Stack<Machine> machines = new Stack<>();
         for(LoadBalancer loadBalancer: deployment.getLoadBalancers()){
             machines.addAll(loadBalancer.getNodes());
         }
         machines.addAll(deployment.getLoadBalancers());
-        for(int i = 0; i<machines.size(); i++){
-            deploy(machines.get(i));
-        }
-//
-//        int numOfMachines = machines.size();
-//        ExecutorService executor = new ThreadPoolExecutor(numOfMachines, numOfMachines,
-//                0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
-//
-//        CompletableFuture<?>[] allFutures = new CompletableFuture<?>[numOfMachines];
-//        for (int i=0; i<numOfMachines; ++i) {
-//            allFutures[i] = CompletableFuture.supplyAsync(() -> {
-//                Future future = executor.submit(() -> deploy(machines.pop()));
-//                //executor.schedule(() -> future.cancel(true), 100, TimeUnit.MILLISECONDS);
-//                try {
-//                    return future.get();
-//                } catch (InterruptedException | ExecutionException | CancellationException e) {
-//                    e.printStackTrace();
-//                }
-//                return null;
-//            });
+
+//        for(int i = 0; i<machines.size(); i++){
+////            Utils.printLogs(machines.get(i).getBashScript());
+//                deploy(machines.get(i));
 //        }
-//
-//        System.out.println(CompletableFuture.allOf(allFutures).join());
+
+        int numOfMachines = machines.size();
+        ExecutorService executor = new ThreadPoolExecutor(numOfMachines, numOfMachines,
+                0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+
+        CompletableFuture<?>[] allFutures = new CompletableFuture<?>[numOfMachines];
+        for (int i=0; i<numOfMachines; ++i) {
+            allFutures[i] = CompletableFuture.supplyAsync(() -> {
+                Future future = executor.submit(() -> deploy(machines.pop()));
+                //executor.schedule(() -> future.cancel(true), 100, TimeUnit.MILLISECONDS);
+                try {
+                    return future.get();
+                } catch (InterruptedException | ExecutionException | CancellationException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            });
+        }
+
+        CompletableFuture.allOf(allFutures).join();
         resultsListener.onCompletion("Succes");
     }
 
-    private void deploy(Machine machine){
+    private void deploy(Machine machine)  {
         try {
             connectionController.sendPackage(machine);
         } catch (WooshException e) {
-            e.printStackTrace();
+            Utils.printLogs(e.getMessage());
         }
     }
 

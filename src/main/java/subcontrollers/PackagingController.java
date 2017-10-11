@@ -72,7 +72,6 @@ public class PackagingController implements PackagingInterface {
             e.printStackTrace();
         }
         String compressedPath = scripter.compressPackage(nodePath, path, node.getName());
-
         Utils.delete(nodePath);
         node.setPathCompressed(compressedPath);
 
@@ -83,20 +82,17 @@ public class PackagingController implements PackagingInterface {
         String loadBalancerConf = loadBalancerPath + NGINXCONF;
         String content = createNginxScript(loadBalancer);
         String nginxPath = configWriter.saveFile(content,loadBalancerConf);
-        String bashScript = createLoadBalancerBashScript(nginxPath);
+        String bashScript = createLoadBalancerBashScript();
         loadBalancer.setBashScript(bashScript);
         loadBalancer.setPathCompressed(nginxPath);
     }
 
-    private String createLoadBalancerBashScript(String nginxPath) throws WooshException {
+    private String createLoadBalancerBashScript() throws WooshException {
         StringBuilder sb = new StringBuilder();
-        sb.append(INSTALLNGINX);
-        sb.append("\n");
-        sb.append("sudo ").append("mkdir -p ").append(SERVERPATH);
-        sb.append("\n");
-        sb.append("sudo ").append("cp ").append(SERVERPATH).append("nginx.conf").append(" ").append(NGINXPATH);
-        sb.append("\n");
-        sb.append(RESTARTNGINX);
+        sb.append(INSTALLNGINX).append("\n");
+        sb.append("sudo ").append("mkdir -p ").append(SERVERPATH).append("\n");
+        sb.append("sudo ").append("cp ").append(SERVERPATH).append("nginx.conf").append(" ").append(NGINXPATH).append("\n");
+        sb.append(RESTARTNGINX).append("\n");
         return sb.toString();
     }
 
@@ -106,6 +102,7 @@ public class PackagingController implements PackagingInterface {
         sb.append("sudo ").append("mkdir -p ").append(SERVERPATH).append(node.getName()).append("\n");
         sb.append("sudo ").append("tar -xvzf ").append(SERVERPATH).append(node.getName()).append(".tar.gz ").append("-C ").append(SERVERPATH).append(node.getName()).append("\n");
         sb.append(content);
+
         node.setBashScript(sb.toString());
     }
 

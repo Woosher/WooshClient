@@ -13,7 +13,6 @@ import static values.Constants.SERVERPATH;
 
 public final class SSHClient {
 
-    private static boolean shouldPrintLog = true;
 
     private static void setKnownHostFile(JSch jsch) throws WooshException {
         try {
@@ -75,6 +74,9 @@ public final class SSHClient {
         Utils.printLogs("DEPLOYMENTLOG FOR: " +machine.getName());
         Utils.printLogs("IP: " + machine.getIp());
         Utils.printLogs("\n\n");
+        Utils.printLogs("BASH SCRIPT " + machine.getBashScript() );
+        Utils.printLogs("MACHINE COMPRESSED " + machine.getPathCompressed());
+
         try {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
@@ -84,16 +86,19 @@ public final class SSHClient {
             Channel channel = session.openChannel("sftp");
             channel.connect();
             ChannelSftp channelSftp = (ChannelSftp) channel;
-            mkdirs(channelSftp, SERVERPATH);
+           // mkdirs(channelSftp, SERVERPATH);
+            executeRemoteCommandAsSudo(session, machine, machine.getPassword(), "sudo mkdir -p " + SERVERPATH);
             channelSftp.cd(SERVERPATH);
-            giveUserRights(session, channelSftp.pwd(), machine.getPassword());
+            executeRemoteCommandAsSudo(session, machine, machine.getPassword(), "sudo chmod -R 777 " + SERVERPATH);
+            //giveUserRights(session, channelSftp.pwd(), machine.getPassword());
             File f = new File(machine.getPathCompressed());
             channelSftp.put(new FileInputStream(f), f.getName());
             Scanner scanner = new Scanner(machine.getBashScript());
+
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 Utils.printLogs(line);
-                executeRemoteCommandAsSudo(machine, machine.getPassword(), line);
+                executeRemoteCommandAsSudo(session, machine, machine.getPassword(), line);
             }
             channel.disconnect();
             session.disconnect();
@@ -153,13 +158,11 @@ public final class SSHClient {
         }
     }
 
-    private static void executeRemoteCommandAsSudo(Machine machine, String password,
+    private static void executeRemoteCommandAsSudo(Session session, Machine machine, String password,
                                                    String command) throws WooshException {
-        Session session = null;
         Channel channel = null;
         StringBuffer result = new StringBuffer();
         try {
-            session = getSession(machine);
             channel = session.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
             ((ChannelExec) channel).setPty(true);
@@ -195,26 +198,10 @@ public final class SSHClient {
                Thread.sleep(500);
             }
         } catch (Exception ex) {
-            throw new WooshException("Failure in exeuctin command " + command);
+            throw new WooshException("Failure in execting command " + command);
         } finally {
-            session.disconnect();
             channel.disconnect();
         }
     }
-
-
-
-
-    private static Session getSession(Machine machine) throws JSchException {
-        JSch jsch = new JSch();
-        Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
-        session.setPassword(machine.getPassword());
-        java.util.Properties config = new java.util.Properties();
-        config.put("StrictHostKeyChecking", "no");
-        session.setConfig(config);
-        session.connect();
-        return session;
-    }
-
 
 }
