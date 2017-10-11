@@ -92,6 +92,7 @@ public final class SSHClient {
             Scanner scanner = new Scanner(machine.getBashScript());
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
+                Utils.printLogs(line);
                 executeRemoteCommandAsSudo(machine, machine.getPassword(), line);
             }
             channel.disconnect();

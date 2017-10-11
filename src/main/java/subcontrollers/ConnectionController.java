@@ -43,7 +43,7 @@ public class ConnectionController implements ConnectionControllerInterface {
     public void sendPackage(Machine machine) throws WooshException{
         SSHClient.sendPackage(machine);
 
-        }
     }
+
 
 }

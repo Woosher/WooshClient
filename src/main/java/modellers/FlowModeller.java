@@ -152,34 +152,39 @@ public class FlowModeller implements FlowModelInterface {
 
     @Override
     public void sendPackages(final ResultsListener<String> resultsListener) {
-        Stack<Machine> machines = new Stack<>();
-        for(LoadBalancer loadBalancer: deployment.getLoadBalancers()){
-            machines.addAll(loadBalancer.getNodes());
-        }
         try {
             packagingController.readyDeployment(deployment);
         } catch (WooshException e) {
             e.printStackTrace();
         }
-        int numOfMachines = machines.size();
-        ExecutorService executor = new ThreadPoolExecutor(numOfMachines, numOfMachines,
-                0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
-
-        CompletableFuture<?>[] allFutures = new CompletableFuture<?>[numOfMachines];
-        for (int i=0; i<numOfMachines; ++i) {
-            allFutures[i] = CompletableFuture.supplyAsync(() -> {
-                Future future = executor.submit(() -> deploy(machines.pop()));
-                //executor.schedule(() -> future.cancel(true), 100, TimeUnit.MILLISECONDS);
-                try {
-                    return future.get();
-                } catch (InterruptedException | ExecutionException | CancellationException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            });
+        Stack<Machine> machines = new Stack<>();
+        for(LoadBalancer loadBalancer: deployment.getLoadBalancers()){
+            machines.addAll(loadBalancer.getNodes());
         }
-
-        System.out.println(CompletableFuture.allOf(allFutures).join());
+        machines.addAll(deployment.getLoadBalancers());
+        for(int i = 0; i<machines.size(); i++){
+            deploy(machines.get(i));
+        }
+//
+//        int numOfMachines = machines.size();
+//        ExecutorService executor = new ThreadPoolExecutor(numOfMachines, numOfMachines,
+//                0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+//
+//        CompletableFuture<?>[] allFutures = new CompletableFuture<?>[numOfMachines];
+//        for (int i=0; i<numOfMachines; ++i) {
+//            allFutures[i] = CompletableFuture.supplyAsync(() -> {
+//                Future future = executor.submit(() -> deploy(machines.pop()));
+//                //executor.schedule(() -> future.cancel(true), 100, TimeUnit.MILLISECONDS);
+//                try {
+//                    return future.get();
+//                } catch (InterruptedException | ExecutionException | CancellationException e) {
+//                    e.printStackTrace();
+//                }
+//                return null;
+//            });
+//        }
+//
+//        System.out.println(CompletableFuture.allOf(allFutures).join());
         resultsListener.onCompletion("Succes");
     }
 
