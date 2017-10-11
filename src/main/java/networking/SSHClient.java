@@ -68,7 +68,7 @@ public final class SSHClient {
 
     }
 
-    public static void sendPackage(Machine machine) throws WooshException {
+    public static String sendPackage(Machine machine) throws WooshException {
 
         Utils.printLogs("-----------------------STARTED----------------------------");
         Utils.printLogs("DEPLOYMENTLOG FOR: " +machine.getName());
@@ -103,16 +103,18 @@ public final class SSHClient {
             channel.disconnect();
             session.disconnect();
 
+
+
         } catch (JSchException e) {
             e.printStackTrace();
-            throw new WooshException(e.getMessage());
+            return e.getMessage();
         } catch (Exception ex) {
             ex.printStackTrace();
-            throw new WooshException(ex.getMessage());
+            return ex.getMessage();
         }
         Utils.printLogs("-----------------------DONE-------------------------------");
         Utils.printLogs("\n\n");
-
+        return "Succes";
     }
 
     public static void giveUserRights(Session session, String path, String sudo_pass) throws JSchException, IOException {
