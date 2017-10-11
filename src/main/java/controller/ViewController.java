@@ -198,7 +198,7 @@ public class ViewController {
         model.sendPackages(new ResultsListener<String>() {
             @Override
             public void onCompletion(String result) {
-
+                System.out.println("Deploy done!");
             }
 
             @Override
