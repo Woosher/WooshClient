@@ -20,7 +20,9 @@ import subcontrollers.interfaces.PackagingInterface;
 import subcontrollers.interfaces.ReaderInterface;
 
 import java.util.List;
+import java.util.Stack;
 import java.util.UUID;
+import java.util.concurrent.*;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -150,22 +152,40 @@ public class FlowModeller implements FlowModelInterface {
 
     @Override
     public void sendPackages(final ResultsListener<String> resultsListener) {
-        supplyAsync(()-> {
-            try {
-                deploy(resultsListener);
-            } catch (WooshException e) {
-                throw new RuntimeException(e.getMessage());
-            }
-            return null;
-        }).thenAccept(a -> {resultsListener.onCompletion("Succes");})
-                .exceptionally((t) -> {
-                    resultsListener.onFailure(t); return null;});
-    }
-
-    private void deploy(ResultsListener<String> resultsListener) throws WooshException{
+        Stack<Machine> machines = new Stack<>();
+        for(LoadBalancer loadBalancer: deployment.getLoadBalancers()){
+            machines.addAll(loadBalancer.getNodes());
+        }
         try {
             packagingController.readyDeployment(deployment);
-            connectionController.sendPackages(deployment);
+        } catch (WooshException e) {
+            e.printStackTrace();
+        }
+        int numOfMachines = machines.size();
+        ExecutorService executor = new ThreadPoolExecutor(numOfMachines, numOfMachines,
+                0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+
+        CompletableFuture<?>[] allFutures = new CompletableFuture<?>[numOfMachines];
+        for (int i=0; i<numOfMachines; ++i) {
+            allFutures[i] = CompletableFuture.supplyAsync(() -> {
+                Future future = executor.submit(() -> deploy(machines.pop()));
+                //executor.schedule(() -> future.cancel(true), 100, TimeUnit.MILLISECONDS);
+                try {
+                    return future.get();
+                } catch (InterruptedException | ExecutionException | CancellationException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            });
+        }
+
+        System.out.println(CompletableFuture.allOf(allFutures).join());
+        resultsListener.onCompletion("Succes");
+    }
+
+    private void deploy(Machine machine){
+        try {
+            connectionController.sendPackage(machine);
         } catch (WooshException e) {
             e.printStackTrace();
         }

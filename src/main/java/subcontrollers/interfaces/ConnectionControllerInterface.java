@@ -12,5 +12,5 @@ public interface ConnectionControllerInterface {
 
     void addKnownHosts(List<Machine> macs) throws WooshException;
 
-    void sendPackages(Deployment deployment) throws WooshException;
+    void sendPackage(Machine machine) throws WooshException;
 }
