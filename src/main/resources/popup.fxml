@@ -17,8 +17,8 @@
     <children>
         <GridPane GridPane.rowIndex="0" fx:id="gridPane"  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
             <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS"  maxWidth="70"  minWidth="70" />
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS"  maxWidth="550"  minWidth="550" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS"  maxWidth="100"  minWidth="110" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS"  maxWidth="550"  minWidth="490" />
                 <ColumnConstraints halignment="CENTER" hgrow="ALWAYS"  maxWidth="50"  minWidth="50"  />
 
             </columnConstraints>
