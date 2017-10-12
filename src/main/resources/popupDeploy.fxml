@@ -9,11 +9,24 @@
 
     <columnConstraints>
         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"  />
-
     </columnConstraints>
     <children>
+        <GridPane GridPane.rowIndex="0" fx:id="gridPane"  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+            <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS"  maxWidth="70"  minWidth="70" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS"  maxWidth="550"  minWidth="550" />
+
+            </columnConstraints>
+            <children>
+                <Label fx:id="headerName" minWidth="50" text="Name"  GridPane.columnIndex="0"  GridPane.rowIndex="0" />
+                <Label fx:id="headerStatus"  minWidth="50" text="Status" GridPane.columnIndex="1" GridPane.rowIndex="0"  />
+            </children>
+        </GridPane>
+
+
         <ListView fx:id="listview" prefWidth="700" GridPane.rowIndex="1" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150"></ListView>
-        <Button fx:id="buttonAdd" text="ACCEPT"  minWidth="80" GridPane.rowIndex="2" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.valignment="CENTER"  ></Button>
+        <ProgressIndicator GridPane.rowIndex="1" fx:id="spinner"></ProgressIndicator>
+        <Button fx:id="buttonAdd" text="OK"  minWidth="80" GridPane.rowIndex="2" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.valignment="CENTER"  ></Button>
     </children>
 
 </GridPane>

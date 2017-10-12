@@ -196,12 +196,15 @@ public class ViewController {
 
 
     public void handleDeploy() {
+        popupDeployStage.show();
+        popupDeployController.setSpinnerVisibility(true);
         model.sendPackages(new ResultsListener<List<ConnectionInfo>>() {
             @Override
             public void onCompletion(List<ConnectionInfo> result) {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        popupDeployController.setSpinnerVisibility(false);
                         ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
                         observableList.addAll(result);
                         popupDeployController.addInfo(observableList);
@@ -331,10 +334,16 @@ public class ViewController {
         popupDeployStage.setScene(new Scene(root1));
         popupDeployStage.setResizable(false);
         popupDeployController = fxmlLoader.getController();
+        popupDeployStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                popupDeployController.resetInfo();
+            }
+        });
         popupDeployController.setEventHandler(new EventHandler() {
             @Override
             public void handle(Event event) {
-                popupDeployStage.hide();
+                popupDeployStage.close();
             }
         });
     }
