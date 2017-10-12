@@ -18,15 +18,24 @@ public class ConnectionController implements ConnectionControllerInterface {
     @Override
     public List<ConnectionInfo> testConnections(Deployment deployment){
         List<ConnectionInfo> list = new ArrayList<>();
+        String status = "Succes";
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
-            String lb = SSHClient.testConnection(loadBalancer);
-            list.add(new ConnectionInfo(loadBalancer,lb));
+            try {
+                SSHClient.testConnection(loadBalancer);
+            } catch (WooshException e) {
+                status = e.getMessage();
+            }
+            list.add(new ConnectionInfo(loadBalancer,status));
             //Nodes
             for (Node node: loadBalancer.getNodes()) {
-                String n = SSHClient.testConnection(node);
-                list.add(new ConnectionInfo(node,n));
+                status = "Succes";
+                try {
+                    SSHClient.testConnection(node);
+                } catch (WooshException e) {
+                    status = e.getMessage();
+                }
+                list.add(new ConnectionInfo(node,status));
             }
-
         }
         return list;
     }

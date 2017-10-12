@@ -9,9 +9,15 @@
 <GridPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controller.PopupController"
-            prefHeight="200.0" prefWidth="400.0">
+            prefWidth="700" maxWidth="-Infinity" minHeight="-Infinity" minWidth="700">
 
-    <ListView fx:id="listview" prefHeight="150.0" prefWidth="400.0" GridPane.rowIndex="1" ></ListView>
-    <Button alignment="CENTER" fx:id="buttontest" text="HEJ" GridPane.rowIndex="2" ></Button>
+    <columnConstraints>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"  />
+
+    </columnConstraints>
+    <children>
+        <ListView fx:id="listview" prefWidth="700" GridPane.rowIndex="1" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150"></ListView>
+        <Button fx:id="buttontest" text="ACCEPT"  minWidth="80" GridPane.rowIndex="2" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.valignment="CENTER"  ></Button>
+    </children>
 
 </GridPane>

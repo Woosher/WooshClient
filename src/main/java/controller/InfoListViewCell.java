@@ -46,14 +46,6 @@ public class InfoListViewCell extends ListCell<ConnectionInfo> {
 
             label1.setText(item.getMachine().getName());
             label2.setText(item.getInfo());
-//
-//            if(student.getGender().equals(Student.GENDER.MALE)) {
-//                fxIconGender.setIcon(FontAwesomeIcon.MARS);
-//            } else if(student.getGender().equals(Student.GENDER.FEMALE)) {
-//                fxIconGender.setIcon(FontAwesomeIcon.VENUS);
-//            } else {
-//                fxIconGender.setIcon(FontAwesomeIcon.GENDERLESS);
-//            }
 
             setText(null);
             setGraphic(gridPane);

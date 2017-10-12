@@ -16,9 +16,12 @@ public final class SSHClient {
 
     private static void setKnownHostFile(JSch jsch) throws WooshException {
         try {
-            File file = Utils.generateFile(System.getProperty("user.home") + "\\.ssh\\known_hosts");
+            Utils.printLogs("HOST FILE CREATION");
+            File file = Utils.generateFile(System.getProperty("user.home") + "/.ssh/known_hosts");
             jsch.setKnownHosts(file.getAbsolutePath());
+            Utils.printLogs(file.getAbsolutePath());
         } catch (Exception e) {
+            Utils.printLogs("HOST FILE FAILURE CREATION");
             throw new WooshException(e.getMessage());
         }
     }
@@ -35,35 +38,32 @@ public final class SSHClient {
             session.connect();
             session.disconnect();
         } catch (Exception e) {
-            e.printStackTrace();
+            Utils.printLogs("FAILURE");
+            throw new WooshException(e.getMessage());
         }
     }
 
-    public static String testConnection(Machine machine) {
+    public static void testConnection(Machine machine) throws WooshException {
 
-        try {
-            JSch jsch = new JSch();
-            try {
-                setKnownHostFile(jsch);
-            } catch (WooshException e) {
-                e.printStackTrace();
-            }
+        JSch jsch = new JSch();
+        setKnownHostFile(jsch);
+        try{
             Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
             session.setPassword(machine.getPassword());
             session.connect();
             session.disconnect();
-            return " Succes!";
         } catch (JSchException e) {
             System.out.println(e.getMessage());
             if (e.getMessage().contains("UnknownHostKey")) {
-                return " Unknown host, fingerprint: " + e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1);
+                Utils.printLogs("HOSTKEY");
+                throw new WooshException(" Unknown host, fingerprint: " + e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1));
             } else if (e.getMessage().contains("Connection refused")) {
-                return " Connection refused!";
+                Utils.printLogs("REFUSED");
+                throw new WooshException("Connection refused");
             }
-            return " Failed";
         } catch (Exception ex) {
-            ex.printStackTrace();
-            return " Error with " + machine.getIp();
+            Utils.printLogs("ERROR");
+            throw new WooshException(" Error with " + machine.getIp());
         }
 
     }
@@ -86,7 +86,7 @@ public final class SSHClient {
             Channel channel = session.openChannel("sftp");
             channel.connect();
             ChannelSftp channelSftp = (ChannelSftp) channel;
-           // mkdirs(channelSftp, SERVERPATH);
+            // mkdirs(channelSftp, SERVERPATH);
             executeRemoteCommandAsSudo(session, machine, machine.getPassword(), "sudo mkdir -p " + SERVERPATH);
             channelSftp.cd(SERVERPATH);
             executeRemoteCommandAsSudo(session, machine, machine.getPassword(), "sudo chmod -R 777 " + SERVERPATH);
@@ -197,7 +197,7 @@ public final class SSHClient {
                     Utils.printLogs("exit-status: "+channel.getExitStatus());
                     break;
                 }
-               Thread.sleep(500);
+                Thread.sleep(500);
             }
         } catch (Exception ex) {
             throw new WooshException("Failure in execting command " + command);
