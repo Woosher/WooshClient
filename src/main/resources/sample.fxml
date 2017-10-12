@@ -134,16 +134,4 @@
             </VBox>
         </ScrollPane>
     </right>
-    <bottom>
-        <ScrollPane fitToWidth="true" fitToHeight="true">
-            <VBox alignment="CENTER">
-                <HBox alignment="CENTER">
-                    <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                          alignment="CENTER">
-                        <Button mnemonicParsing="false" text="DEPLOYMENT INFO HERE"/>
-                    </VBox>
-                </HBox>
-            </VBox>
-        </ScrollPane>
-    </bottom>
 </BorderPane>

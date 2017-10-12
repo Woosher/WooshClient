@@ -1,6 +1,5 @@
 package controller;
 
-import com.sun.jndi.ldap.Connection;
 import entities.ConnectionInfo;
 import entities.ResultsListener;
 import entities.parsing.Deployment;
@@ -17,22 +16,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.*;
 import javafx.util.Callback;
 import modellers.interfaces.FlowModelInterface;
-import tools.Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 public class ViewController {
@@ -65,7 +57,7 @@ public class ViewController {
 
 
     private Machine currentMachine;
-    private Deployment deployment;
+    private Deployment deployment = new Deployment();
     private Stage popupStage, popupDeployStage;
     private PopupController popupController;
     private PopupDeployController popupDeployController;
