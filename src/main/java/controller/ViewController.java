@@ -59,7 +59,7 @@ public class ViewController {
 
 
     private Machine currentMachine;
-    private Deployment deployment = new Deployment();
+    private Deployment deployment;
     private Stage popupStage, popupDeployStage;
     private PopupController popupController;
     private PopupDeployController popupDeployController;
