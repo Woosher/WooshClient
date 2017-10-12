@@ -46,21 +46,23 @@
                         <ListView fx:id="nodeListView"></ListView>
                     </VBox>
                 </HBox>
-
                 <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
             </VBox>
         </ScrollPane>
     </center>
     <left>
-        <ScrollPane fitToWidth="true" fitToHeight="true">
-            <VBox alignment="CENTER">
-                <HBox alignment="CENTER">
+        <ScrollPane fitToWidth="true" fitToHeight="true" >
+            <padding><Insets top="25" right="15" bottom="25" left="15"/></padding>
+
+                <HBox alignment="TOP_CENTER">
                     <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                          alignment="CENTER">
-                        <Button mnemonicParsing="false" text="TOOLS"/>
+                           spacing="20">
+                        <Button fx:id="toolsAddLb" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Add Loadbalancer"/>
+                        <Button fx:id="toolsDelLb" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Delete Loadbalancer"/>
+                        <Button fx:id="toolsAddNode" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Add node"/>
+                        <Button fx:id="toolsDelNode" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Delete node"/>
                     </VBox>
                 </HBox>
-            </VBox>
         </ScrollPane>
     </left>
     <top>

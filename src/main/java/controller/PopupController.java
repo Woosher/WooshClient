@@ -61,10 +61,8 @@ public class PopupController {
                             boolean prevValue = machineMap.get(connectionInfo.getMachine());
                             machineMap.put(connectionInfo.getMachine(),!prevValue);
                         }
-
                     });
             }
-
         });
     }
 
@@ -83,9 +81,6 @@ public class PopupController {
 
     public interface Adder{
         void add(ConnectionInfo connectionInfo);
-
     }
-
-
 
 }
