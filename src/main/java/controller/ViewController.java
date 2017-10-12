@@ -26,13 +26,12 @@ import tools.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 
 public class ViewController {
 
     private FlowModelInterface model;
-    private Scene dialogScene;
-    private Stage connectionStage;
 
     @FXML
     MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem, addLoadBalancerMenuItem;
@@ -62,8 +61,9 @@ public class ViewController {
 
     private Machine currentMachine;
     private Deployment deployment;
-    private Stage popupStage;
+    private Stage popupStage, popupDeployStage;
     private PopupController popupController;
+    private PopupDeployController popupDeployController;
 
     public void initModel(FlowModelInterface model) {
         if (this.model != null) {
@@ -92,6 +92,7 @@ public class ViewController {
 
         setupLists();
         createPopup();
+        createPopupDeploy();
     }
 
     private void handleProjectClose(){
@@ -239,10 +240,21 @@ public class ViewController {
 
 
     public void handleDeploy() {
-        model.sendPackages(new ResultsListener<String>() {
+        popupDeployStage.show();
+        popupDeployController.setSpinnerVisibility(true);
+        model.sendPackages(new ResultsListener<List<ConnectionInfo>>() {
             @Override
-            public void onCompletion(String result) {
-                System.out.println(result);
+            public void onCompletion(List<ConnectionInfo> result) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        popupDeployController.setSpinnerVisibility(false);
+                        ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
+                        observableList.addAll(result);
+                        popupDeployController.addInfo(observableList);
+                        popupDeployStage.show();
+                    }
+                });
             }
 
             @Override
@@ -349,6 +361,33 @@ public class ViewController {
                     }
                 };
                 return cell;
+            }
+        });
+    }
+    private void createPopupDeploy(){
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("popupDeploy.fxml"));
+        Parent root1 = null;
+        try {
+            root1 = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        popupDeployStage = new Stage();
+        popupDeployStage.initModality(Modality.APPLICATION_MODAL);
+        popupDeployStage.setTitle("Deployment report");
+        popupDeployStage.setScene(new Scene(root1));
+        popupDeployStage.setResizable(false);
+        popupDeployController = fxmlLoader.getController();
+        popupDeployStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                popupDeployController.resetInfo();
+            }
+        });
+        popupDeployController.setEventHandler(new EventHandler() {
+            @Override
+            public void handle(Event event) {
+                popupDeployStage.close();
             }
         });
     }

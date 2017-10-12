@@ -20,10 +20,7 @@ import subcontrollers.interfaces.PackagingInterface;
 import subcontrollers.interfaces.ReaderInterface;
 import tools.Utils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -153,7 +150,7 @@ public class FlowModeller implements FlowModelInterface {
 
 
     @Override
-    public void sendPackages(final ResultsListener<String> resultsListener) {
+    public void sendPackages(final ResultsListener<List<ConnectionInfo>> resultsListener) {
         supplyAsync(()-> {
             try {
                 return deploy();
@@ -161,16 +158,13 @@ public class FlowModeller implements FlowModelInterface {
                 throw new RuntimeException(e.getMessage());
             }
         }).thenAccept(a -> {
-            StringBuilder strBuilder = new StringBuilder();
-            for (int i = 0; i < a.length; i++) {
-                strBuilder.append(a[i]);
-            } resultsListener.onCompletion(strBuilder.toString());})
+            resultsListener.onCompletion(Arrays.asList(a));})
                 .exceptionally((t) -> {
                     resultsListener.onFailure(t); return null;});
 
     }
 
-    private String[] deploy() throws WooshException{
+    private ConnectionInfo[] deploy() throws WooshException{
         try {
             packagingController.readyDeployment(deployment);
         } catch (WooshException e) {
@@ -184,8 +178,6 @@ public class FlowModeller implements FlowModelInterface {
         machines.addAll(deployment.getLoadBalancers());
 
         int numOfMachines = machines.size();
-        ExecutorService executor = new ThreadPoolExecutor(numOfMachines, numOfMachines,
-                0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
 
         CompletableFuture<?>[] allFutures = new CompletableFuture<?>[numOfMachines];
         for (int i=0; i<numOfMachines; ++i) {
@@ -193,7 +185,7 @@ public class FlowModeller implements FlowModelInterface {
         }
 
         CompletableFuture.allOf(allFutures).join();
-        return Arrays.stream(allFutures).map(CompletableFuture::join).toArray(String[]::new);
+        return Arrays.stream(allFutures).map(CompletableFuture::join).toArray(ConnectionInfo[]::new);
     }
 
 

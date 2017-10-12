@@ -8,6 +8,7 @@ import entities.parsing.Machine;
 import entities.parsing.Node;
 
 import java.util.List;
+import java.util.Map;
 
 public interface FlowModelInterface {
 
@@ -27,7 +28,7 @@ public interface FlowModelInterface {
 
     void addKnownHosts(List<Machine> macs, final ResultsListener<Boolean> resultsListener);
 
-    void sendPackages(final ResultsListener<String> resultsListener) ;
+    void sendPackages(final ResultsListener<List<ConnectionInfo>> resultsListener) ;
 
     void testConnections(final ResultsListener<List<ConnectionInfo>> resultsListener);
 

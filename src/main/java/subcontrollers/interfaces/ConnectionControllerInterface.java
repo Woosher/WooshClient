@@ -12,5 +12,5 @@ public interface ConnectionControllerInterface {
 
     void addKnownHosts(List<Machine> macs) throws WooshException;
 
-    String sendPackage(Machine machine);
+    ConnectionInfo sendPackage(Machine machine);
 }
