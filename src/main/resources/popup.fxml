@@ -17,7 +17,7 @@
     </columnConstraints>
     <children>
         <ListView fx:id="listview" prefWidth="700" GridPane.rowIndex="1" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150"></ListView>
-        <Button fx:id="buttontest" text="ACCEPT"  minWidth="80" GridPane.rowIndex="2" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.valignment="CENTER"  ></Button>
+        <Button fx:id="buttonAdd" text="ACCEPT"  minWidth="80" GridPane.rowIndex="2" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.valignment="CENTER"  ></Button>
     </children>
 
 </GridPane>
