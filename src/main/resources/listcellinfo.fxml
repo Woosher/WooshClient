@@ -15,8 +15,8 @@
 
     </columnConstraints>
     <children>
-        <Label style="-fx-font-weight: bold" fx:id="label1" minWidth="50" text="asdasd"  GridPane.columnIndex="0" />
-        <Label fx:id="label2"  minWidth="50" text="" GridPane.columnIndex="1" />
-        <CheckBox  mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.valignment="CENTER" minWidth="50"  fx:id="checkBox"  GridPane.columnIndex="2" ></CheckBox>
+        <Label style="-fx-font-weight: bold" fx:id="label1" minWidth="50" text="asdasd"  GridPane.columnIndex="0"  GridPane.rowIndex="1" />
+        <Label fx:id="label2"  minWidth="50" text="" GridPane.columnIndex="1"  GridPane.rowIndex="1" />
+        <CheckBox  mnemonicParsing="false" GridPane.halignment="CENTER"  minWidth="50"  fx:id="checkBox"  GridPane.columnIndex="2"  GridPane.rowIndex="1"  ></CheckBox>
     </children>
 </GridPane>

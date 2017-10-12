@@ -7,10 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.Callback;
 import tools.Utils;
 
@@ -33,7 +30,19 @@ public class PopupController {
     @FXML
     private ListView listview;
 
+    @FXML
+    private ProgressIndicator spinner;
+
     private Map<Machine, Boolean> machineMap = new HashMap<>();
+
+
+    public void resetInfo(){
+        listview.setItems(null);
+    }
+
+    public void setListViewDisabled(boolean value){
+        listview.setDisable(value);
+    }
 
     public void addInfo(ObservableList<ConnectionInfo> connectionInfoList){
         buttonAdd.setOnMouseClicked(eventHandler);
@@ -52,6 +61,7 @@ public class PopupController {
                             boolean prevValue = machineMap.get(connectionInfo.getMachine());
                             machineMap.put(connectionInfo.getMachine(),!prevValue);
                         }
+
                     });
             }
 
@@ -67,8 +77,13 @@ public class PopupController {
         return machines;
     }
 
+    public void setSpinnerVisibility(boolean visibility){
+        spinner.setVisible(visibility);
+    }
+
     public interface Adder{
         void add(ConnectionInfo connectionInfo);
+
     }
 
 
