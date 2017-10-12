@@ -34,7 +34,7 @@ public class Main extends Application{
         controller.initModel(flowModel);
 
         primaryStage.setTitle("Woosh Deployment");
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setScene(new Scene(root, 900, 700));
         primaryStage.show();
     }
 

@@ -146,9 +146,6 @@ public class FlowModeller implements FlowModelInterface {
                     resultsListener.onFailure(t); return null;});
     }
 
-
-
-
     @Override
     public void sendPackages(final ResultsListener<List<ConnectionInfo>> resultsListener) {
         supplyAsync(()-> {

@@ -49,7 +49,6 @@ public final class SSHClient {
             session.connect();
             session.disconnect();
         } catch (JSchException e) {
-            System.out.println(e.getMessage());
             if (e.getMessage().contains("UnknownHostKey")) {
                 throw new WooshException(" Unknown host, fingerprint: " + e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1));
             } else if (e.getMessage().contains("Connection refused")) {

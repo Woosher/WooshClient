@@ -50,7 +50,8 @@ public class ViewController {
     HBox innerBox1, innerBox2, addLoadBalancerBox;
 
     @FXML
-    Button saveInfoButton, addNodeButton;
+    Button saveInfoButton, addNodeButton, toolsAddLb, toolsDelLb, toolsAddNode, toolsDelNode;
+
 
     private int nodeCount = 0;
     private int loadBalancerCount = 0;
@@ -74,6 +75,7 @@ public class ViewController {
         saveMenuItem.setOnAction(event -> handleSave());
         loadMenuItem.setOnAction(event -> handleLoad());
         deployMenuItem.setOnAction(event -> handleDeploy());
+        closeMenuItem.setOnAction(event -> handleProjectClose());
         connectionTestMenuItem.setOnAction(event -> testConnections());
         addLoadBalancerMenuItem.setOnAction(event -> addLoadBalancer());
         addLoadBalancerBox.setOnMouseClicked(event -> addLoadBalancer());
@@ -81,9 +83,53 @@ public class ViewController {
         nodeListView.setOnMouseClicked(event -> handleNodeClick() );
         saveInfoButton.setOnMouseClicked(event -> saveInfo());
         addNodeButton.setOnMouseClicked(event -> addNode());
+        toolsAddNode.setOnMouseClicked(event -> addNode());
+        toolsAddLb.setOnMouseClicked(event -> addLoadBalancer());
+        toolsDelNode.setOnMouseClicked(event -> deleteNode());
+        toolsDelLb.setOnMouseClicked(event -> deleteLoadbalancer());
+
         setupLists();
         createPopup();
         createPopupDeploy();
+    }
+
+    private void handleProjectClose(){
+        this.deployment = null;
+        resetGUI();
+        setupLists();
+
+    }
+
+    private void resetGUI(){
+        resetPopup();
+        loadBalancerListView.getItems().clear();
+        nodeListView.getItems().clear();
+        deploymentNameTxt.setText("");
+    }
+
+    private void deleteNode(){
+        if(currentMachine instanceof Node){
+            nodeListView.getItems().remove(currentMachine);
+            setupNodeList();
+        }
+    }
+
+    private void deleteLoadbalancer(){
+        if(currentMachine != null){
+            if(currentMachine instanceof LoadBalancer){
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Node> nodes = ((LoadBalancer) currentMachine).getNodes();
+                        nodeListView.getItems().removeAll(nodes);
+                        loadBalancerListView.getItems().remove(currentMachine);
+                        currentMachine = null;
+                        setupLists();
+                    }
+                });
+            }
+        }
+
     }
 
     private void handleNodeClick(){
@@ -153,9 +199,13 @@ public class ViewController {
 
     private void addNode(){
         LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
-        Node node = new Node();
-        node.setName("node" + ++nodeCount);
-        loadBalancer.getNodes().add(node);
+        if(currentMachine != null){
+            Node node = new Node();
+            node.setName("node" + ++nodeCount);
+            loadBalancer.getNodes().add(node);
+        }else {
+            Utils.printLogs("You have not selected a loadbalancer");
+        }
     }
 
     private void addLoadBalancer() {
@@ -223,7 +273,7 @@ public class ViewController {
                     @Override
                     public void onCompletion(Deployment result) {
                         deployment = result;
-                       // deployment.getLoadBalancers().get(0).addObserver(new Observer());
+                        // deployment.getLoadBalancers().get(0).addObserver(new Observer());
                         setupDeploymentInGui();
                     }
 

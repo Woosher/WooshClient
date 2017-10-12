@@ -9,7 +9,7 @@
 <GridPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controller.PopupController"
-            prefWidth="700" maxWidth="-Infinity" minHeight="-Infinity" minWidth="700">
+            prefWidth="710" maxWidth="-Infinity" minHeight="-Infinity" minWidth="710">
 
     <columnConstraints>
         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"  />
