@@ -20,8 +20,15 @@ import java.util.List;
 import java.util.Map;
 
 public class PopupController {
+
+    EventHandler eventHandler;
+
+    public void setEventHandler(EventHandler eventHandler) {
+        this.eventHandler = eventHandler;
+    }
+
     @FXML
-    private Button buttontest;
+    private Button buttonAdd;
 
     @FXML
     private ListView listview;
@@ -29,6 +36,8 @@ public class PopupController {
     private Map<Machine, Boolean> machineMap = new HashMap<>();
 
     public void addInfo(ObservableList<ConnectionInfo> connectionInfoList){
+        buttonAdd.setOnMouseClicked(eventHandler);
+
         machineMap.clear();
         for(ConnectionInfo c : connectionInfoList){
             machineMap.put(c.getMachine(), false);
@@ -37,14 +46,29 @@ public class PopupController {
         listview.setCellFactory(new Callback<ListView<ConnectionInfo>, ListCell<ConnectionInfo>>() {
             @Override
             public ListCell<ConnectionInfo> call(ListView<ConnectionInfo> param) {
-                    return new InfoListViewCell(new EventHandler() {
+                    return new InfoListViewCell(new Adder() {
                         @Override
-                        public void handle(Event event) {
+                        public void add(ConnectionInfo connectionInfo) {
+                            boolean prevValue = machineMap.get(connectionInfo.getMachine());
+                            machineMap.put(connectionInfo.getMachine(),!prevValue);
                         }
                     });
             }
 
         });
+    }
+
+    public List<Machine> getSelectedMachines(){
+        List<Machine> machines = new ArrayList<>();
+        for(Machine m : machineMap.keySet()){
+            boolean value = machineMap.get(m);
+            if(value) machines.add(m);
+        }
+        return machines;
+    }
+
+    public interface Adder{
+        void add(ConnectionInfo connectionInfo);
     }
 
 

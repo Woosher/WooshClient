@@ -15,9 +15,10 @@ import java.io.IOException;
 public class InfoListViewCell extends ListCell<ConnectionInfo> {
 
     EventHandler eventHandler;
+    PopupController.Adder adder;
 
-    public InfoListViewCell(EventHandler eventHandler){
-        this.eventHandler = eventHandler;
+    public InfoListViewCell(PopupController.Adder adder){
+        this.adder = adder;
     }
 
     @FXML
@@ -56,7 +57,12 @@ public class InfoListViewCell extends ListCell<ConnectionInfo> {
             }
             label1.setText(item.getMachine().getName());
             label2.setText(item.getInfo());
-            checkBox.setOnMouseClicked(eventHandler);
+            checkBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    adder.add(item);
+                }
+            });
             setText(null);
             setGraphic(gridPane);
 

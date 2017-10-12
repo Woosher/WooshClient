@@ -16,12 +16,9 @@ public final class SSHClient {
 
     private static void setKnownHostFile(JSch jsch) throws WooshException {
         try {
-            Utils.printLogs("HOST FILE CREATION");
             File file = Utils.generateFile(System.getProperty("user.home") + "/.ssh/known_hosts");
             jsch.setKnownHosts(file.getAbsolutePath());
-            Utils.printLogs(file.getAbsolutePath());
         } catch (Exception e) {
-            Utils.printLogs("HOST FILE FAILURE CREATION");
             throw new WooshException(e.getMessage());
         }
     }
@@ -38,7 +35,6 @@ public final class SSHClient {
             session.connect();
             session.disconnect();
         } catch (Exception e) {
-            Utils.printLogs("FAILURE");
             throw new WooshException(e.getMessage());
         }
     }
@@ -55,14 +51,11 @@ public final class SSHClient {
         } catch (JSchException e) {
             System.out.println(e.getMessage());
             if (e.getMessage().contains("UnknownHostKey")) {
-                Utils.printLogs("HOSTKEY");
                 throw new WooshException(" Unknown host, fingerprint: " + e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1));
             } else if (e.getMessage().contains("Connection refused")) {
-                Utils.printLogs("REFUSED");
                 throw new WooshException("Connection refused");
             }
         } catch (Exception ex) {
-            Utils.printLogs("ERROR");
             throw new WooshException(" Error with " + machine.getIp());
         }
 

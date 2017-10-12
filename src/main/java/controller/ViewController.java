@@ -10,6 +10,7 @@ import entities.parsing.Node;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -162,9 +163,8 @@ public class ViewController {
     private void addNode(){
         LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
         Node node = new Node();
-        node.setName("New Node#" + ++nodeCount);
+        node.setName("node" + ++nodeCount);
         loadBalancer.getNodes().add(node);
-        printDeployMent(deployment);
     }
 
     private void addLoadBalancer() {
@@ -190,10 +190,9 @@ public class ViewController {
 
     private void putLoadBalancersOnDeployment(){
         LoadBalancer loadBalancer = new LoadBalancer();
-        loadBalancer.setName("New loadbalancer#" + ++loadBalancerCount);
+        loadBalancer.setName("loadBalancer" + ++loadBalancerCount);
         loadBalancer.setCachingAttributes("aoskdoaskd");
         deployment.getLoadBalancers().add(loadBalancer);
-        printDeployMent(deployment);
     }
 
 
@@ -326,6 +325,14 @@ public class ViewController {
         popupStage.setScene(new Scene(root1));
         popupStage.setResizable(false);
         popupController = (PopupController) fxmlLoader.getController();
+        popupController.setEventHandler(new EventHandler() {
+            @Override
+            public void handle(Event event) {
+                popupStage.hide();
+                List<Machine> machines =popupController.getSelectedMachines();
+                addKnownHosts(machines);
+            }
+        });
 
     }
 
@@ -353,67 +360,7 @@ public class ViewController {
     }
 
 
-    public void printDeployMent(Deployment deployment) {
-        print("NAME OF DEPLOYMENT: " + deployment.getName());
-        print("SSL PATH: " + deployment.getSsl_path());
-        print("LOADBALANCERS: ");
-        for (LoadBalancer loadBalancer : deployment.getLoadBalancers()) {
-            print("");
-            print("\tNAME OF LB: " + loadBalancer.getName());
-            print("\tIP OF LB: " + loadBalancer.getIp());
-            print("\tSSHPort OF LB" + loadBalancer.getSSHPort());
-            print("\tCATCHE OF LB: " + loadBalancer.getCachingAttributes());
-            print("\tNODES");
-            for (Node node : loadBalancer.getNodes()) {
-                print("");
-                print("\t\tNAME OF NODE: " + node.getName());
-                print("\t\tIP OF NODE: " + node.getIp());
-                print("\t\tSSHPORT OF NODE: " + node.getSSHPort());
-                print("\t\tSE OF NODE: " + node.getEnvironment());
-                print("\t\tOS OF NODE: " + node.getOperatingSystem());
-            }
-        }
-    }
-
-    private void print(String args) {
-        System.out.println(args);
-    }
-
-    private void oldPopup(List<ConnectionInfo> result){
-        connectionStage = new Stage();
-        connectionStage.initModality(Modality.APPLICATION_MODAL);
-        connectionStage.initOwner(new Stage());
-        VBox dialogVbox = new VBox(20);
-        for (ConnectionInfo s : result) {
-            HBox hb = new HBox();
-            ObservableList hbChildren = hb.getChildren();
-            hbChildren.add(new Text("IP: " + s.getMachine().getIp() + s.getInfo()));
-            hbChildren.add(new CheckBox());
-            dialogVbox.getChildren().add(hb);
-        }
-        Button ok = new Button("OK");
-        ok.setOnMouseClicked(event -> addKnownHosts(result));
-        dialogVbox.getChildren().add(ok);
-        dialogScene = new Scene(dialogVbox, 600, 200);
-        connectionStage.setScene(dialogScene);
-        connectionStage.show();
-    }
-
-    private void addKnownHosts(List<ConnectionInfo> result) {
-        ObservableList list = dialogScene.getRoot().getChildrenUnmodifiable();
-        List<Machine> hosts = new ArrayList<>();
-        int i = 0;
-        for (Object box : list) {
-            if (box instanceof HBox) {
-                HBox vBox = (HBox) box;
-                CheckBox cb = (CheckBox) vBox.getChildren().get(1);
-                if (cb.isSelected()) {
-                    hosts.add(result.get(i).getMachine());
-
-                }
-            }
-            i++;
-        }
+    private void addKnownHosts(List<Machine> hosts) {
         model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
             @Override
             public void onCompletion(Boolean result) {
@@ -422,10 +369,14 @@ public class ViewController {
 
             @Override
             public void onFailure(Throwable throwable) {
-                print("meh");
                 print(throwable.getMessage());
             }
         });
     }
+
+    private void print(String args) {
+        System.out.println(args);
+    }
+
 
 }
