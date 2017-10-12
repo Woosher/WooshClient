@@ -40,11 +40,11 @@ public class ConnectionController implements ConnectionControllerInterface {
     }
 
     @Override
-    public String sendPackage(Machine machine){
+    public ConnectionInfo sendPackage(Machine machine){
         try {
-            return SSHClient.sendPackage(machine);
+            return new ConnectionInfo(machine,SSHClient.sendPackage(machine));
         } catch (WooshException e) {
-            return e.getMessage();
+            return new ConnectionInfo(machine,e.getMessage());
         }
 
     }

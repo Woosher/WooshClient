@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class ViewController {
@@ -198,9 +199,9 @@ public class ViewController {
 
 
     public void handleDeploy() {
-        model.sendPackages(new ResultsListener<String>() {
+        model.sendPackages(new ResultsListener<Map<String,String>>() {
             @Override
-            public void onCompletion(String result) {
+            public void onCompletion(Map<String,String> result) {
                 System.out.println(result);
             }
 
