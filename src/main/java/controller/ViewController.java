@@ -40,8 +40,6 @@ import java.util.Map;
 public class ViewController {
 
     private FlowModelInterface model;
-    private Scene dialogScene;
-    private Stage connectionStage;
 
     @FXML
     MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem, addLoadBalancerMenuItem;
@@ -70,8 +68,9 @@ public class ViewController {
 
     private Machine currentMachine;
     private Deployment deployment;
-    private Stage popupStage;
+    private Stage popupStage, popupDeployStage;
     private PopupController popupController;
+    private PopupDeployController popupDeployController;
 
     public void initModel(FlowModelInterface model) {
         if (this.model != null) {
@@ -94,6 +93,7 @@ public class ViewController {
         addNodeButton.setOnMouseClicked(event -> addNode());
         setupLists();
         createPopup();
+        createPopupDeploy();
     }
 
     private void handleNodeClick(){
@@ -206,8 +206,8 @@ public class ViewController {
                     public void run() {
                         ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
                         observableList.addAll(result);
-                        popupController.addInfo(observableList);
-                        popupStage.show();
+                        popupDeployController.addInfo(observableList);
+                        popupDeployStage.show();
                     }
                 });
             }
@@ -316,6 +316,27 @@ public class ViewController {
                     }
                 };
                 return cell;
+            }
+        });
+    }
+    private void createPopupDeploy(){
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("popupDeploy.fxml"));
+        Parent root1 = null;
+        try {
+            root1 = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        popupDeployStage = new Stage();
+        popupDeployStage.initModality(Modality.APPLICATION_MODAL);
+        popupDeployStage.setTitle("Deployment report");
+        popupDeployStage.setScene(new Scene(root1));
+        popupDeployStage.setResizable(false);
+        popupDeployController = fxmlLoader.getController();
+        popupDeployController.setEventHandler(new EventHandler() {
+            @Override
+            public void handle(Event event) {
+                popupDeployStage.hide();
             }
         });
     }

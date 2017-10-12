@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="controller.PopupDeployController"
+          prefWidth="700" maxWidth="-Infinity" minHeight="-Infinity" minWidth="700">
+
+    <columnConstraints>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"  />
+
+    </columnConstraints>
+    <children>
+        <ListView fx:id="listview" prefWidth="700" GridPane.rowIndex="1" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150"></ListView>
+        <Button fx:id="buttonAdd" text="ACCEPT"  minWidth="80" GridPane.rowIndex="2" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.valignment="CENTER"  ></Button>
+    </children>
+
+</GridPane>
