@@ -324,6 +324,7 @@ public class ViewController {
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("Connection info");
         popupStage.setScene(new Scene(root1));
+        popupStage.setResizable(false);
         popupController = (PopupController) fxmlLoader.getController();
 
     }
