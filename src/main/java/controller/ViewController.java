@@ -199,10 +199,18 @@ public class ViewController {
 
 
     public void handleDeploy() {
-        model.sendPackages(new ResultsListener<Map<String,String>>() {
+        model.sendPackages(new ResultsListener<List<ConnectionInfo>>() {
             @Override
-            public void onCompletion(Map<String,String> result) {
-                System.out.println(result);
+            public void onCompletion(List<ConnectionInfo> result) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
+                        observableList.addAll(result);
+                        popupController.addInfo(observableList);
+                        popupStage.show();
+                    }
+                });
             }
 
             @Override

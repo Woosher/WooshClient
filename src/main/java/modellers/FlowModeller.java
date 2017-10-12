@@ -150,7 +150,7 @@ public class FlowModeller implements FlowModelInterface {
 
 
     @Override
-    public void sendPackages(final ResultsListener<Map<String,String>> resultsListener) {
+    public void sendPackages(final ResultsListener<List<ConnectionInfo>> resultsListener) {
         supplyAsync(()-> {
             try {
                 return deploy();
@@ -158,11 +158,7 @@ public class FlowModeller implements FlowModelInterface {
                 throw new RuntimeException(e.getMessage());
             }
         }).thenAccept(a -> {
-            Map<String,String> result = new HashMap<>();
-            for (int i = 0; i < a.length; i++) {
-                result.put(a[i].getMachine().getName(),a[i].getInfo());
-            }
-            resultsListener.onCompletion(result);})
+            resultsListener.onCompletion(Arrays.asList(a));})
                 .exceptionally((t) -> {
                     resultsListener.onFailure(t); return null;});
 
