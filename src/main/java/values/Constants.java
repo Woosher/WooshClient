@@ -37,4 +37,7 @@ public class Constants {
     public static final String ENVIRONMENT_RUBY = "RUBY";
 
 
+    public static final String TRUSTED = "Trusted";
+
+
 }

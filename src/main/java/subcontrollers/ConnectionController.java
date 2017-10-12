@@ -13,12 +13,14 @@ import tools.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static values.Constants.TRUSTED;
+
 public class ConnectionController implements ConnectionControllerInterface {
 
     @Override
     public List<ConnectionInfo> testConnections(Deployment deployment){
         List<ConnectionInfo> list = new ArrayList<>();
-        String status = "Succes";
+        String status = TRUSTED;
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
             try {
                 SSHClient.testConnection(loadBalancer);
@@ -28,7 +30,7 @@ public class ConnectionController implements ConnectionControllerInterface {
             list.add(new ConnectionInfo(loadBalancer,status));
             //Nodes
             for (Node node: loadBalancer.getNodes()) {
-                status = "Succes";
+                status = TRUSTED;
                 try {
                     SSHClient.testConnection(node);
                 } catch (WooshException e) {

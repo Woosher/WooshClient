@@ -23,12 +23,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
 import javafx.util.Callback;
 import modellers.interfaces.FlowModelInterface;
+import tools.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -324,11 +322,24 @@ public class ViewController {
         popupStage.setTitle("Connection info");
         popupStage.setScene(new Scene(root1));
         popupStage.setResizable(false);
+        popupStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                popupController.resetInfo();
+            }
+        });
         popupController = (PopupController) fxmlLoader.getController();
         popupController.setEventHandler(new EventHandler() {
             @Override
             public void handle(Event event) {
-                popupStage.hide();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        popupController.setListViewDisabled(true);
+                        popupController.setSpinnerVisibility(true);
+                    }
+                });
+
                 List<Machine> machines =popupController.getSelectedMachines();
                 addKnownHosts(machines);
             }
@@ -337,16 +348,18 @@ public class ViewController {
     }
 
     public void testConnections() {
+        popupController.setSpinnerVisibility(true);
+        popupStage.show();
         model.testConnections(new ResultsListener<List<ConnectionInfo>>() {
             @Override
             public void onCompletion(List<ConnectionInfo> result) {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        popupController.setSpinnerVisibility(false);
                         ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
                         observableList.addAll(result);
                         popupController.addInfo(observableList);
-                        popupStage.show();
                     }
                 });
             }
@@ -364,12 +377,26 @@ public class ViewController {
         model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
             @Override
             public void onCompletion(Boolean result) {
-                print(result.toString());
+                resetPopup();
+                print(result + "");
             }
 
             @Override
             public void onFailure(Throwable throwable) {
+                resetPopup();
                 print(throwable.getMessage());
+            }
+        });
+    }
+
+    private void resetPopup(){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                popupController.setSpinnerVisibility(false);
+                popupController.setListViewDisabled(false);
+                popupController.resetInfo();
+                popupStage.close();
             }
         });
     }
