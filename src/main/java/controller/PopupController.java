@@ -35,7 +35,6 @@ public class PopupController {
 
     private Map<Machine, Boolean> machineMap = new HashMap<>();
 
-
     public void resetInfo(){
         listview.setItems(null);
     }
