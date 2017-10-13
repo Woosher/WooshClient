@@ -16,10 +16,8 @@ import static values.Constants.TRUSTED;
 
 public class DeployListViewCell extends ListCell<ConnectionInfo>{
 
-    PopupDeployController.Adder adder;
 
-    public DeployListViewCell(PopupDeployController.Adder adder){
-        this.adder = adder;
+    public DeployListViewCell(){
     }
 
     @FXML

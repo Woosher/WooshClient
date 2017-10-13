@@ -109,49 +109,6 @@ public final class SSHClient {
         return "Succes";
     }
 
-    public static void giveUserRights(Session session, String path, String sudo_pass) throws JSchException, IOException {
-        String command = "sudo chmod -R 777 " + path;
-        Channel channel = session.openChannel("exec");
-        ((ChannelExec) channel).setCommand(command);
-
-        InputStream in = channel.getInputStream();
-        OutputStream out = channel.getOutputStream();
-        ((ChannelExec) channel).setErrStream(System.err);
-
-        channel.connect();
-
-        out.write((sudo_pass + "\n").getBytes());
-        out.flush();
-        channel.disconnect();
-    }
-
-
-    public static void mkdirs(ChannelSftp ch, String path) {
-        try {
-            String[] folders = path.split("/");
-            if (folders[0].isEmpty()) folders[0] = "/";
-            String fullPath = folders[0];
-            for (int i = 1; i < folders.length; i++) {
-                Vector ls = ch.ls(fullPath);
-                boolean isExist = false;
-                for (Object o : ls) {
-                    if (o instanceof ChannelSftp.LsEntry) {
-                        ChannelSftp.LsEntry e = (ChannelSftp.LsEntry) o;
-                        if (e.getAttrs().isDir() && e.getFilename().equals(folders[i])) {
-                            isExist = true;
-                        }
-                    }
-                }
-                if (!isExist && !folders[i].isEmpty()) {
-                    ch.mkdir(fullPath + folders[i]);
-                }
-                fullPath = fullPath + folders[i] + "/";
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private static void executeRemoteCommandAsSudo(Session session, Machine machine, String password,
                                                    String command) throws WooshException {
         Channel channel = null;

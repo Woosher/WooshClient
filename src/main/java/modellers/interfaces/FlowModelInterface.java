@@ -1,14 +1,12 @@
 package modellers.interfaces;
 
 import entities.ConnectionInfo;
-import entities.ResultsListener;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Machine;
 import entities.parsing.Node;
 
 import java.util.List;
-import java.util.Map;
 
 public interface FlowModelInterface {
 

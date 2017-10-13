@@ -21,8 +21,6 @@ abstract public class Machine extends Observable {
 
     public void setUsername(String username) {
         this.username = username;
-        setChanged();
-        notifyObservers();
     }
 
     public String getPathCompressed() {
@@ -39,8 +37,6 @@ abstract public class Machine extends Observable {
 
     final public void setName(String name) {
         this.name = name;
-        setChanged();
-        notifyObservers();
     }
 
     public int getPort() {
@@ -49,8 +45,6 @@ abstract public class Machine extends Observable {
 
     public void setPort(int port) {
         this.port = port;
-        setChanged();
-        notifyObservers();
     }
 
     final public String getIp() {
@@ -59,8 +53,6 @@ abstract public class Machine extends Observable {
 
     final public void setIp(String ip) {
         this.ip = ip;
-        setChanged();
-        notifyObservers();
     }
 
     final public String getPassword() {
@@ -69,8 +61,6 @@ abstract public class Machine extends Observable {
 
     final public void setPassword(String password) {
         this.password = password;
-        setChanged();
-        notifyObservers();
     }
 
     final public int getSSHPort() {
@@ -80,8 +70,6 @@ abstract public class Machine extends Observable {
 
     final public void setSSHPort(int SSHPort) {
         this.SSHPort = SSHPort;
-        setChanged();
-        notifyObservers();
     }
 
 

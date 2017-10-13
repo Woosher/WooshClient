@@ -32,8 +32,6 @@ public class PopupDeployController {
     @FXML
     private ProgressIndicator spinner;
 
-    private Map<Machine, Boolean> machineMap = new HashMap<>();
-
 
     public void resetInfo(){
         listview.setItems(null);
@@ -45,43 +43,19 @@ public class PopupDeployController {
 
     public void addInfo(ObservableList<ConnectionInfo> connectionInfoList){
         buttonAdd.setOnMouseClicked(eventHandler);
-
-        machineMap.clear();
-        for(ConnectionInfo c : connectionInfoList){
-            machineMap.put(c.getMachine(), false);
-        }
         listview.setItems(connectionInfoList);
         listview.setCellFactory(new Callback<ListView<ConnectionInfo>, ListCell<ConnectionInfo>>() {
             @Override
             public ListCell<ConnectionInfo> call(ListView<ConnectionInfo> param) {
-                return new DeployListViewCell(new PopupDeployController.Adder() {
-                    @Override
-                    public void add(ConnectionInfo connectionInfo) {
-                        boolean prevValue = machineMap.get(connectionInfo.getMachine());
-                        machineMap.put(connectionInfo.getMachine(),!prevValue);
-                    }
-
-                });
+                return new DeployListViewCell();
             }
-
         });
     }
 
-    public List<Machine> getSelectedMachines(){
-        List<Machine> machines = new ArrayList<>();
-        for(Machine m : machineMap.keySet()){
-            boolean value = machineMap.get(m);
-            if(value) machines.add(m);
-        }
-        return machines;
-    }
+
 
     public void setSpinnerVisibility(boolean visibility){
         spinner.setVisible(visibility);
     }
 
-    public interface Adder{
-        void add(ConnectionInfo connectionInfo);
-
-    }
 }

@@ -1,4 +1,4 @@
-package entities;
+package modellers.interfaces;
 
 
 public interface ResultsListener<T> {

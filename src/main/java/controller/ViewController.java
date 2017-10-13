@@ -1,7 +1,7 @@
 package controller;
 
 import entities.ConnectionInfo;
-import entities.ResultsListener;
+import modellers.interfaces.ResultsListener;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Machine;
@@ -30,7 +30,6 @@ import java.util.List;
 
 public class ViewController {
 
-    private FlowModelInterface model;
 
     @FXML
     MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem, addLoadBalancerMenuItem;
@@ -56,13 +55,13 @@ public class ViewController {
 
     private int nodeCount = 0;
     private int loadBalancerCount = 0;
-
-
     private Machine currentMachine;
     private Deployment deployment;
     private Stage popupStage, popupDeployStage;
     private PopupController popupController;
     private PopupDeployController popupDeployController;
+    private FlowModelInterface model;
+
 
     public void initModel(FlowModelInterface model) {
         if (this.model != null) {
@@ -77,22 +76,25 @@ public class ViewController {
         loadMenuItem.setOnAction(event -> handleLoad());
         deployMenuItem.setOnAction(event -> handleDeploy());
         closeMenuItem.setOnAction(event -> handleProjectClose());
-        connectionTestMenuItem.setOnAction(event -> testConnections());
-        addLoadBalancerMenuItem.setOnAction(event -> addLoadBalancer());
-        addLoadBalancerBox.setOnMouseClicked(event -> addLoadBalancer());
-        loadBalancerListView.setOnMouseClicked(event -> loadBalancerClick());
+        connectionTestMenuItem.setOnAction(event -> handleTestConnections());
+        addLoadBalancerMenuItem.setOnAction(event -> handleAddLoadBalancer());
+        addLoadBalancerBox.setOnMouseClicked(event -> handleAddLoadBalancer());
+        loadBalancerListView.setOnMouseClicked(event -> handleLoadBalancerClick());
         nodeListView.setOnMouseClicked(event -> handleNodeClick() );
-        saveInfoButton.setOnMouseClicked(event -> saveInfo());
-        addNodeButton.setOnMouseClicked(event -> addNode());
-        toolsAddNode.setOnMouseClicked(event -> addNode());
-        toolsAddLb.setOnMouseClicked(event -> addLoadBalancer());
-        toolsDelNode.setOnMouseClicked(event -> deleteNode());
-        toolsDelLb.setOnMouseClicked(event -> deleteLoadbalancer());
-
+        saveInfoButton.setOnMouseClicked(event -> handleSaveInfo());
+        addNodeButton.setOnMouseClicked(event -> handleAddNode());
+        toolsAddNode.setOnMouseClicked(event -> handleAddNode());
+        toolsAddLb.setOnMouseClicked(event -> handleAddLoadBalancer());
+        toolsDelNode.setOnMouseClicked(event -> handleDeleteNode());
+        toolsDelLb.setOnMouseClicked(event -> handleDeleteLoadbalancer());
         setupLists();
         createPopup();
         createPopupDeploy();
     }
+
+    /********************************************************************************************************
+     * Button handlers
+     */
 
     private void handleProjectClose(){
         this.deployment = null;
@@ -101,21 +103,14 @@ public class ViewController {
 
     }
 
-    private void resetGUI(){
-        resetPopup();
-        loadBalancerListView.getItems().clear();
-        nodeListView.getItems().clear();
-        deploymentNameTxt.setText("");
-    }
-
-    private void deleteNode(){
+    private void handleDeleteNode(){
         if(currentMachine instanceof Node){
             nodeListView.getItems().remove(currentMachine);
             setupNodeList();
         }
     }
 
-    private void deleteLoadbalancer(){
+    private void handleDeleteLoadbalancer(){
         if(currentMachine != null){
             if(currentMachine instanceof LoadBalancer){
                 Platform.runLater(new Runnable() {
@@ -138,7 +133,7 @@ public class ViewController {
         updateInfoLayout(node);
     }
 
-    private void loadBalancerClick(){
+    private void handleLoadBalancerClick(){
         setupNodeList();
         LoadBalancer loadBalancer = loadBalancerListView.getSelectionModel().getSelectedItem();
         if(loadBalancer != null){
@@ -146,6 +141,178 @@ public class ViewController {
             updateInfoLayout(loadBalancer);
             nodeListView.setItems(nodes);
         }
+    }
+
+    private void handleSaveInfo(){
+        currentMachine.setPassword(passwordTxt.getText());
+        currentMachine.setName(nameTxt.getText());
+        currentMachine.setUsername(usernameTxt.getText());
+        currentMachine.setIp(ipTxt.getText());
+        currentMachine.setSSHPort(Integer.parseInt(SSHportTxt.getText()));
+        currentMachine.setPort(Integer.parseInt(portTxt.getText()));
+        if(currentMachine instanceof Node){
+            Node node = (Node) currentMachine;
+            node.setPath(pathTxt.getText());
+            node.setEnvironment(envTxt.getText());
+            node.setOperatingSystem(osTxt.getText());
+        }
+        setupLists();
+    }
+
+    private void handleAddNode(){
+        LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
+        if(currentMachine != null){
+            Node node = new Node();
+            node.setName("node" + ++nodeCount);
+            loadBalancer.getNodes().add(node);
+        }else {
+            Utils.printLogs("You have not selected a loadbalancer");
+        }
+    }
+
+    private void handleAddLoadBalancer() {
+        if(deployment == null){
+            model.createNewDeployment(deploymentNameTxt.getText(), new ResultsListener<Deployment>() {
+                @Override
+                public void onCompletion(Deployment result) {
+                    deployment = result;
+                    putLoadBalancersOnDeployment();
+                    setupDeploymentInGui();
+
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+
+                }
+            });
+        }else {
+            putLoadBalancersOnDeployment();
+        }
+    }
+
+    private void handleDeploy() {
+        popupDeployStage.show();
+        popupDeployController.setSpinnerVisibility(true);
+        model.sendPackages(new ResultsListener<List<ConnectionInfo>>() {
+            @Override
+            public void onCompletion(List<ConnectionInfo> result) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        popupDeployController.setSpinnerVisibility(false);
+                        ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
+                        observableList.addAll(result);
+                        popupDeployController.addInfo(observableList);
+                        popupDeployStage.show();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Utils.printLogs(throwable.getMessage());
+            }
+        });
+    }
+
+    private void handleLoad() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Open File");
+        File file = chooser.showOpenDialog(new Stage());
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            if (path != null) {
+                model.loadDeployment(path, new ResultsListener<Deployment>() {
+                    @Override
+                    public void onCompletion(Deployment result) {
+                        deployment = result;
+                        // deployment.getLoadBalancers().get(0).addObserver(new Observer());
+                        setupDeploymentInGui();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        Utils.printLogs(throwable.getMessage());
+                    }
+                });
+            }
+        }
+    }
+
+    private void handleSave() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Save File");
+        chooser.setInitialFileName(deploymentNameTxt.getText() + ".txt");
+        File file = chooser.showSaveDialog(new Stage());
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            if (path != null) {
+                deployment.setName(deploymentNameTxt.getText());
+                model.saveDeployment(path, new ResultsListener<Void>() {
+                    @Override
+                    public void onCompletion(Void result) {
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        Utils.printLogs(throwable.getMessage());
+                    }
+                });
+            }
+        }
+    }
+
+    private void handleAddKnownHosts(List<Machine> hosts) {
+        model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
+            @Override
+            public void onCompletion(Boolean result) {
+                resetPopup();
+                Utils.printLogs(result + "");
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                resetPopup();
+                Utils.printLogs(throwable.getMessage());
+            }
+        });
+    }
+
+    private void handleTestConnections() {
+        popupController.setSpinnerVisibility(true);
+        popupStage.show();
+        model.testConnections(new ResultsListener<List<ConnectionInfo>>() {
+            @Override
+            public void onCompletion(List<ConnectionInfo> result) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        popupController.setSpinnerVisibility(false);
+                        ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
+                        observableList.addAll(result);
+                        popupController.addInfo(observableList);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Utils.printLogs(throwable.getMessage());
+
+            }
+        });
+    }
+
+    /********************************************************************************************************
+     * GUI Update methods
+     */
+
+    private void putLoadBalancersOnDeployment(){
+        LoadBalancer loadBalancer = new LoadBalancer();
+        loadBalancer.setName("loadBalancer" + ++loadBalancerCount);
+        loadBalancer.setCachingAttributes("/temp/attributes/");
+        deployment.getLoadBalancers().add(loadBalancer);
     }
 
     private void updateInfoLayout(Machine machine){
@@ -181,110 +348,11 @@ public class ViewController {
         }
     }
 
-
-    private void saveInfo(){
-        currentMachine.setPassword(passwordTxt.getText());
-        currentMachine.setName(nameTxt.getText());
-        currentMachine.setUsername(usernameTxt.getText());
-        currentMachine.setIp(ipTxt.getText());
-        currentMachine.setSSHPort(Integer.parseInt(SSHportTxt.getText()));
-        currentMachine.setPort(Integer.parseInt(portTxt.getText()));
-        if(currentMachine instanceof Node){
-            Node node = (Node) currentMachine;
-            node.setPath(pathTxt.getText());
-            node.setEnvironment(envTxt.getText());
-            node.setOperatingSystem(osTxt.getText());
-        }
-        setupLists();
-    }
-
-    private void addNode(){
-        LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
-        if(currentMachine != null){
-            Node node = new Node();
-            node.setName("node" + ++nodeCount);
-            loadBalancer.getNodes().add(node);
-        }else {
-            Utils.printLogs("You have not selected a loadbalancer");
-        }
-    }
-
-    private void addLoadBalancer() {
-        if(deployment == null){
-            model.createNewDeployment(deploymentNameTxt.getText(), new ResultsListener<Deployment>() {
-                @Override
-                public void onCompletion(Deployment result) {
-                    deployment = result;
-                    putLoadBalancersOnDeployment();
-                    setupDeploymentInGui();
-
-                }
-
-                @Override
-                public void onFailure(Throwable throwable) {
-
-                }
-            });
-        }else {
-            putLoadBalancersOnDeployment();
-        }
-    }
-
-    private void putLoadBalancersOnDeployment(){
-        LoadBalancer loadBalancer = new LoadBalancer();
-        loadBalancer.setName("loadBalancer" + ++loadBalancerCount);
-        loadBalancer.setCachingAttributes("aoskdoaskd");
-        deployment.getLoadBalancers().add(loadBalancer);
-    }
-
-
-    public void handleDeploy() {
-        popupDeployStage.show();
-        popupDeployController.setSpinnerVisibility(true);
-        model.sendPackages(new ResultsListener<List<ConnectionInfo>>() {
-            @Override
-            public void onCompletion(List<ConnectionInfo> result) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        popupDeployController.setSpinnerVisibility(false);
-                        ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
-                        observableList.addAll(result);
-                        popupDeployController.addInfo(observableList);
-                        popupDeployStage.show();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                print(throwable.getMessage());
-            }
-        });
-    }
-
-    public void handleLoad() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Open File");
-        File file = chooser.showOpenDialog(new Stage());
-        if (file != null) {
-            String path = file.getAbsolutePath();
-            if (path != null) {
-                model.loadDeployment(path, new ResultsListener<Deployment>() {
-                    @Override
-                    public void onCompletion(Deployment result) {
-                        deployment = result;
-                        // deployment.getLoadBalancers().get(0).addObserver(new Observer());
-                        setupDeploymentInGui();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        print(throwable.getMessage());
-                    }
-                });
-            }
-        }
+    private void resetGUI(){
+        resetPopup();
+        loadBalancerListView.getItems().clear();
+        nodeListView.getItems().clear();
+        deploymentNameTxt.setText("");
     }
 
     private void setupDeploymentInGui() {
@@ -296,29 +364,6 @@ public class ViewController {
                 setupLists();
             }
         });
-    }
-
-    public void handleSave() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Save File");
-        chooser.setInitialFileName(deploymentNameTxt.getText() + ".txt");
-        File file = chooser.showSaveDialog(new Stage());
-        if (file != null) {
-            String path = file.getAbsolutePath();
-            if (path != null) {
-                deployment.setName(deploymentNameTxt.getText());
-                model.saveDeployment(path, new ResultsListener<Void>() {
-                    @Override
-                    public void onCompletion(Void result) {
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        print(throwable.getMessage());
-                    }
-                });
-            }
-        }
     }
 
     private void setupLists(){
@@ -363,6 +408,7 @@ public class ViewController {
             }
         });
     }
+
     private void createPopupDeploy(){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("popupDeploy.fxml"));
         Parent root1 = null;
@@ -423,52 +469,10 @@ public class ViewController {
                 });
 
                 List<Machine> machines =popupController.getSelectedMachines();
-                addKnownHosts(machines);
+                handleAddKnownHosts(machines);
             }
         });
 
-    }
-
-    public void testConnections() {
-        popupController.setSpinnerVisibility(true);
-        popupStage.show();
-        model.testConnections(new ResultsListener<List<ConnectionInfo>>() {
-            @Override
-            public void onCompletion(List<ConnectionInfo> result) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        popupController.setSpinnerVisibility(false);
-                        ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
-                        observableList.addAll(result);
-                        popupController.addInfo(observableList);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                print(throwable.getMessage());
-
-            }
-        });
-    }
-
-
-    private void addKnownHosts(List<Machine> hosts) {
-        model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
-            @Override
-            public void onCompletion(Boolean result) {
-                resetPopup();
-                print(result + "");
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                resetPopup();
-                print(throwable.getMessage());
-            }
-        });
     }
 
     private void resetPopup(){
@@ -481,10 +485,6 @@ public class ViewController {
                 popupStage.close();
             }
         });
-    }
-
-    private void print(String args) {
-        System.out.println(args);
     }
 
 

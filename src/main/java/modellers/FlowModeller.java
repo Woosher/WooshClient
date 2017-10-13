@@ -4,7 +4,7 @@ import entities.ConnectionInfo;
 import entities.parsing.Machine;
 import iohelpers.interfaces.CheckerInterface;
 import modellers.interfaces.FlowModelInterface;
-import entities.ResultsListener;
+import modellers.interfaces.ResultsListener;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
@@ -18,7 +18,6 @@ import subcontrollers.interfaces.ConnectionControllerInterface;
 import subcontrollers.interfaces.MapperInterface;
 import subcontrollers.interfaces.PackagingInterface;
 import subcontrollers.interfaces.ReaderInterface;
-import tools.Utils;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -41,7 +40,6 @@ public class FlowModeller implements FlowModelInterface {
         memoryMapper = new MemoryMapper();
         readController = new ReadController(configChecker);
         deployment = null;
-        //testParsing();
     }
 
 
@@ -122,7 +120,7 @@ public class FlowModeller implements FlowModelInterface {
         /*TODO
             SSLPATH REMOVE
          */
-            this.deployment.setSsl_path("oaskdo");
+            this.deployment.setSsl_path("/test/path/");
             resultsListener.onCompletion(deployment);
 
         }catch (Exception e){
@@ -184,41 +182,5 @@ public class FlowModeller implements FlowModelInterface {
         CompletableFuture.allOf(allFutures).join();
         return Arrays.stream(allFutures).map(CompletableFuture::join).toArray(ConnectionInfo[]::new);
     }
-
-
-    void store(ResultsListener<String> resultsListener) {
-        try {
-            Thread.sleep(6000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        resultsListener.onCompletion("LISTENER COMPLETE");
-    }
-
-
-    String convert(UUID input) {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return input.toString();
-    }
-
-    UUID createId() {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return UUID.randomUUID();
-    }
-
-
-    public void print(String text){
-        System.out.println(text);
-    }
-
-
 
 }
