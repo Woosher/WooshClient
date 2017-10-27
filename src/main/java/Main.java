@@ -15,10 +15,6 @@ public class Main extends Application{
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("sample.fxml"));
         BorderPane root = new BorderPane();
         root.setCenter(loader.load());
-        ViewController controller = loader.getController();
-        FlowModelInterface flowModel = new FlowModeller();
-        controller.initModel(flowModel);
-
         primaryStage.setTitle("Woosh Deployment");
         primaryStage.setScene(new Scene(root, 900, 700));
         primaryStage.show();

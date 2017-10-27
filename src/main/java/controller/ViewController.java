@@ -1,6 +1,7 @@
 package controller;
 
 import entities.ConnectionInfo;
+import modellers.FlowModeller;
 import modellers.interfaces.ResultsListener;
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
@@ -63,11 +64,9 @@ public class ViewController {
     private FlowModelInterface model;
 
 
-    public void initModel(FlowModelInterface model) {
-        if (this.model != null) {
-            throw new IllegalStateException("Model can only be initialized once");
-        }
-        this.model = model;
+    @FXML
+    public void initialize() {
+        model = new FlowModeller();
         initLayout();
     }
 
