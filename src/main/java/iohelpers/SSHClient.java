@@ -3,6 +3,7 @@ package iohelpers;
 import com.jcraft.jsch.*;
 import entities.parsing.Machine;
 import exceptions.WooshException;
+import iohelpers.interfaces.SSHClientInterface;
 import tools.Utils;
 import tools.WooshLogger;
 
@@ -12,7 +13,7 @@ import java.util.Vector;
 
 import static values.Constants.SERVERPATH;
 
-public class SSHClient implements iohelpers.interfaces.SSHClientInterface {
+public class SSHClient implements SSHClientInterface {
 
 
     private void setKnownHostFile(JSch jsch) throws WooshException {
