@@ -43,8 +43,6 @@ public class FlowModeller implements FlowModelInterface {
         deployment = null;
     }
 
-
-
     @Override
     public void loadDeployment(String path,final ResultsListener<Deployment> resultsListener) {
         supplyAsync(()-> {
