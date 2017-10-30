@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<GridPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.subcontrollers.PopupErrorController"
+          >
+
+    <VBox alignment="CENTER" spacing="20">
+
+        <Label text="ERROR MESSAGE" fx:id="labelError"></Label>
+        <Button text="OK" fx:id="buttonOk" minWidth="150"></Button>
+        <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+    </VBox>
+
+</GridPane>

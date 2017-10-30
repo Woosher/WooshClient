@@ -131,7 +131,6 @@ public class FlowModeller implements FlowModelInterface {
 
     @Override
     public void addKnownHosts(List<Machine> macs,ResultsListener<Boolean> resultsListener){
-
         supplyAsync(()-> {
             try {
                 connectionController.addKnownHosts(macs);
