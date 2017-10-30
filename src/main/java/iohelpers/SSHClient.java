@@ -1,4 +1,4 @@
-package networking;
+package iohelpers;
 
 import com.jcraft.jsch.*;
 import entities.parsing.Machine;
@@ -11,10 +11,10 @@ import java.util.Vector;
 
 import static values.Constants.SERVERPATH;
 
-public final class SSHClient {
+public class SSHClient implements iohelpers.interfaces.SSHClientInterface {
 
 
-    private static void setKnownHostFile(JSch jsch) throws WooshException {
+    private void setKnownHostFile(JSch jsch) throws WooshException {
         try {
             File file = Utils.generateFile(System.getProperty("user.home") + "/.ssh/known_hosts");
             jsch.setKnownHosts(file.getAbsolutePath());
@@ -23,7 +23,8 @@ public final class SSHClient {
         }
     }
 
-    public static void addKnownHost(Machine machine) throws WooshException {
+    @Override
+    public void addKnownHost(Machine machine) throws WooshException {
         try {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
@@ -39,7 +40,8 @@ public final class SSHClient {
         }
     }
 
-    public static void testConnection(Machine machine) throws WooshException {
+    @Override
+    public void testConnection(Machine machine) throws WooshException {
 
         JSch jsch = new JSch();
         setKnownHostFile(jsch);
@@ -60,7 +62,8 @@ public final class SSHClient {
 
     }
 
-    public static String sendPackage(Machine machine) throws WooshException {
+    @Override
+    public String sendPackage(Machine machine) throws WooshException {
 
         Utils.printLogs("-----------------------STARTED----------------------------");
         Utils.printLogs("DEPLOYMENTLOG FOR: " +machine.getName());
@@ -109,7 +112,7 @@ public final class SSHClient {
         return "Succes";
     }
 
-    private static void executeRemoteCommandAsSudo(Session session, Machine machine, String password,
+    private void executeRemoteCommandAsSudo(Session session, Machine machine, String password,
                                                    String command) throws WooshException {
         Channel channel = null;
         StringBuffer result = new StringBuffer();

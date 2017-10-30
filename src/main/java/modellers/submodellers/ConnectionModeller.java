@@ -6,7 +6,8 @@ import entities.parsing.LoadBalancer;
 import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
-import networking.SSHClient;
+import iohelpers.SSHClient;
+import iohelpers.interfaces.SSHClientInterface;
 import modellers.submodellers.interfaces.ConnectionInterface;
 
 import java.util.ArrayList;
@@ -16,13 +17,19 @@ import static values.Constants.TRUSTED;
 
 public class ConnectionModeller implements ConnectionInterface {
 
+    SSHClientInterface sshClient;
+
+    public ConnectionModeller(){
+        sshClient = new SSHClient();
+    }
+
     @Override
     public List<ConnectionInfo> testConnections(Deployment deployment){
         List<ConnectionInfo> list = new ArrayList<>();
         String status = TRUSTED;
         for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
             try {
-                SSHClient.testConnection(loadBalancer);
+                sshClient.testConnection(loadBalancer);
             } catch (WooshException e) {
                 status = e.getMessage();
             }
@@ -31,7 +38,7 @@ public class ConnectionModeller implements ConnectionInterface {
             for (Node node: loadBalancer.getNodes()) {
                 status = TRUSTED;
                 try {
-                    SSHClient.testConnection(node);
+                    sshClient.testConnection(node);
                 } catch (WooshException e) {
                     status = e.getMessage();
                 }
@@ -44,7 +51,7 @@ public class ConnectionModeller implements ConnectionInterface {
     @Override
     public void addKnownHosts(List<Machine> macs)throws WooshException{
         for(Machine machine : macs){
-            SSHClient.addKnownHost(machine);
+            sshClient.addKnownHost(machine);
         }
 
     }
@@ -52,7 +59,7 @@ public class ConnectionModeller implements ConnectionInterface {
     @Override
     public ConnectionInfo sendPackage(Machine machine){
         try {
-            return new ConnectionInfo(machine,SSHClient.sendPackage(machine));
+            return new ConnectionInfo(machine,sshClient.sendPackage(machine));
         } catch (WooshException e) {
             return new ConnectionInfo(machine,e.getMessage());
         }
