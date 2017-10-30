@@ -4,6 +4,7 @@ import com.jcraft.jsch.*;
 import entities.parsing.Machine;
 import exceptions.WooshException;
 import tools.Utils;
+import tools.WooshLogger;
 
 import java.io.*;
 import java.util.Scanner;
@@ -64,13 +65,10 @@ public class SSHClient implements iohelpers.interfaces.SSHClientInterface {
 
     @Override
     public String sendPackage(Machine machine) throws WooshException {
-
-        Utils.printLogs("-----------------------STARTED----------------------------");
-        Utils.printLogs("DEPLOYMENTLOG FOR: " +machine.getName());
-        Utils.printLogs("IP: " + machine.getIp());
-        Utils.printLogs("\n\n");
-        Utils.printLogs("BASH SCRIPT " + machine.getBashScript() );
-        Utils.printLogs("MACHINE COMPRESSED " + machine.getPathCompressed());
+        WooshLogger logger = new WooshLogger();
+        logger.appendLoggingWithOutTime("-----------------------STARTED----------------------------");
+        logger.appendLoggingWithOutTime("DEPLOYMENTLOG FOR: " +machine.getName());
+        logger.appendLoggingWithOutTime("IP: " + machine.getIp());
 
         try {
             JSch jsch = new JSch();
@@ -82,9 +80,9 @@ public class SSHClient implements iohelpers.interfaces.SSHClientInterface {
             channel.connect();
             ChannelSftp channelSftp = (ChannelSftp) channel;
             // mkdirs(channelSftp, SERVERPATH);
-            executeRemoteCommandAsSudo(session, machine, machine.getPassword(), "sudo mkdir -p " + SERVERPATH);
+            executeRemoteCommandAsSudo(session, machine, machine.getPassword(), "sudo mkdir -p " + SERVERPATH, logger);
             channelSftp.cd(SERVERPATH);
-            executeRemoteCommandAsSudo(session, machine, machine.getPassword(), "sudo chmod -R 777 " + SERVERPATH);
+            executeRemoteCommandAsSudo(session, machine, machine.getPassword(), "sudo chmod -R 777 " + SERVERPATH, logger);
             //giveUserRights(session, channelSftp.pwd(), machine.getPassword());
             File f = new File(machine.getPathCompressed());
             channelSftp.put(new FileInputStream(f), f.getName());
@@ -92,13 +90,10 @@ public class SSHClient implements iohelpers.interfaces.SSHClientInterface {
 
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                Utils.printLogs(line);
-                executeRemoteCommandAsSudo(session, machine, machine.getPassword(), line);
+                executeRemoteCommandAsSudo(session, machine, machine.getPassword(), line, logger);
             }
             channel.disconnect();
             session.disconnect();
-
-
 
         } catch (JSchException e) {
             e.printStackTrace();
@@ -107,13 +102,13 @@ public class SSHClient implements iohelpers.interfaces.SSHClientInterface {
             ex.printStackTrace();
             return ex.getMessage();
         }
-        Utils.printLogs("-----------------------DONE-------------------------------");
-        Utils.printLogs("\n\n");
+        logger.appendLoggingWithOutTime("-----------------------DONE-------------------------------");
+        logger.saveLogsAndClear(machine.getName());
         return "Succes";
     }
 
     private void executeRemoteCommandAsSudo(Session session, Machine machine, String password,
-                                                   String command) throws WooshException {
+                                                   String command, WooshLogger logger) throws WooshException {
         Channel channel = null;
         StringBuffer result = new StringBuffer();
         try {
@@ -138,18 +133,18 @@ public class SSHClient implements iohelpers.interfaces.SSHClientInterface {
                 while(stdout.available()>0){
                     int i=stdout.read(tmp, 0, 1024);
                     if(i<0)break;
-                    Utils.printLogs(new String(tmp, 0, i));
+                    logger.appendLoggingWithTime(new String(tmp, 0, i));
                 }
                 while(stderr.available()>0){
                     int i=stdout.read(tmp, 0, 1024);
                     if(i<0)break;
-                    Utils.printLogs(new String(tmp, 0, i));
+                    logger.appendLoggingWithTime(new String(tmp, 0, i));
                 }
                 if(channel.isClosed()){
-                    Utils.printLogs("exit-status: "+channel.getExitStatus());
+                    logger.appendLoggingWithTime("exit-status: "+channel.getExitStatus());
                     break;
                 }
-                Thread.sleep(500);
+                Thread.sleep(100);
             }
         } catch (Exception ex) {
             throw new WooshException("Failure in execting command " + command);
