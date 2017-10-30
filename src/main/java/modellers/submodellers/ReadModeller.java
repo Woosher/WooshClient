@@ -12,8 +12,8 @@ public class ReadModeller implements ReaderInterface {
 
     ConfigReader configReader;
 
-    public ReadModeller(CheckerInterface configChecker){
-        configReader = new ConfigReader(configChecker);
+    public ReadModeller(){
+        configReader = new ConfigReader();
     }
 
     public Deployment readConfigFile(String path) throws WooshException {
