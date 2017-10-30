@@ -25,8 +25,8 @@ public class PackagingModeller implements PackagingInterface {
     private WriterInterface configWriter;
     private ScripterInterface scripter;
 
-    public PackagingModeller(CheckerInterface configChecker){
-        configWriter = new ConfigWriter(configChecker);
+    public PackagingModeller(){
+        configWriter = new ConfigWriter();
         scripter = new Scripter();
     }
 

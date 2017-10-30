@@ -20,8 +20,8 @@ public class ConfigReader implements ConfigReaderInterface {
 
     private CheckerInterface configChecker;
 
-    public ConfigReader(CheckerInterface configChecker){
-        this.configChecker = configChecker;
+    public ConfigReader(){
+        this.configChecker = new ConfigChecker();
     }
 
     public Deployment parseFromJSON(JSONObject jsonObject){

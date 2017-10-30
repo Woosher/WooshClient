@@ -31,15 +31,13 @@ public class FlowModeller implements FlowModelInterface {
     private PackagingInterface packagingController;
     private ConnectionInterface connectionController;
     private MapperInterface memoryMapper;
-    private CheckerInterface configChecker;
     private Deployment deployment;
 
     public FlowModeller(){
-        configChecker = new ConfigChecker();
-        packagingController = new PackagingModeller(configChecker);
+        packagingController = new PackagingModeller();
         connectionController = new ConnectionModeller();
         memoryMapper = new MemoryModeller();
-        readController = new ReadModeller(configChecker);
+        readController = new ReadModeller();
         deployment = null;
     }
 

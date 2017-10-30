@@ -18,8 +18,8 @@ public class ConfigWriter implements WriterInterface{
 
     private CheckerInterface configChecker;
 
-    public ConfigWriter(CheckerInterface configChecker){
-        this.configChecker = configChecker;
+    public ConfigWriter(){
+        this.configChecker = new ConfigChecker();
     }
 
 
