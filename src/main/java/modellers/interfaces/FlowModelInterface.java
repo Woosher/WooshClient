@@ -5,6 +5,7 @@ import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Machine;
 import entities.parsing.Node;
+import javafx.collections.ObservableList;
 
 import java.util.List;
 
@@ -14,15 +15,15 @@ public interface FlowModelInterface {
 
     void saveDeployment(String path, final ResultsListener<Void> resultsListener) ;
 
-    void clearDeployment(final ResultsListener<Deployment> resultsListener) ;
+    void clearDeployment(Deployment deployment,final ResultsListener<Deployment> resultsListener) ;
 
-    void addNodeToDeployment(Node node,final ResultsListener<String> resultsListener) ;
+    void addNodeToLoadBalancer(LoadBalancer loadBalancer, String nodeName,final ResultsListener<String> resultsListener) ;
 
-    void removeNodeToDeployment(Node node,final ResultsListener<String> resultsListener) ;
+    void removeNodeFromLoadBalancer(ObservableList<Node> nodes, Node node, final ResultsListener<String> resultsListener) ;
 
-    void addLoadBalancerToDeployment(LoadBalancer loadBalancer,final ResultsListener<String> resultsListener) ;
+    void addLoadBalancerToDeployment(String loadBalancerName,final ResultsListener<String> resultsListener) ;
 
-    void removeLoadBalancerToDeployment(LoadBalancer loadBalancer,final ResultsListener<String> resultsListener) ;
+    void removeLoadBalancerFromDeployment(ObservableList<LoadBalancer> loadBalancers, LoadBalancer loadBalancer,final ResultsListener<String> resultsListener) ;
 
     void addKnownHosts(List<Machine> macs, final ResultsListener<Boolean> resultsListener);
 

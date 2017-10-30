@@ -13,6 +13,7 @@ abstract public class Machine extends Observable {
 
     public void setBashScript(String bashScript) {
         this.bashScript = bashScript;
+        notifyListeners();
     }
 
     public String getUsername() {
@@ -21,6 +22,7 @@ abstract public class Machine extends Observable {
 
     public void setUsername(String username) {
         this.username = username;
+        notifyListeners();
     }
 
     public String getPathCompressed() {
@@ -29,6 +31,7 @@ abstract public class Machine extends Observable {
 
     public void setPathCompressed(String pathCompressed) {
         this.pathCompressed = pathCompressed;
+        notifyListeners();
     }
 
     final public String getName() {
@@ -37,6 +40,7 @@ abstract public class Machine extends Observable {
 
     final public void setName(String name) {
         this.name = name;
+        notifyListeners();
     }
 
     public int getPort() {
@@ -45,6 +49,7 @@ abstract public class Machine extends Observable {
 
     public void setPort(int port) {
         this.port = port;
+        notifyListeners();
     }
 
     final public String getIp() {
@@ -53,6 +58,7 @@ abstract public class Machine extends Observable {
 
     final public void setIp(String ip) {
         this.ip = ip;
+        notifyListeners();
     }
 
     final public String getPassword() {
@@ -61,6 +67,7 @@ abstract public class Machine extends Observable {
 
     final public void setPassword(String password) {
         this.password = password;
+        notifyListeners();
     }
 
     final public int getSSHPort() {
@@ -70,6 +77,12 @@ abstract public class Machine extends Observable {
 
     final public void setSSHPort(int SSHPort) {
         this.SSHPort = SSHPort;
+        notifyListeners();
+    }
+
+    protected void notifyListeners(){
+        setChanged();
+        notifyObservers();
     }
 
 

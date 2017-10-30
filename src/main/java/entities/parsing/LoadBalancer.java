@@ -33,5 +33,6 @@ public class LoadBalancer extends Machine {
     public void setNodes(List<Node> nodes) {
         this.nodes.clear();
         this.nodes.addAll(nodes);
+        notifyListeners();
     }
 }

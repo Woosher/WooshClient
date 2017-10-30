@@ -3,6 +3,7 @@ package modellers;
 import entities.ConnectionInfo;
 import entities.parsing.Machine;
 import iohelpers.interfaces.CheckerInterface;
+import javafx.collections.ObservableList;
 import modellers.interfaces.FlowModelInterface;
 import modellers.interfaces.ResultsListener;
 import entities.parsing.Deployment;
@@ -63,7 +64,6 @@ public class FlowModeller implements FlowModelInterface {
         supplyAsync(() -> {
             try {
                 packagingController.formatToConfigFile(this.deployment,path);
-               // packagingController.readyDeployment(this.deployment);
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -75,28 +75,59 @@ public class FlowModeller implements FlowModelInterface {
 
 
     @Override
-    public void clearDeployment(ResultsListener<Deployment> resultsListener) {
+    public void clearDeployment(Deployment deployment, ResultsListener<Deployment> resultsListener) {
+        supplyAsync(() -> {
+            try {
+                memoryMapper.clearDeployment(deployment);
+            } catch (WooshException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+            return  null;
+        }).thenAccept(a -> { resultsListener.onCompletion(null);}).exceptionally((t) -> {
+            resultsListener.onFailure(t); return null;
+        });
+    }
+
+    @Override
+    public void addNodeToLoadBalancer(LoadBalancer loadBalancer, String nodeName, ResultsListener<String> resultsListener) {
+        try {
+            memoryMapper.addNodeToLoadBalancer(loadBalancer,nodeName);
+            resultsListener.onCompletion("Complete");
+        } catch (WooshException e) {
+            resultsListener.onFailure(e);
+        }
+    }
+
+
+    @Override
+    public void removeNodeFromLoadBalancer(ObservableList<Node> nodes, Node node, ResultsListener<String> resultsListener) {
+        try{
+            memoryMapper.deleteNodeFromLoadBalancer(nodes,node);
+            resultsListener.onCompletion("Complete");
+        } catch (WooshException e) {
+            resultsListener.onFailure(e);
+        }
 
     }
 
     @Override
-    public void addNodeToDeployment(Node node, ResultsListener<String> resultsListener) {
-
+    public void addLoadBalancerToDeployment(String loadBalancerName, ResultsListener<String> resultsListener) {
+        try {
+            memoryMapper.addLoadbalancer(deployment,loadBalancerName);
+            resultsListener.onCompletion("Complete");
+        } catch (WooshException e) {
+            resultsListener.onFailure(e);
+        }
     }
 
     @Override
-    public void removeNodeToDeployment(Node node, ResultsListener<String> resultsListener) {
-
-    }
-
-    @Override
-    public void addLoadBalancerToDeployment(LoadBalancer loadBalancer, ResultsListener<String> resultsListener) {
-
-    }
-
-    @Override
-    public void removeLoadBalancerToDeployment(LoadBalancer loadBalancer, ResultsListener<String> resultsListener) {
-
+    public void removeLoadBalancerFromDeployment(ObservableList<LoadBalancer> loadBalancers, LoadBalancer loadBalancer, ResultsListener<String> resultsListener) {
+        try{
+            memoryMapper.deleteLoadBalancer(loadBalancers,loadBalancer);
+            resultsListener.onCompletion("Complete");
+        } catch (WooshException e) {
+            resultsListener.onFailure(e);
+        }
     }
 
     @Override

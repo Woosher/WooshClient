@@ -24,6 +24,8 @@ public class Deployment extends Observable {
 
     public void setName(String name) {
         this.name = name;
+        setChanged();
+        notifyObservers();
     }
 
     public String getSsl_path() {
@@ -41,6 +43,8 @@ public class Deployment extends Observable {
     public void setLoadBalancers(List<LoadBalancer> loadBalancers) {
         this.loadBalancers.clear();
         this.loadBalancers.addAll(loadBalancers);
+        setChanged();
+        notifyObservers();
     }
 
 }

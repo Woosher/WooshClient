@@ -16,6 +16,7 @@ public class Node extends Machine {
 
     public void setPath(String path) {
         this.path = path;
+        notifyListeners();
     }
 
     public String getEnvironment() {
@@ -24,6 +25,7 @@ public class Node extends Machine {
 
     public void setEnvironment(String environment) {
         this.environment = environment;
+        notifyListeners();
     }
 
     public String getOperatingSystem() {
@@ -32,6 +34,7 @@ public class Node extends Machine {
 
     public void setOperatingSystem(String operatingSystem) {
         this.operatingSystem = operatingSystem;
+        notifyListeners();
     }
 
 }

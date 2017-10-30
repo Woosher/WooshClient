@@ -4,6 +4,7 @@ import controller.subcontrollers.PopupController;
 import controller.subcontrollers.PopupDeployController;
 import controller.subcontrollers.PopupErrorController;
 import entities.ConnectionInfo;
+import javafx.collections.ListChangeListener;
 import modellers.FlowModeller;
 import modellers.interfaces.ResultsListener;
 import entities.parsing.Deployment;
@@ -30,6 +31,9 @@ import tools.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Optional;
 
 
 public class Controller {
@@ -60,12 +64,14 @@ public class Controller {
     private int nodeCount = 0;
     private int loadBalancerCount = 0;
     private Machine currentMachine;
+    private boolean deploymentChanged = false;
     private Deployment deployment;
     private Stage popupStage, popupDeployStage, popupErrorStage;
     private PopupController popupController;
     private PopupDeployController popupDeployController;
     private PopupErrorController popupErrorController;
     private FlowModelInterface model;
+    private Alert alert;
 
 
     @FXML
@@ -101,16 +107,46 @@ public class Controller {
      */
 
     private void handleProjectClose() {
-        this.deployment = null;
-        resetGUI();
-        setupLists();
+        if (deploymentChanged) {
+            createCloseDialog();
+        } else {
+            clearDeployment();
+        }
+    }
 
+    private void clearDeployment() {
+        model.clearDeployment(deployment, new ResultsListener<Deployment>() {
+            @Override
+            public void onCompletion(Deployment result) {
+                resetGUI();
+                setupLists();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                showError(throwable.getMessage());
+            }
+        });
     }
 
     private void handleDeleteNode() {
         if (currentMachine instanceof Node) {
-            nodeListView.getItems().remove(currentMachine);
-            setupNodeList();
+            Platform.runLater(() -> {
+                model.removeNodeFromLoadBalancer(nodeListView.getItems(), (Node) currentMachine, new ResultsListener<String>() {
+                    @Override
+                    public void onCompletion(String result) {
+                        infoLayout.setVisible(false);
+                        setupNodeList();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        showError(throwable.getMessage());
+                    }
+                });
+            });
+        } else {
+            showError("Select a node");
         }
     }
 
@@ -118,12 +154,21 @@ public class Controller {
         if (currentMachine != null) {
             if (currentMachine instanceof LoadBalancer) {
                 Platform.runLater(() -> {
-                    List<Node> nodes = ((LoadBalancer) currentMachine).getNodes();
-                    nodeListView.getItems().removeAll(nodes);
-                    loadBalancerListView.getItems().remove(currentMachine);
-                    currentMachine = null;
-                    setupLists();
+                    model.removeLoadBalancerFromDeployment(loadBalancerListView.getItems(), (LoadBalancer) currentMachine, new ResultsListener<String>() {
+                        @Override
+                        public void onCompletion(String result) {
+                            infoLayout.setVisible(false);
+                            setupLists();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            showError(throwable.getMessage());
+                        }
+                    });
                 });
+            } else {
+                showError("Select a loadbalancer");
             }
         }
     }
@@ -162,9 +207,18 @@ public class Controller {
     private void handleAddNode() {
         LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
         if (currentMachine != null) {
-            Node node = new Node();
-            node.setName("node" + ++nodeCount);
-            loadBalancer.getNodes().add(node);
+            Platform.runLater(() -> {
+                model.addNodeToLoadBalancer(loadBalancer, "node" + ++nodeCount, new ResultsListener<String>() {
+                    @Override
+                    public void onCompletion(String result) {
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        showError(throwable.getMessage());
+                    }
+                });
+            });
         } else {
             showError("You have not selected a loadbalancer");
         }
@@ -178,7 +232,6 @@ public class Controller {
                     deployment = result;
                     putLoadBalancersOnDeployment();
                     setupDeploymentInGui();
-
                 }
 
                 @Override
@@ -200,11 +253,11 @@ public class Controller {
                 @Override
                 public void onCompletion(List<ConnectionInfo> result) {
                     Platform.runLater(() -> {
-                            popupDeployController.setSpinnerVisibility(false);
-                            ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
-                            observableList.addAll(result);
-                            popupDeployController.addInfo(observableList);
-                            popupDeployStage.show();
+                        popupDeployController.setSpinnerVisibility(false);
+                        ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
+                        observableList.addAll(result);
+                        popupDeployController.addInfo(observableList);
+                        popupDeployStage.show();
                     });
                 }
 
@@ -213,7 +266,7 @@ public class Controller {
                     showError(throwable.getMessage());
                 }
             });
-        }else {
+        } else {
             showError("You have nothing inside your deployment");
         }
     }
@@ -234,7 +287,7 @@ public class Controller {
 
                     @Override
                     public void onFailure(Throwable throwable) {
-                        showError(throwable.getMessage());
+                        showError(throwable.getCause().getMessage());
                     }
                 });
             }
@@ -270,6 +323,7 @@ public class Controller {
             public void onCompletion(Boolean result) {
                 resetPopup();
             }
+
             @Override
             public void onFailure(Throwable throwable) {
                 resetPopup();
@@ -286,10 +340,10 @@ public class Controller {
                 @Override
                 public void onCompletion(List<ConnectionInfo> result) {
                     Platform.runLater(() -> {
-                            popupController.setSpinnerVisibility(false);
-                            ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
-                            observableList.addAll(result);
-                            popupController.addInfo(observableList);
+                        popupController.setSpinnerVisibility(false);
+                        ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
+                        observableList.addAll(result);
+                        popupController.addInfo(observableList);
                     });
                 }
 
@@ -298,7 +352,7 @@ public class Controller {
                     showError(throwable.getMessage());
                 }
             });
-        }else {
+        } else {
             showError("You have nothing inside your deployment");
         }
     }
@@ -307,19 +361,26 @@ public class Controller {
      * GUI Update methods
      */
 
-    private void showError(String error){
+    private void showError(String error) {
         Platform.runLater(() -> {
-                popupErrorController.setMessage(error);
-                popupErrorStage.show();
+            popupErrorController.setMessage(error);
+            popupErrorStage.show();
         });
 
     }
 
     private void putLoadBalancersOnDeployment() {
-        LoadBalancer loadBalancer = new LoadBalancer();
-        loadBalancer.setName("loadBalancer" + ++loadBalancerCount);
-        loadBalancer.setCachingAttributes("/temp/attributes/");
-        deployment.getLoadBalancers().add(loadBalancer);
+        model.addLoadBalancerToDeployment("loadBalancer" + ++loadBalancerCount, new ResultsListener<String>() {
+            @Override
+            public void onCompletion(String result) {
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                showError(throwable.getMessage());
+            }
+        });
     }
 
     private void updateInfoLayout(Machine machine) {
@@ -357,6 +418,7 @@ public class Controller {
 
     private void resetGUI() {
         resetPopup();
+        infoLayout.setVisible(false);
         loadBalancerListView.getItems().clear();
         nodeListView.getItems().clear();
         deploymentNameTxt.setText("");
@@ -364,10 +426,52 @@ public class Controller {
 
     private void setupDeploymentInGui() {
         Platform.runLater(() -> {
-                loadBalancerListView.setItems(deployment.getLoadBalancers());
-                deploymentNameTxt.setText(deployment.getName());
-                setupLists();
+            loadBalancerListView.setItems(deployment.getLoadBalancers());
+            deploymentNameTxt.setText(deployment.getName());
+            setupLists();
+            addObservers();
         });
+
+
+    }
+
+    private void addObservers() {
+        deployment.addObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                deploymentChanged = true;
+            }
+        });
+
+        deployment.getLoadBalancers().addListener(new ListChangeListener<LoadBalancer>() {
+            @Override
+            public void onChanged(Change<? extends LoadBalancer> c) {
+                deploymentChanged = true;
+            }
+        });
+
+        for (LoadBalancer loadBalancer : deployment.getLoadBalancers()) {
+            loadBalancer.addObserver(new Observer() {
+                @Override
+                public void update(Observable o, Object arg) {
+                    deploymentChanged = true;
+                }
+            });
+            loadBalancer.getNodes().addListener(new ListChangeListener<Node>() {
+                @Override
+                public void onChanged(Change<? extends Node> c) {
+                    deploymentChanged = true;
+                }
+            });
+            for (Node node : loadBalancer.getNodes()) {
+                node.addObserver(new Observer() {
+                    @Override
+                    public void update(Observable o, Object arg) {
+                        deploymentChanged = true;
+                    }
+                });
+            }
+        }
     }
 
     private void setupLists() {
@@ -413,6 +517,28 @@ public class Controller {
         });
     }
 
+    private void createCloseDialog() {
+        alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Woosh");
+        alert.setHeaderText("You have unsaved changed in your deployment");
+        alert.setContentText("Choose your option.");
+
+        ButtonType buttonTypeOne = new ButtonType("Save");
+        ButtonType buttonTypeTwo = new ButtonType("Close without saving");
+        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonTypeOne) {
+            handleSave();
+        } else if (result.get() == buttonTypeTwo) {
+            clearDeployment();
+        } else {
+            alert.close();
+        }
+    }
+
 
     private void createPopupError() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("popupError.fxml"));
@@ -424,7 +550,7 @@ public class Controller {
         }
         popupErrorStage = new Stage();
         popupErrorStage.initModality(Modality.APPLICATION_MODAL);
-        popupErrorStage.setTitle("Error report");
+        popupErrorStage.setTitle("Woosh");
         popupErrorStage.setScene(new Scene(root1));
         popupErrorStage.setResizable(false);
         popupErrorController = fxmlLoader.getController();
@@ -451,7 +577,7 @@ public class Controller {
         }
         popupDeployStage = new Stage();
         popupDeployStage.initModality(Modality.APPLICATION_MODAL);
-        popupDeployStage.setTitle("Deployment report");
+        popupDeployStage.setTitle("Woosh");
         popupDeployStage.setScene(new Scene(root1));
         popupDeployStage.setResizable(false);
         popupDeployController = fxmlLoader.getController();
@@ -493,8 +619,8 @@ public class Controller {
             @Override
             public void handle(Event event) {
                 Platform.runLater(() -> {
-                        popupController.setListViewDisabled(true);
-                        popupController.setSpinnerVisibility(true);
+                    popupController.setListViewDisabled(true);
+                    popupController.setSpinnerVisibility(true);
                 });
 
                 List<Machine> machines = popupController.getSelectedMachines();
@@ -506,10 +632,10 @@ public class Controller {
 
     private void resetPopup() {
         Platform.runLater(() -> {
-                popupController.setSpinnerVisibility(false);
-                popupController.setListViewDisabled(false);
-                popupController.resetInfo();
-                popupStage.close();
+            popupController.setSpinnerVisibility(false);
+            popupController.setListViewDisabled(false);
+            popupController.resetInfo();
+            popupStage.close();
         });
     }
 
