@@ -1,7 +1,7 @@
-package controller;
+package controller.subcontrollers;
 
+import controller.subcontrollers.listViews.DeployListViewCell;
 import entities.ConnectionInfo;
-import entities.parsing.Machine;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -10,11 +10,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.util.Callback;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class PopupDeployController {
     EventHandler eventHandler;

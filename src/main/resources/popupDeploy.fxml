@@ -4,7 +4,7 @@
 
 <GridPane xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
-          fx:controller="controller.PopupDeployController"
+          fx:controller="controller.subcontrollers.PopupDeployController"
           prefWidth="700" maxWidth="-Infinity" minHeight="-Infinity" minWidth="700">
 
     <columnConstraints>

@@ -1,5 +1,6 @@
-package controller;
+package controller.subcontrollers.listViews;
 
+import controller.subcontrollers.PopupController;
 import entities.ConnectionInfo;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

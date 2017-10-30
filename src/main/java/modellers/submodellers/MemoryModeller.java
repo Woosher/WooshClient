@@ -1,21 +1,17 @@
-package subcontrollers;
+package modellers.submodellers;
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
 import exceptions.WooshException;
-import iohelpers.ConfigChecker;
-import iohelpers.ConfigWriter;
-import iohelpers.interfaces.CheckerInterface;
-import org.json.JSONObject;
-import subcontrollers.interfaces.MapperInterface;
+import modellers.submodellers.interfaces.MapperInterface;
 
 import java.util.List;
 
-public class MemoryMapper implements MapperInterface{
+public class MemoryModeller implements MapperInterface{
 
 
-    public MemoryMapper(){
+    public MemoryModeller(){
 
     }
 

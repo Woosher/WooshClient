@@ -1,4 +1,4 @@
-package subcontrollers;
+package modellers.submodellers;
 
 import entities.ConnectionInfo;
 import entities.parsing.Deployment;
@@ -7,15 +7,14 @@ import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import networking.SSHClient;
-import subcontrollers.interfaces.ConnectionControllerInterface;
-import tools.Utils;
+import modellers.submodellers.interfaces.ConnectionInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static values.Constants.TRUSTED;
 
-public class ConnectionController implements ConnectionControllerInterface {
+public class ConnectionModeller implements ConnectionInterface {
 
     @Override
     public List<ConnectionInfo> testConnections(Deployment deployment){

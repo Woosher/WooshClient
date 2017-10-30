@@ -1,4 +1,4 @@
-package controller;
+package controller.subcontrollers.listViews;
 
 import entities.ConnectionInfo;
 import javafx.event.EventHandler;

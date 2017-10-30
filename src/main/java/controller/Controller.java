@@ -1,5 +1,7 @@
 package controller;
 
+import controller.subcontrollers.PopupController;
+import controller.subcontrollers.PopupDeployController;
 import entities.ConnectionInfo;
 import modellers.FlowModeller;
 import modellers.interfaces.ResultsListener;
@@ -29,7 +31,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class ViewController {
+public class Controller {
 
 
     @FXML

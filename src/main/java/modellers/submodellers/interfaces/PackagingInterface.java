@@ -1,12 +1,8 @@
-package subcontrollers.interfaces;
+package modellers.submodellers.interfaces;
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
-import entities.parsing.Machine;
-import entities.parsing.Node;
 import exceptions.WooshException;
-
-import java.util.List;
 
 public interface PackagingInterface {
 

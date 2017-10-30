@@ -1,4 +1,4 @@
-package subcontrollers.interfaces;
+package modellers.submodellers.interfaces;
 
 import entities.ConnectionInfo;
 import entities.parsing.Deployment;
@@ -7,7 +7,7 @@ import exceptions.WooshException;
 
 import java.util.List;
 
-public interface ConnectionControllerInterface {
+public interface ConnectionInterface {
     List<ConnectionInfo> testConnections(Deployment deployment) throws WooshException;
 
     void addKnownHosts(List<Machine> macs) throws WooshException;

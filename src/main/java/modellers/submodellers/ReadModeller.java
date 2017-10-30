@@ -1,4 +1,4 @@
-package subcontrollers;
+package modellers.submodellers;
 
 import entities.parsing.Deployment;
 import exceptions.WooshException;
@@ -6,13 +6,13 @@ import iohelpers.ConfigReader;
 import iohelpers.interfaces.CheckerInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
-import subcontrollers.interfaces.ReaderInterface;
+import modellers.submodellers.interfaces.ReaderInterface;
 
-public class ReadController implements ReaderInterface {
+public class ReadModeller implements ReaderInterface {
 
     ConfigReader configReader;
 
-    public ReadController(CheckerInterface configChecker){
+    public ReadModeller(CheckerInterface configChecker){
         configReader = new ConfigReader(configChecker);
     }
 

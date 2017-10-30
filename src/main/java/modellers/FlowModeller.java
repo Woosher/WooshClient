@@ -10,14 +10,14 @@ import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import iohelpers.ConfigChecker;
-import subcontrollers.ConnectionController;
-import subcontrollers.MemoryMapper;
-import subcontrollers.PackagingController;
-import subcontrollers.ReadController;
-import subcontrollers.interfaces.ConnectionControllerInterface;
-import subcontrollers.interfaces.MapperInterface;
-import subcontrollers.interfaces.PackagingInterface;
-import subcontrollers.interfaces.ReaderInterface;
+import modellers.submodellers.ConnectionModeller;
+import modellers.submodellers.MemoryModeller;
+import modellers.submodellers.PackagingModeller;
+import modellers.submodellers.ReadModeller;
+import modellers.submodellers.interfaces.ConnectionInterface;
+import modellers.submodellers.interfaces.MapperInterface;
+import modellers.submodellers.interfaces.PackagingInterface;
+import modellers.submodellers.interfaces.ReaderInterface;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -28,17 +28,17 @@ public class FlowModeller implements FlowModelInterface {
 
     private ReaderInterface readController;
     private PackagingInterface packagingController;
-    private ConnectionControllerInterface connectionController;
+    private ConnectionInterface connectionController;
     private MapperInterface memoryMapper;
     private CheckerInterface configChecker;
     private Deployment deployment;
 
     public FlowModeller(){
         configChecker = new ConfigChecker();
-        packagingController = new PackagingController(configChecker);
-        connectionController = new ConnectionController();
-        memoryMapper = new MemoryMapper();
-        readController = new ReadController(configChecker);
+        packagingController = new PackagingModeller(configChecker);
+        connectionController = new ConnectionModeller();
+        memoryMapper = new MemoryModeller();
+        readController = new ReadModeller(configChecker);
         deployment = null;
     }
 

@@ -1,9 +1,8 @@
-package subcontrollers;
+package modellers.submodellers;
 
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
-import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import iohelpers.ConfigWriter;
@@ -12,8 +11,7 @@ import iohelpers.interfaces.CheckerInterface;
 import iohelpers.interfaces.ScripterInterface;
 import iohelpers.interfaces.WriterInterface;
 import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
-import subcontrollers.interfaces.PackagingInterface;
+import modellers.submodellers.interfaces.PackagingInterface;
 import tools.Utils;
 
 import java.io.File;
@@ -22,12 +20,12 @@ import java.io.IOException;
 
 import static values.Constants.*;
 
-public class PackagingController implements PackagingInterface {
+public class PackagingModeller implements PackagingInterface {
 
     private WriterInterface configWriter;
     private ScripterInterface scripter;
 
-    public PackagingController(CheckerInterface configChecker){
+    public PackagingModeller(CheckerInterface configChecker){
         configWriter = new ConfigWriter(configChecker);
         scripter = new Scripter();
     }

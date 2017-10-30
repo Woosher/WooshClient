@@ -1,15 +1,13 @@
-package controller;
+package controller.subcontrollers;
 
+import controller.subcontrollers.listViews.InfoListViewCell;
 import entities.ConnectionInfo;
 import entities.parsing.Machine;
-import entities.parsing.Node;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
-import tools.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package subcontrollers.interfaces;
+package modellers.submodellers.interfaces;
 
 import entities.parsing.Deployment;
 import exceptions.WooshException;
