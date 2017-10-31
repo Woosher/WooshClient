@@ -27,22 +27,24 @@ public class ConnectionModeller implements ConnectionInterface {
     public List<ConnectionInfo> testConnections(Deployment deployment){
         List<ConnectionInfo> list = new ArrayList<>();
         String status = TRUSTED;
-        for (LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
+        for (Machine machine: deployment.getMachines()) {
             try {
-                sshClient.testConnection(loadBalancer);
+                sshClient.testConnection(machine);
             } catch (WooshException e) {
                 status = e.getMessage();
             }
-            list.add(new ConnectionInfo(loadBalancer,status));
+            list.add(new ConnectionInfo(machine,status));
             //Nodes
-            for (Node node: loadBalancer.getNodes()) {
-                status = TRUSTED;
-                try {
-                    sshClient.testConnection(node);
-                } catch (WooshException e) {
-                    status = e.getMessage();
+            if(machine instanceof LoadBalancer) {
+                for (Node node : ((LoadBalancer)machine).getNodes()) {
+                    status = TRUSTED;
+                    try {
+                        sshClient.testConnection(node);
+                    } catch (WooshException e) {
+                        status = e.getMessage();
+                    }
+                    list.add(new ConnectionInfo(node, status));
                 }
-                list.add(new ConnectionInfo(node,status));
             }
         }
         return list;

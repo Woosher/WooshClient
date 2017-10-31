@@ -85,9 +85,13 @@ public class ConfigChecker implements CheckerInterface {
             Udbyg så den kan tjekke en node stack også
          */
         Stack<Machine> machines = new Stack<>();
-        machines.addAll(deployment.getLoadBalancers());
-        for(LoadBalancer loadBalancer: deployment.getLoadBalancers()){
-            machines.addAll(loadBalancer.getNodes());
+        machines.addAll(deployment.getMachines());
+        for(Machine machine: deployment.getMachines()){
+            if(machine instanceof LoadBalancer) {
+                machines.addAll(((LoadBalancer)machine).getNodes());
+            }
+            machines.add(machine);
+
         }
         Machine firstMachine = machines.pop();
         checkMachineStack(firstMachine, machines);
@@ -115,12 +119,17 @@ public class ConfigChecker implements CheckerInterface {
         if(deployment.getSsl_path() == null){
             errorMsg += "You have no SSL path \n";
         }
-        if(deployment.getLoadBalancers() != null){
-            if(deployment.getLoadBalancers().isEmpty()){
-                errorMsg += "You have no loadbalancers \n";
+        if(deployment.getMachines() != null){
+            if(deployment.getMachines().isEmpty()){
+                errorMsg += "You have no machines \n";
             }else {
-                for(LoadBalancer loadBalancer : deployment.getLoadBalancers()){
-                    errorMsg += checkLoadBalancerAttributes(loadBalancer);
+                for(Machine machine : deployment.getMachines()){
+                    if(machine instanceof LoadBalancer){
+                        errorMsg += checkLoadBalancerAttributes((LoadBalancer)machine);
+                    }else{
+                        errorMsg += checkNodeAttributes((Node)machine);
+                    }
+
                 }
             }
         }

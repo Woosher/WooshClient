@@ -2,6 +2,7 @@ package modellers.submodellers;
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
+import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import javafx.collections.ObservableList;
@@ -39,15 +40,24 @@ public class MemoryModeller implements MapperInterface{
         LoadBalancer loadBalancer = new LoadBalancer();
         loadBalancer.setName(loadBalancerName);
         loadBalancer.setCachingAttributes("/temp/attributes/");
-        deployment.getLoadBalancers().add(loadBalancer);
+        deployment.getMachines().add(loadBalancer);
     }
 
     @Override
-    public void deleteLoadBalancer(ObservableList<LoadBalancer> loadBalancers, LoadBalancer loadBalancer) throws WooshException {
-        List<Node> nodes = loadBalancer.getNodes();
-        nodes.removeAll(nodes);
-        loadBalancers.remove(loadBalancer);
-        loadBalancer = null;
+    public void addNode(Deployment deployment, String nodeName) throws WooshException {
+        Node node = new Node();
+        node.setName(nodeName);
+        deployment.getMachines().add(node);
+    }
+
+    @Override
+    public void deleteMachine(ObservableList<Machine> machines, Machine machine) throws WooshException {
+        if(machine instanceof LoadBalancer){
+            List<Node> nodes = ((LoadBalancer)machine).getNodes();
+            nodes.removeAll(nodes);
+        }
+        machines.remove(machine);
+        machine = null;
     }
 
     @Override

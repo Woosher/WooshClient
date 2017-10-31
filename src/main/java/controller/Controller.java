@@ -26,7 +26,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.*;
 import javafx.util.Callback;
 import modellers.interfaces.FlowModelInterface;
-import tools.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +42,7 @@ public class Controller {
     MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem, addLoadBalancerMenuItem;
 
     @FXML
-    ListView<LoadBalancer> loadBalancerListView;
+    ListView<Machine> machineListView;
 
     @FXML
     ListView<Node> nodeListView;
@@ -58,11 +57,11 @@ public class Controller {
     HBox innerBox1, innerBox2, addLoadBalancerBox;
 
     @FXML
-    Button saveInfoButton, addNodeButton, toolsAddLb, toolsDelLb, toolsAddNode, toolsDelNode;
+    Button saveInfoButton, addNodeButton, toolsAddLb, toolsDelLb, toolsAddNode, toolsDelNode, toolsAddNodeToLb, toolsDelNodeFromLb;
 
 
     private int nodeCount = 0;
-    private int loadBalancerCount = 0;
+    private int MachinesCount = 0;
     private Machine currentMachine;
     private boolean deploymentChanged = false;
     private Deployment deployment;
@@ -86,16 +85,18 @@ public class Controller {
         deployMenuItem.setOnAction(event -> handleDeploy());
         closeMenuItem.setOnAction(event -> handleProjectClose());
         connectionTestMenuItem.setOnAction(event -> handleTestConnections());
-        addLoadBalancerMenuItem.setOnAction(event -> handleAddLoadBalancer());
-        addLoadBalancerBox.setOnMouseClicked(event -> handleAddLoadBalancer());
-        loadBalancerListView.setOnMouseClicked(event -> handleLoadBalancerClick());
+        addLoadBalancerMenuItem.setOnAction(event -> handleAddLoadbalancer());
+        addLoadBalancerBox.setOnMouseClicked(event -> handleAddLoadbalancer());
+        machineListView.setOnMouseClicked(event -> handleMachineClick());
         nodeListView.setOnMouseClicked(event -> handleNodeClick());
         saveInfoButton.setOnMouseClicked(event -> handleSaveInfo());
-        addNodeButton.setOnMouseClicked(event -> handleAddNode());
+        addNodeButton.setOnMouseClicked(event -> handleAddNodeToLb());
         toolsAddNode.setOnMouseClicked(event -> handleAddNode());
-        toolsAddLb.setOnMouseClicked(event -> handleAddLoadBalancer());
+        toolsAddLb.setOnMouseClicked(event -> handleAddLoadbalancer());
         toolsDelNode.setOnMouseClicked(event -> handleDeleteNode());
         toolsDelLb.setOnMouseClicked(event -> handleDeleteLoadbalancer());
+        toolsAddNodeToLb.setOnMouseClicked(event -> handleAddNodeToLb());
+        toolsDelNodeFromLb.setOnMouseClicked(event -> handleDeleteNodeFromLb());
         setupLists();
         createPopup();
         createPopupDeploy();
@@ -129,7 +130,7 @@ public class Controller {
         });
     }
 
-    private void handleDeleteNode() {
+    private void handleDeleteNodeFromLb() {
         if (currentMachine instanceof Node) {
             Platform.runLater(() -> {
                 model.removeNodeFromLoadBalancer(nodeListView.getItems(), (Node) currentMachine, new ResultsListener<String>() {
@@ -154,7 +155,7 @@ public class Controller {
         if (currentMachine != null) {
             if (currentMachine instanceof LoadBalancer) {
                 Platform.runLater(() -> {
-                    model.removeLoadBalancerFromDeployment(loadBalancerListView.getItems(), (LoadBalancer) currentMachine, new ResultsListener<String>() {
+                    model.removeMachineFromDeployment(machineListView.getItems(), currentMachine, new ResultsListener<String>() {
                         @Override
                         public void onCompletion(String result) {
                             infoLayout.setVisible(false);
@@ -178,14 +179,16 @@ public class Controller {
         updateInfoLayout(node);
     }
 
-    private void handleLoadBalancerClick() {
+    private void handleMachineClick() {
         setupNodeList();
-        LoadBalancer loadBalancer = loadBalancerListView.getSelectionModel().getSelectedItem();
-        if (loadBalancer != null) {
-            ObservableList<Node> nodes = loadBalancer.getNodes();
-            updateInfoLayout(loadBalancer);
+        Machine machine = machineListView.getSelectionModel().getSelectedItem();
+        if (machine != null && machine instanceof LoadBalancer) {
+            ObservableList<Node> nodes = ((LoadBalancer)machine).getNodes();
             nodeListView.setItems(nodes);
+        }else{
+            nodeListView.setItems(null);
         }
+        updateInfoLayout(machine);
     }
 
     private void handleSaveInfo() {
@@ -204,9 +207,9 @@ public class Controller {
         setupLists();
     }
 
-    private void handleAddNode() {
-        LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
-        if (currentMachine != null) {
+    private void handleAddNodeToLb() {
+        if (currentMachine != null && currentMachine instanceof LoadBalancer) {
+            LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
             Platform.runLater(() -> {
                 model.addNodeToLoadBalancer(loadBalancer, "node" + ++nodeCount, new ResultsListener<String>() {
                     @Override
@@ -224,13 +227,13 @@ public class Controller {
         }
     }
 
-    private void handleAddLoadBalancer() {
+    private void handleAddNode() {
         if (deployment == null) {
             model.createNewDeployment(deploymentNameTxt.getText(), new ResultsListener<Deployment>() {
                 @Override
                 public void onCompletion(Deployment result) {
                     deployment = result;
-                    putLoadBalancersOnDeployment();
+                    putNodeOnDeployment();
                     setupDeploymentInGui();
                 }
 
@@ -240,7 +243,50 @@ public class Controller {
                 }
             });
         } else {
-            putLoadBalancersOnDeployment();
+            putNodeOnDeployment();
+        }
+    }
+
+    private void handleDeleteNode(){
+        if (currentMachine != null) {
+            if (currentMachine instanceof Node) {
+                Platform.runLater(() -> {
+                    model.removeMachineFromDeployment(machineListView.getItems(), (Node) currentMachine, new ResultsListener<String>() {
+                        @Override
+                        public void onCompletion(String result) {
+                            infoLayout.setVisible(false);
+                            setupLists();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            showError(throwable.getMessage());
+                        }
+                    });
+                });
+            } else {
+                showError("Select a loadbalancer");
+            }
+        }
+    }
+
+    private void handleAddLoadbalancer() {
+        if (deployment == null) {
+            model.createNewDeployment(deploymentNameTxt.getText(), new ResultsListener<Deployment>() {
+                @Override
+                public void onCompletion(Deployment result) {
+                    deployment = result;
+                    putLoadbalancerOnDeployment();
+                    setupDeploymentInGui();
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    showError(throwable.getMessage());
+                }
+            });
+        } else {
+            putLoadbalancerOnDeployment();
         }
     }
 
@@ -369,8 +415,22 @@ public class Controller {
 
     }
 
-    private void putLoadBalancersOnDeployment() {
-        model.addLoadBalancerToDeployment("loadBalancer" + ++loadBalancerCount, new ResultsListener<String>() {
+    private void putNodeOnDeployment(){
+        model.addNodeToDeployment("Node" + ++MachinesCount, new ResultsListener<String>() {
+            @Override
+            public void onCompletion(String result) {
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                showError(throwable.getMessage());
+            }
+        });
+    }
+
+    private void putLoadbalancerOnDeployment() {
+        model.addLoadBalancerToDeployment("Loadbalancer" + ++MachinesCount, new ResultsListener<String>() {
             @Override
             public void onCompletion(String result) {
 
@@ -419,14 +479,14 @@ public class Controller {
     private void resetGUI() {
         resetPopup();
         infoLayout.setVisible(false);
-        loadBalancerListView.getItems().clear();
+        machineListView.getItems().clear();
         nodeListView.getItems().clear();
         deploymentNameTxt.setText("");
     }
 
     private void setupDeploymentInGui() {
         Platform.runLater(() -> {
-            loadBalancerListView.setItems(deployment.getLoadBalancers());
+            machineListView.setItems(deployment.getMachines());
             deploymentNameTxt.setText(deployment.getName());
             setupLists();
             addObservers();
@@ -443,50 +503,53 @@ public class Controller {
             }
         });
 
-        deployment.getLoadBalancers().addListener(new ListChangeListener<LoadBalancer>() {
+        deployment.getMachines().addListener(new ListChangeListener<Machine>() {
             @Override
-            public void onChanged(Change<? extends LoadBalancer> c) {
+            public void onChanged(Change<? extends Machine> c) {
                 deploymentChanged = true;
             }
         });
 
-        for (LoadBalancer loadBalancer : deployment.getLoadBalancers()) {
-            loadBalancer.addObserver(new Observer() {
+        for (Machine machine : deployment.getMachines()) {
+            machine.addObserver(new Observer() {
                 @Override
                 public void update(Observable o, Object arg) {
                     deploymentChanged = true;
                 }
             });
-            loadBalancer.getNodes().addListener(new ListChangeListener<Node>() {
-                @Override
-                public void onChanged(Change<? extends Node> c) {
-                    deploymentChanged = true;
-                }
-            });
-            for (Node node : loadBalancer.getNodes()) {
-                node.addObserver(new Observer() {
+            if(machine instanceof LoadBalancer) {
+                LoadBalancer loadBalancer = (LoadBalancer) machine;
+                loadBalancer.getNodes().addListener(new ListChangeListener<Node>() {
                     @Override
-                    public void update(Observable o, Object arg) {
+                    public void onChanged(Change<? extends Node> c) {
                         deploymentChanged = true;
                     }
                 });
+                for (Node node : loadBalancer.getNodes()) {
+                    node.addObserver(new Observer() {
+                        @Override
+                        public void update(Observable o, Object arg) {
+                            deploymentChanged = true;
+                        }
+                    });
+                }
             }
         }
     }
 
     private void setupLists() {
-        setupLoadbalancerList();
+        setupMachineList();
         setupNodeList();
     }
 
-    private void setupLoadbalancerList() {
-        loadBalancerListView.setCellFactory(new Callback<ListView<LoadBalancer>, ListCell<LoadBalancer>>() {
+    private void setupMachineList() {
+        machineListView.setCellFactory(new Callback<ListView<Machine>, ListCell<Machine>>() {
             @Override
-            public ListCell<LoadBalancer> call(ListView<LoadBalancer> param) {
-                ListCell<LoadBalancer> cell = new ListCell<LoadBalancer>() {
+            public ListCell<Machine> call(ListView<Machine> param) {
+                ListCell<Machine> cell = new ListCell<Machine>() {
 
                     @Override
-                    protected void updateItem(LoadBalancer item, boolean empty) {
+                    protected void updateItem(Machine item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item != null) {
                             setText(item.getName());

@@ -2,6 +2,7 @@ package modellers.submodellers.interfaces;
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
+import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import javafx.collections.ObservableList;
@@ -17,7 +18,9 @@ public interface MapperInterface {
 
     void addLoadbalancer(Deployment deployment, String loadBalancer) throws WooshException;
 
-    void deleteLoadBalancer(ObservableList<LoadBalancer> loadBalancers, LoadBalancer loadBalancer) throws WooshException;
+    void deleteMachine(ObservableList<Machine> machines, Machine machine) throws WooshException;
+
+    void addNode(Deployment deployment, String loadBalancer) throws WooshException;
 
     void deleteNodeFromLoadBalancer(ObservableList<Node> nodes, Node node) throws WooshException;
 

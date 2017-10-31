@@ -32,17 +32,17 @@
                 <HBox alignment="CENTER">
                     <VBox>
                         <HBox spacing="50">
-                            <Label fx:id="LoadBalancers" text="LoadBalancers"></Label>
+                            <Label fx:id="Machines" text="Machines"></Label>
                             <HBox fx:id="addLoadBalancerBox">
                                 <ImageView fitHeight="15" fitWidth="15" >
                                     <Image url="if_plus_214640.png" />
                                 </ImageView>
                             </HBox>
                         </HBox>
-                        <ListView fx:id="loadBalancerListView"></ListView>
+                        <ListView fx:id="machineListView"></ListView>
                     </VBox>
                     <VBox>
-                        <Label fx:id="Machines" text="Nodes"></Label>
+                        <Label fx:id="Nodes" text="Loadbalanced nodes"></Label>
                         <ListView fx:id="nodeListView"></ListView>
                     </VBox>
                 </HBox>
@@ -61,6 +61,8 @@
                         <Button fx:id="toolsDelLb" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Delete Loadbalancer"/>
                         <Button fx:id="toolsAddNode" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Add node"/>
                         <Button fx:id="toolsDelNode" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Delete node"/>
+                        <Button fx:id="toolsAddNodeToLb" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Add node to Loadbalancer"/>
+                        <Button fx:id="toolsDelNodeFromLb" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Delete node from Loadbalancer"/>
                     </VBox>
                 </HBox>
         </ScrollPane>

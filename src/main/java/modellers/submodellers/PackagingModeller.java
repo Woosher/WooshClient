@@ -3,6 +3,7 @@ package modellers.submodellers;
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
+import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import iohelpers.ConfigWriter;
@@ -40,10 +41,14 @@ public class PackagingModeller implements PackagingInterface {
         try {
             String path = FULLTEMPPATH + deployment.getName() + "/";
             Utils.generateSimpleFolder(path);
-            for(LoadBalancer loadBalancer: deployment.getLoadBalancers()) {
-                updateAndSaveLb(loadBalancer, path);
-                for(Node node : loadBalancer.getNodes()){
-                    updateAndSaveNode(node,path);
+            for(Machine machine: deployment.getMachines()) {
+                if(machine instanceof LoadBalancer) {
+                    updateAndSaveLb((LoadBalancer)machine, path);
+                    for (Node node : ((LoadBalancer)machine).getNodes()) {
+                        updateAndSaveNode(node, path);
+                    }
+                }else{
+                    updateAndSaveNode((Node)machine,path);
                 }
             }
         } catch (IOException e) {

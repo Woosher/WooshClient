@@ -2,7 +2,6 @@ package modellers;
 
 import entities.ConnectionInfo;
 import entities.parsing.Machine;
-import iohelpers.interfaces.CheckerInterface;
 import javafx.collections.ObservableList;
 import modellers.interfaces.FlowModelInterface;
 import modellers.interfaces.ResultsListener;
@@ -10,7 +9,6 @@ import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
 import entities.parsing.Node;
 import exceptions.WooshException;
-import iohelpers.ConfigChecker;
 import modellers.submodellers.ConnectionModeller;
 import modellers.submodellers.MemoryModeller;
 import modellers.submodellers.PackagingModeller;
@@ -107,9 +105,9 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void addLoadBalancerToDeployment(String loadBalancerName, ResultsListener<String> resultsListener) {
+    public void addNodeToDeployment(String machineName, ResultsListener<String> resultsListener){
         try {
-            memoryMapper.addLoadbalancer(deployment,loadBalancerName);
+            memoryMapper.addNode(deployment,machineName);
             resultsListener.onCompletion("Complete");
         } catch (WooshException e) {
             resultsListener.onFailure(e);
@@ -117,9 +115,19 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void removeLoadBalancerFromDeployment(ObservableList<LoadBalancer> loadBalancers, LoadBalancer loadBalancer, ResultsListener<String> resultsListener) {
+    public void addLoadBalancerToDeployment(String machineName, ResultsListener<String> resultsListener) {
+        try {
+            memoryMapper.addLoadbalancer(deployment,machineName);
+            resultsListener.onCompletion("Complete");
+        } catch (WooshException e) {
+            resultsListener.onFailure(e);
+        }
+    }
+
+    @Override
+    public void removeMachineFromDeployment(ObservableList<Machine> machines, Machine machine, ResultsListener<String> resultsListener) {
         try{
-            memoryMapper.deleteLoadBalancer(loadBalancers,loadBalancer);
+            memoryMapper.deleteMachine(machines,machine);
             resultsListener.onCompletion("Complete");
         } catch (WooshException e) {
             resultsListener.onFailure(e);
@@ -193,10 +201,12 @@ public class FlowModeller implements FlowModelInterface {
         }
 
         Stack<Machine> machines = new Stack<>();
-        for(LoadBalancer loadBalancer: deployment.getLoadBalancers()){
-            machines.addAll(loadBalancer.getNodes());
+        for(Machine machine: deployment.getMachines()){
+            if(machine instanceof LoadBalancer){
+                machines.addAll(((LoadBalancer)machine).getNodes());
+            }
         }
-        machines.addAll(deployment.getLoadBalancers());
+        machines.addAll(deployment.getMachines());
 
         int numOfMachines = machines.size();
 

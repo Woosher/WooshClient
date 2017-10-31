@@ -12,10 +12,10 @@ import java.util.Observable;
 public class Deployment extends Observable {
 
     private String name, ssl_path;
-    private ObservableList<LoadBalancer> loadBalancers;
+    private ObservableList<Machine> machines;
 
     public Deployment(){
-        loadBalancers = FXCollections.observableArrayList();
+        machines = FXCollections.observableArrayList();
     }
 
     public String getName() {
@@ -36,13 +36,13 @@ public class Deployment extends Observable {
         this.ssl_path = ssl_path;
     }
 
-    public ObservableList<LoadBalancer> getLoadBalancers() {
-        return loadBalancers;
+    public ObservableList<Machine> getMachines() {
+        return machines;
     }
 
-    public void setLoadBalancers(List<LoadBalancer> loadBalancers) {
-        this.loadBalancers.clear();
-        this.loadBalancers.addAll(loadBalancers);
+    public void setMachines(List<Machine> machines) {
+        this.machines.clear();
+        this.machines.addAll(machines);
         setChanged();
         notifyObservers();
     }

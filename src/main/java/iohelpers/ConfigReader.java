@@ -2,6 +2,7 @@ package iohelpers;
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
+import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import iohelpers.interfaces.CheckerInterface;
@@ -26,16 +27,21 @@ public class ConfigReader implements ConfigReaderInterface {
 
     public Deployment parseFromJSON(JSONObject jsonObject){
         Deployment deployment = new Deployment();
-        List<LoadBalancer> loadBalancers = new ArrayList<LoadBalancer>();
+        List<Machine> machines = new ArrayList<>();
         deployment.setName(jsonObject.getString("deployment_name"));
         deployment.setSsl_path(jsonObject.getString("ssl_path"));
-        JSONArray loadBalancersJson = jsonObject.getJSONArray("loadbalancers");
-        for(int i = 0; i<loadBalancersJson.length(); i++){
-            JSONObject loadBalancerJSON = loadBalancersJson.getJSONObject(i);
-            LoadBalancer loadBalancer = parseLoadBalancerFromJSON(loadBalancerJSON);
-            loadBalancers.add(loadBalancer);
+        JSONArray machinesJson = jsonObject.getJSONArray("machines");
+        for(int i = 0; i<machinesJson.length(); i++){
+            JSONObject machineJSON = machinesJson.getJSONObject(i);
+            if(machineJSON.getString("type").equals("loadbalancer")){
+                LoadBalancer loadBalancer = parseLoadBalancerFromJSON(machineJSON);
+                machines.add(loadBalancer);
+            }else{
+                Node node = parseNodeFromJSON(machineJSON);
+                machines.add(node);
+            }
         }
-        deployment.setLoadBalancers(loadBalancers);
+        deployment.setMachines(machines);
 
         return deployment;
     }

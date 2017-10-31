@@ -23,7 +23,9 @@ public interface FlowModelInterface {
 
     void addLoadBalancerToDeployment(String loadBalancerName,final ResultsListener<String> resultsListener) ;
 
-    void removeLoadBalancerFromDeployment(ObservableList<LoadBalancer> loadBalancers, LoadBalancer loadBalancer,final ResultsListener<String> resultsListener) ;
+    void addNodeToDeployment(String loadBalancerName,final ResultsListener<String> resultsListener);
+
+    void removeMachineFromDeployment(ObservableList<Machine> machines, Machine machine, final ResultsListener<String> resultsListener) ;
 
     void addKnownHosts(List<Machine> macs, final ResultsListener<Boolean> resultsListener);
 

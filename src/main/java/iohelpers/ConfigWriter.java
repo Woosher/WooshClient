@@ -2,6 +2,7 @@ package iohelpers;
 
 import entities.parsing.Deployment;
 import entities.parsing.LoadBalancer;
+import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
 import iohelpers.interfaces.CheckerInterface;
@@ -52,17 +53,24 @@ public class ConfigWriter implements WriterInterface{
         JSONArray jsonArray = new JSONArray();
         jsonObject.put("deployment_name", deployment.getName());
         jsonObject.put("ssl_path", deployment.getSsl_path());
-        for(LoadBalancer loadBalancer : deployment.getLoadBalancers()){
-            JSONObject loadBalancerJson = parseLoadBalancer(loadBalancer);
-            jsonArray.put(loadBalancerJson);
+        for(Machine machine : deployment.getMachines()){
+            if(machine instanceof LoadBalancer){
+                JSONObject loadBalancerJson = parseLoadBalancer((LoadBalancer)machine);
+                jsonArray.put(loadBalancerJson);
+            }else{
+                JSONObject nodeJson = parseNode((Node) machine);
+                jsonArray.put(nodeJson);
+            }
+
         }
-        jsonObject.put("loadbalancers", jsonArray);
+        jsonObject.put("machines", jsonArray);
         return jsonObject;
     }
 
     private JSONObject parseLoadBalancer(LoadBalancer loadBalancer){
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
+        jsonObject.put("type","loadbalancer");
         jsonObject.put("name",loadBalancer.getName());
         jsonObject.put("username",loadBalancer.getUsername());
         jsonObject.put("ip", loadBalancer.getIp());
@@ -84,6 +92,7 @@ public class ConfigWriter implements WriterInterface{
 
     private JSONObject parseNode(Node node){
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type","node");
         jsonObject.put("ip", node.getIp());
         jsonObject.put("port", node.getPort());
         jsonObject.put("sshport", node.getSSHPort());
