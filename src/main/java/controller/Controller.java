@@ -48,13 +48,16 @@ public class Controller {
     ListView<Node> nodeListView;
 
     @FXML
-    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, passwordTxt, pathTxt, osTxt, envTxt, nodeNumberTxt, deploymentNameTxt;
+    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, passwordTxt, pathTxt, osTxt, nodeNumberTxt, deploymentNameTxt;
 
     @FXML
     VBox infoLayout, nodeExtraInfo, loadBalancerExtraInfo;
 
     @FXML
     HBox innerBox1, innerBox2, addLoadBalancerBox;
+
+    @FXML
+    ComboBox<String> envBox;
 
     @FXML
     Button saveInfoButton, addNodeButton, toolsAddLb, toolsDelLb, toolsAddNode, toolsDelNode, toolsAddNodeToLb, toolsDelNodeFromLb;
@@ -116,9 +119,10 @@ public class Controller {
     }
 
     private void clearDeployment() {
-        model.clearDeployment(deployment, new ResultsListener<Deployment>() {
+        model.clearDeployment(new ResultsListener<Deployment>() {
             @Override
             public void onCompletion(Deployment result) {
+                deployment = result;
                 resetGUI();
                 setupLists();
             }
@@ -201,29 +205,33 @@ public class Controller {
         if (currentMachine instanceof Node) {
             Node node = (Node) currentMachine;
             node.setPath(pathTxt.getText());
-            node.setEnvironment(envTxt.getText());
+            String env = envBox.getSelectionModel().getSelectedItem();
+            System.out.println(envBox.getSelectionModel().getSelectedItem());
+            node.setEnvironment(env);
             node.setOperatingSystem(osTxt.getText());
         }
         setupLists();
     }
 
     private void handleAddNodeToLb() {
-        if (currentMachine != null && currentMachine instanceof LoadBalancer) {
-            LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
-            Platform.runLater(() -> {
-                model.addNodeToLoadBalancer(loadBalancer, "node" + ++nodeCount, new ResultsListener<String>() {
-                    @Override
-                    public void onCompletion(String result) {
-                    }
+        if (deployment != null) {
+            if (currentMachine != null && currentMachine instanceof LoadBalancer) {
+                LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
+                Platform.runLater(() -> {
+                    model.addNodeToLoadBalancer(loadBalancer, "node" + ++nodeCount, new ResultsListener<String>() {
+                        @Override
+                        public void onCompletion(String result) {
+                        }
 
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        showError(throwable.getMessage());
-                    }
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            showError(throwable.getMessage());
+                        }
+                    });
                 });
-            });
-        } else {
-            showError("You have not selected a loadbalancer");
+            } else {
+                showError("You have not selected a loadbalancer");
+            }
         }
     }
 
@@ -416,17 +424,19 @@ public class Controller {
     }
 
     private void putNodeOnDeployment(){
-        model.addNodeToDeployment("Node" + ++MachinesCount, new ResultsListener<String>() {
-            @Override
-            public void onCompletion(String result) {
+        if(deployment != null){
+            model.addNodeToDeployment("Node" + ++MachinesCount, new ResultsListener<String>() {
+                @Override
+                public void onCompletion(String result) {
 
-            }
+                }
 
-            @Override
-            public void onFailure(Throwable throwable) {
-                showError(throwable.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Throwable throwable) {
+                    showError(throwable.getMessage());
+                }
+            });
+        }
     }
 
     private void putLoadbalancerOnDeployment() {
@@ -471,9 +481,22 @@ public class Controller {
                 loadBalancerExtraInfo.setManaged(false);
                 osTxt.setText(node.getOperatingSystem());
                 pathTxt.setText(node.getPath());
-                envTxt.setText(node.getEnvironment());
+                envBox.getSelectionModel().select(getIndexForString(node.getEnvironment()));
             }
         }
+    }
+
+    private int getIndexForString(String environment){
+        if(environment != null){
+            List<String> items = envBox.getItems();
+            for(int i = 0; i<items.size(); i++){
+                String option = items.get(i);
+                if(environment.equals(option)){
+                    return i;
+                }
+            }
+        }
+        return 0;
     }
 
     private void resetGUI() {

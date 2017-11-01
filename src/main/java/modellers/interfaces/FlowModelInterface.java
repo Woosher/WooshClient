@@ -15,7 +15,7 @@ public interface FlowModelInterface {
 
     void saveDeployment(String path, final ResultsListener<Void> resultsListener) ;
 
-    void clearDeployment(Deployment deployment,final ResultsListener<Deployment> resultsListener) ;
+    void clearDeployment(final ResultsListener<Deployment> resultsListener) ;
 
     void addNodeToLoadBalancer(LoadBalancer loadBalancer, String nodeName,final ResultsListener<String> resultsListener) ;
 

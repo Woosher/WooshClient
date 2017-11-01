@@ -33,7 +33,7 @@ public class Constants {
 
     public static final String ENVIRONMENT_JAVA = "JAVA";
     public static final String ENVIRONMENT_PYTHON = "PYTHON";
-    public static final String ENVIRONMENT_CSHARP = "CSHARP";
+    public static final String ENVIRONMENT_CSHARP = "C#";
     public static final String ENVIRONMENT_RUBY = "RUBY";
 
 

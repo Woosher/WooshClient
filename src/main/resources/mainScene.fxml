@@ -17,6 +17,9 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <BorderPane fx:id="parent" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.Controller">
     <center>
@@ -117,7 +120,19 @@
                     <TextField fx:id="osTxt" ></TextField>
 
                     <Label fx:id="envLabel" text="Programming Environment"></Label>
-                    <TextField fx:id="envTxt" ></TextField>
+                    <ComboBox fx:id="envBox">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="JAVA" />
+                                <String fx:value="RUBY" />
+                                <String fx:value="C#" />
+                                <String fx:value="PYTHON" />
+                            </FXCollections>
+                        </items>
+                        <value>
+                            <String fx:value="JAVA" />
+                        </value>
+                    </ComboBox>
 
                 </VBox>
 
