@@ -82,9 +82,7 @@ public class ConfigWriter implements WriterInterface{
 
         for(Node node : loadBalancer.getNodes()){
             JSONObject jsonNodeInfo = parseNode(node);
-            JSONObject jsonNode = new JSONObject();
-            jsonNode.put("node", jsonNodeInfo);
-            jsonArray.put(jsonNode);
+            jsonArray.put(jsonNodeInfo);
         }
 
         jsonObject.put("nodes", jsonArray);
