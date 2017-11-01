@@ -60,7 +60,7 @@ public class Controller {
     ComboBox<String> envBox;
 
     @FXML
-    Button saveInfoButton, addNodeButton, toolsAddLb, toolsDelLb, toolsAddNode, toolsDelNode, toolsAddNodeToLb, toolsDelNodeFromLb;
+    Button saveInfoButton, addNodeButton, toolsAddLb, toolsAddNode, toolsDelMachine, toolsAddNodeToLb;
 
 
     private int nodeCount = 0;
@@ -96,10 +96,8 @@ public class Controller {
         addNodeButton.setOnMouseClicked(event -> handleAddNodeToLb());
         toolsAddNode.setOnMouseClicked(event -> handleAddNode());
         toolsAddLb.setOnMouseClicked(event -> handleAddLoadbalancer());
-        toolsDelNode.setOnMouseClicked(event -> handleDeleteNode());
-        toolsDelLb.setOnMouseClicked(event -> handleDeleteLoadbalancer());
+        toolsDelMachine.setOnMouseClicked(event -> handleDeleteMachine());
         toolsAddNodeToLb.setOnMouseClicked(event -> handleAddNodeToLb());
-        toolsDelNodeFromLb.setOnMouseClicked(event -> handleDeleteNodeFromLb());
         setupLists();
         createPopup();
         createPopupDeploy();
@@ -134,49 +132,6 @@ public class Controller {
         });
     }
 
-    private void handleDeleteNodeFromLb() {
-        if (currentMachine instanceof Node) {
-            Platform.runLater(() -> {
-                model.removeNodeFromLoadBalancer(nodeListView.getItems(), (Node) currentMachine, new ResultsListener<String>() {
-                    @Override
-                    public void onCompletion(String result) {
-                        infoLayout.setVisible(false);
-                        setupNodeList();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        showError(throwable.getMessage());
-                    }
-                });
-            });
-        } else {
-            showError("Select a node");
-        }
-    }
-
-    private void handleDeleteLoadbalancer() {
-        if (currentMachine != null) {
-            if (currentMachine instanceof LoadBalancer) {
-                Platform.runLater(() -> {
-                    model.removeMachineFromDeployment(machineListView.getItems(), currentMachine, new ResultsListener<String>() {
-                        @Override
-                        public void onCompletion(String result) {
-                            infoLayout.setVisible(false);
-                            setupLists();
-                        }
-
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            showError(throwable.getMessage());
-                        }
-                    });
-                });
-            } else {
-                showError("Select a loadbalancer");
-            }
-        }
-    }
 
     private void handleNodeClick() {
         Node node = nodeListView.getSelectionModel().getSelectedItem();
@@ -255,11 +210,11 @@ public class Controller {
         }
     }
 
-    private void handleDeleteNode(){
+    private void handleDeleteMachine(){
         if (currentMachine != null) {
-            if (currentMachine instanceof Node) {
+            if (machineListView.getItems().contains(currentMachine)) {
                 Platform.runLater(() -> {
-                    model.removeMachineFromDeployment(machineListView.getItems(), (Node) currentMachine, new ResultsListener<String>() {
+                    model.removeMachineFromDeployment(machineListView.getItems(), currentMachine, new ResultsListener<String>() {
                         @Override
                         public void onCompletion(String result) {
                             infoLayout.setVisible(false);
@@ -272,8 +227,21 @@ public class Controller {
                         }
                     });
                 });
-            } else {
-                showError("Select a loadbalancer");
+            } else if(nodeListView.getItems().contains(currentMachine)){
+                Platform.runLater(() -> {
+                    model.removeNodeFromLoadBalancer(nodeListView.getItems(), (Node) currentMachine, new ResultsListener<String>() {
+                        @Override
+                        public void onCompletion(String result) {
+                            infoLayout.setVisible(false);
+                            setupNodeList();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            showError(throwable.getMessage());
+                        }
+                    });
+                });
             }
         }
     }
