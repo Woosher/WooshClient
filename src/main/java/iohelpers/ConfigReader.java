@@ -59,7 +59,7 @@ public class ConfigReader implements ConfigReaderInterface {
         JSONArray JSONnodes = jsonObject.getJSONArray("nodes");
         for(int i = 0; i<JSONnodes.length(); i++){
             JSONObject JSONnode = JSONnodes.getJSONObject(i);
-            Node node = parseNodeFromJSON(JSONnode.getJSONObject("node"));
+            Node node = parseNodeFromJSON(JSONnode);
             nodes.add(node);
         }
         loadBalancer.setNodes(nodes);
