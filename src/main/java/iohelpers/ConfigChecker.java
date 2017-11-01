@@ -90,7 +90,6 @@ public class ConfigChecker implements CheckerInterface {
             if(machine instanceof LoadBalancer) {
                 machines.addAll(((LoadBalancer)machine).getNodes());
             }
-            machines.add(machine);
 
         }
         Machine firstMachine = machines.pop();

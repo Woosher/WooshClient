@@ -58,11 +58,9 @@
                     <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
                            spacing="20">
                         <Button fx:id="toolsAddLb" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Add Loadbalancer"/>
-                        <Button fx:id="toolsDelLb" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Delete Loadbalancer"/>
                         <Button fx:id="toolsAddNode" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Add node"/>
-                        <Button fx:id="toolsDelNode" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Delete node"/>
                         <Button fx:id="toolsAddNodeToLb" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Add node to Loadbalancer"/>
-                        <Button fx:id="toolsDelNodeFromLb" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Delete node from Loadbalancer"/>
+                        <Button fx:id="toolsDelMachine" mnemonicParsing="false" minWidth="70" prefWidth="180" text="Delete machine"/>
                     </VBox>
                 </HBox>
         </ScrollPane>
