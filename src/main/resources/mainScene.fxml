@@ -97,6 +97,12 @@
                 <Label fx:id="usernameLabel" text="Username"></Label>
                 <TextField fx:id="usernameTxt" ></TextField>
 
+                <Label fx:id="passwordLabel" text="Password"></Label>
+                <TextField fx:id="passwordTxt" ></TextField>
+
+                <Label fx:id="sshKeyLabel" text="SSH Key"></Label>
+                <TextField fx:id="sshKeyTxt" ></TextField>
+
                 <Label fx:id="ipLabel" text="IP"></Label>
                 <TextField fx:id="ipTxt" ></TextField>
 
@@ -106,16 +112,14 @@
                 <Label fx:id="SSHportLabel" text="SSHPort"></Label>
                 <TextField fx:id="SSHportTxt" ></TextField>
 
-                <Label fx:id="passwordLabel" text="Password"></Label>
-                <TextField fx:id="passwordTxt" ></TextField>
 
                 <VBox fx:id="nodeExtraInfo" spacing="5">
 
                     <Label fx:id="pathLabel" text="Program"></Label>
                     <TextField fx:id="pathTxt" ></TextField>
 
-                    <Label fx:id="osLabel" text="Operating System"></Label>
-                    <TextField fx:id="osTxt" ></TextField>
+                    <!--<Label fx:id="osLabel" text="Operating System"></Label>-->
+                    <!--<TextField fx:id="osTxt" ></TextField>-->
 
                     <Label fx:id="envLabel" text="Programming Environment"></Label>
                     <ComboBox fx:id="envBox">

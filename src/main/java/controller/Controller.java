@@ -4,6 +4,8 @@ import controller.subcontrollers.PopupController;
 import controller.subcontrollers.PopupDeployController;
 import controller.subcontrollers.PopupErrorController;
 import entities.ConnectionInfo;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import modellers.FlowModeller;
 import modellers.interfaces.ResultsListener;
@@ -34,6 +36,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
 
+import static values.Constants.UBUNTU_XENIAL;
+
 
 public class Controller {
 
@@ -48,7 +52,7 @@ public class Controller {
     ListView<Node> nodeListView;
 
     @FXML
-    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, passwordTxt, pathTxt, osTxt, nodeNumberTxt, deploymentNameTxt;
+    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, passwordTxt, pathTxt, nodeNumberTxt, deploymentNameTxt, sshKeyTxt;
 
     @FXML
     VBox infoLayout, nodeExtraInfo, loadBalancerExtraInfo;
@@ -98,6 +102,24 @@ public class Controller {
         toolsAddLb.setOnMouseClicked(event -> handleAddLoadbalancer());
         toolsDelMachine.setOnMouseClicked(event -> handleDeleteMachine());
         toolsAddNodeToLb.setOnMouseClicked(event -> handleAddNodeToLb());
+        sshKeyTxt.setOnMouseClicked(event -> handleSettingPath(sshKeyTxt));
+        pathTxt.setOnMouseClicked(event -> handleSettingPathForFolder(pathTxt));
+        portTxt.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.matches("\\d{0,7}([\\.]\\d{0,4})?")) {
+                    portTxt.setText(oldValue);
+                }
+            }
+        });
+        SSHportTxt.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.matches("\\d{0,7}([\\.]\\d{0,4})?")) {
+                    SSHportTxt.setText(oldValue);
+                }
+            }
+        });
         setupLists();
         createPopup();
         createPopupDeploy();
@@ -107,6 +129,8 @@ public class Controller {
     /********************************************************************************************************
      * Button handlers
      */
+
+
 
     private void handleProjectClose() {
         if (deploymentChanged) {
@@ -157,13 +181,14 @@ public class Controller {
         currentMachine.setIp(ipTxt.getText());
         currentMachine.setSSHPort(Integer.parseInt(SSHportTxt.getText()));
         currentMachine.setPort(Integer.parseInt(portTxt.getText()));
+        currentMachine.setSshKeyPath(sshKeyTxt.getText());
         if (currentMachine instanceof Node) {
             Node node = (Node) currentMachine;
             node.setPath(pathTxt.getText());
             String env = envBox.getSelectionModel().getSelectedItem();
             System.out.println(envBox.getSelectionModel().getSelectedItem());
             node.setEnvironment(env);
-            node.setOperatingSystem(osTxt.getText());
+            node.setOperatingSystem(UBUNTU_XENIAL);
         }
         setupLists();
     }
@@ -290,6 +315,31 @@ public class Controller {
             });
         } else {
             showError("You have nothing inside your deployment");
+        }
+    }
+
+    private void handleSettingPathForFolder(TextField textField) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Select folder of program");
+        chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        File dir = chooser.showDialog(new Stage());
+        if (dir != null) {
+            String path = dir.getAbsolutePath();
+            if (path != null) {
+                textField.setText(path);
+            }
+        }
+    }
+
+    private void handleSettingPath(TextField textField) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Select File");
+        File file = chooser.showOpenDialog(new Stage());
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            if (path != null) {
+                textField.setText(path);
+            }
         }
     }
 
@@ -433,6 +483,7 @@ public class Controller {
             portTxt.setText(machine.getPort() + "");
             SSHportTxt.setText(Integer.toString(machine.getSSHPort()));
             passwordTxt.setText(machine.getPassword());
+            sshKeyTxt.setText(machine.getSshKeyPath());
 
             if (machine instanceof LoadBalancer) {
                 LoadBalancer loadBalancer = (LoadBalancer) machine;
@@ -447,7 +498,6 @@ public class Controller {
                 nodeExtraInfo.setManaged(true);
                 loadBalancerExtraInfo.setVisible(false);
                 loadBalancerExtraInfo.setManaged(false);
-                osTxt.setText(node.getOperatingSystem());
                 pathTxt.setText(node.getPath());
                 envBox.getSelectionModel().select(getIndexForString(node.getEnvironment()));
             }
