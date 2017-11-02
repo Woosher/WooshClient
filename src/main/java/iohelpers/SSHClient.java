@@ -90,11 +90,9 @@ public class SSHClient implements SSHClientInterface {
             Channel channel = session.openChannel("sftp");
             channel.connect();
             ChannelSftp channelSftp = (ChannelSftp) channel;
-            // mkdirs(channelSftp, SERVERPATH);
-            executeRemoteCommandAsSudo(session, machine, machine.getPassword(), "sudo mkdir -p " + SERVERPATH, logger);
+            executeRemoteCommandAsSudo(session, true, machine.getPassword(), "sudo mkdir -p " + SERVERPATH, logger);
             channelSftp.cd(SERVERPATH);
-            executeRemoteCommandAsSudo(session, machine, machine.getPassword(), "sudo chmod -R 777 " + SERVERPATH, logger);
-            //giveUserRights(session, channelSftp.pwd(), machine.getPassword());
+            executeRemoteCommandAsSudo(session, true, machine.getPassword(), "sudo chmod -R 777 " + SERVERPATH, logger);
             File f = new File(machine.getPathCompressed());
             channelSftp.put(new FileInputStream(f), f.getName());
             Scanner scanner = new Scanner(machine.getBashScript());
@@ -102,7 +100,7 @@ public class SSHClient implements SSHClientInterface {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 System.out.println(line);
-                executeRemoteCommandAsSudo(session, machine, machine.getPassword(), line, logger);
+                executeRemoteCommandAsSudo(session, scanner.hasNextLine(), machine.getPassword(), line, logger);
             }
             channel.disconnect();
             session.disconnect();
@@ -119,7 +117,7 @@ public class SSHClient implements SSHClientInterface {
         return "Succes";
     }
 
-    private void executeRemoteCommandAsSudo(Session session, Machine machine, String password,
+    private void executeRemoteCommandAsSudo(Session session, boolean hasMore, String password,
                                                    String command, WooshLogger logger) throws WooshException {
         Channel channel = null;
         StringBuffer result = new StringBuffer();
@@ -139,23 +137,27 @@ public class SSHClient implements SSHClientInterface {
             out.write((password + "\n").getBytes());
             out.flush();
             out.close();
-
-            byte[] tmp=new byte[1024];
-            while(true){
-                while(stdout.available()>0){
-                    if(!read(stdout,tmp,logger)) break;
+            if(hasMore){
+                byte[] tmp=new byte[1024];
+                while(true){
+                    while(stdout.available()>0){
+                        if(!read(stdout,tmp,logger)) break;
+                    }
+                    while(stderr.available()>0){
+                        if(!read(stdout,tmp,logger)) break;
+                    }
+                    if(channel.isClosed()){
+                        logger.appendLoggingWithTime("exit-status: "+channel.getExitStatus());
+                        break;
+                    }
+                    Thread.sleep(400);
                 }
-                while(stderr.available()>0){
-                    if(!read(stdout,tmp,logger)) break;
-                }
-                if(channel.isClosed()){
-                    logger.appendLoggingWithTime("exit-status: "+channel.getExitStatus());
-                    break;
-                }
-                Thread.sleep(400);
+            }else {
+                channel.disconnect();
             }
+
         } catch (Exception ex) {
-            throw new WooshException("Failure in execting command " + command);
+            throw new WooshException("Failure in executing command " + command);
         } finally {
             channel.disconnect();
         }
