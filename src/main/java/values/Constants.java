@@ -31,6 +31,7 @@ public class Constants {
     public static final String INSTALL_MONO = "sudo apt install mono-mcs -y";
     public static final String INSTALL_RUBY = "sudo apt-get install ruby-full -y";
     public static final String INSTALL_PYTHON= "sudo apt-get install python3.6 -y";
+    public static final String INSTALL_TMUX = "sudo apt-get install tmux";
     public static final String UBUNTU_XENIAL= "Ubuntu_Xenial";
 
     public static final String NGINXPATH = "/etc/nginx/";
@@ -39,6 +40,7 @@ public class Constants {
     public static final String ADD_KEY_SERVER = "sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF";
     public static final String ECHO_MONO_PROJECT = "echo \"deb http://download.mono-project.com/repo/debian wheezy main\" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list";
     public static final String UPDATE = "sudo apt-get update";
+
     public static final String MONO = "mono ";
     public static final String RUN = "./";
     public static final String PYTHON = "python ";

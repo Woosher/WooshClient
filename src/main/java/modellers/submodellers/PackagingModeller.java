@@ -179,12 +179,14 @@ public class PackagingModeller implements PackagingInterface {
 
     private String doJavaBashScript(String path, Node node){
         StringBuilder sb = new StringBuilder();
+        sb.append(UPDATE);
+        sb.append("\n");
         sb.append(INSTALLJAVA);
         sb.append("\n");
         File[] jarFiles = filterForExtention(path, "jar");
         for(int i = 0; i<jarFiles.length; i++){
             File jarFile = jarFiles[i];
-            sb.append("sudo java -jar ").append(SERVERPATH).append(node.getName()).append("/").append(jarFile.getName()).append(" &> executioner.log  ");
+            sb.append("nohup java -jar ").append(SERVERPATH).append(node.getName()).append("/").append(jarFile.getName());
             sb.append("\n");
         }
         System.out.println(sb.toString());
