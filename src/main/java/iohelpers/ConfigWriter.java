@@ -25,7 +25,7 @@ public class ConfigWriter implements WriterInterface{
 
 
     public void saveDeployment(Deployment deployment, String path) throws WooshException {
-        configChecker.checkDeploymentObject(deployment);
+//        configChecker.checkDeploymentObject(deployment);
         JSONObject jsonObject = parseDeployment(deployment);
         String content = jsonObject.toString();
         saveFile(content, path);
