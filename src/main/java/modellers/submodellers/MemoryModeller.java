@@ -12,14 +12,25 @@ import java.util.List;
 
 public class MemoryModeller implements MapperInterface{
 
+    Deployment deployment;
+
     public MemoryModeller(){
 
     }
 
+    @Override
+    public Deployment getDeployment() {
+        return deployment;
+    }
 
     @Override
-    public void clearDeployment(Deployment deployment) throws WooshException {
-        deployment = null;
+    public void setDeployment(Deployment deployment) {
+        this.deployment = deployment;
+    }
+
+    @Override
+    public void clearDeployment() throws WooshException {
+        this.deployment = null;
     }
 
     @Override
@@ -32,11 +43,10 @@ public class MemoryModeller implements MapperInterface{
     @Override
     public void deleteNodeFromLoadBalancer(ObservableList<Node> nodes, Node node) throws WooshException {
         nodes.remove(node);
-        node = null;
     }
 
     @Override
-    public void addLoadbalancer(Deployment deployment,  String loadBalancerName) throws WooshException {
+    public void addLoadbalancer( String loadBalancerName) throws WooshException {
         LoadBalancer loadBalancer = new LoadBalancer();
         loadBalancer.setName(loadBalancerName);
         loadBalancer.setCachingAttributes("/temp/attributes/");
@@ -44,10 +54,10 @@ public class MemoryModeller implements MapperInterface{
     }
 
     @Override
-    public void addNode(Deployment deployment, String nodeName) throws WooshException {
+    public void addNode(String nodeName) throws WooshException {
         Node node = new Node();
         node.setName(nodeName);
-        deployment.getMachines().add(node);
+        this.deployment.getMachines().add(node);
     }
 
     @Override
@@ -57,11 +67,18 @@ public class MemoryModeller implements MapperInterface{
             nodes.removeAll(nodes);
         }
         machines.remove(machine);
-        machine = null;
     }
 
     @Override
     public void copyInfo(Node source, Node destinationNode) throws WooshException {
 
+    }
+
+    @Override
+    public Deployment createNewDeployment(String name) throws WooshException {
+        this.deployment = new Deployment();
+        this.deployment.setName(name);
+        this.deployment.setSsl_path("/test/path/");
+        return this.deployment;
     }
 }

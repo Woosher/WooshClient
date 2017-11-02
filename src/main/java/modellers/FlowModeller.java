@@ -29,14 +29,12 @@ public class FlowModeller implements FlowModelInterface {
     private PackagingInterface packagingController;
     private ConnectionInterface connectionController;
     private MapperInterface memoryMapper;
-    private Deployment deployment;
 
     public FlowModeller(){
         packagingController = new PackagingModeller();
         connectionController = new ConnectionModeller();
         memoryMapper = new MemoryModeller();
         readController = new ReadModeller();
-        deployment = null;
     }
 
     @Override
@@ -47,7 +45,7 @@ public class FlowModeller implements FlowModelInterface {
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
-        }).thenAccept(a -> {this.deployment = a;  resultsListener.onCompletion(deployment);})
+        }).thenAccept(a -> {memoryMapper.setDeployment(a);  resultsListener.onCompletion(memoryMapper.getDeployment());})
                 .exceptionally((t) -> {
                     resultsListener.onFailure(t); return null;});
 
@@ -57,7 +55,7 @@ public class FlowModeller implements FlowModelInterface {
     public void saveDeployment(String path, ResultsListener<Void> resultsListener) {
         supplyAsync(() -> {
             try {
-                packagingController.formatToConfigFile(this.deployment,path);
+                packagingController.formatToConfigFile(memoryMapper.getDeployment(),path);
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -69,17 +67,13 @@ public class FlowModeller implements FlowModelInterface {
 
 
     @Override
-    public void clearDeployment(Deployment deployment, ResultsListener<Deployment> resultsListener) {
-        supplyAsync(() -> {
-            try {
-                memoryMapper.clearDeployment(deployment);
-            } catch (WooshException e) {
-                throw new RuntimeException(e.getMessage());
-            }
-            return  null;
-        }).thenAccept(a -> { resultsListener.onCompletion(null);}).exceptionally((t) -> {
-            resultsListener.onFailure(t); return null;
-        });
+    public void clearDeployment(ResultsListener<Deployment> resultsListener) {
+        try {
+            memoryMapper.clearDeployment();
+            resultsListener.onCompletion(null);
+        } catch (WooshException e) {
+            resultsListener.onFailure(e);
+        }
     }
 
     @Override
@@ -107,7 +101,7 @@ public class FlowModeller implements FlowModelInterface {
     @Override
     public void addNodeToDeployment(String machineName, ResultsListener<String> resultsListener){
         try {
-            memoryMapper.addNode(deployment,machineName);
+            memoryMapper.addNode(machineName);
             resultsListener.onCompletion("Complete");
         } catch (WooshException e) {
             resultsListener.onFailure(e);
@@ -117,7 +111,7 @@ public class FlowModeller implements FlowModelInterface {
     @Override
     public void addLoadBalancerToDeployment(String machineName, ResultsListener<String> resultsListener) {
         try {
-            memoryMapper.addLoadbalancer(deployment,machineName);
+            memoryMapper.addLoadbalancer(machineName);
             resultsListener.onCompletion("Complete");
         } catch (WooshException e) {
             resultsListener.onFailure(e);
@@ -138,7 +132,7 @@ public class FlowModeller implements FlowModelInterface {
     public void testConnections(final ResultsListener<List<ConnectionInfo>> resultsListener) {
         supplyAsync(()-> {
             try {
-                return connectionController.testConnections(deployment);
+                return connectionController.testConnections(memoryMapper.getDeployment());
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -150,12 +144,7 @@ public class FlowModeller implements FlowModelInterface {
     @Override
     public void createNewDeployment(String name, ResultsListener<Deployment> resultsListener) {
         try{
-            this.deployment = new Deployment();
-            this.deployment.setName(name);
-        /*TODO
-            SSLPATH REMOVE
-         */
-            this.deployment.setSsl_path("/test/path/");
+            Deployment deployment = memoryMapper.createNewDeployment(name);
             resultsListener.onCompletion(deployment);
 
         }catch (Exception e){
@@ -195,18 +184,18 @@ public class FlowModeller implements FlowModelInterface {
 
     private ConnectionInfo[] deploy() throws WooshException{
         try {
-            packagingController.readyDeployment(deployment);
+            packagingController.readyDeployment(memoryMapper.getDeployment());
         } catch (WooshException e) {
             e.printStackTrace();
         }
 
         Stack<Machine> machines = new Stack<>();
-        for(Machine machine: deployment.getMachines()){
+        for(Machine machine: memoryMapper.getDeployment().getMachines()){
             if(machine instanceof LoadBalancer){
                 machines.addAll(((LoadBalancer)machine).getNodes());
             }
         }
-        machines.addAll(deployment.getMachines());
+        machines.addAll(memoryMapper.getDeployment().getMachines());
 
         int numOfMachines = machines.size();
 

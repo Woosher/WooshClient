@@ -78,6 +78,7 @@ public class ConfigWriter implements WriterInterface{
         jsonObject.put("sshport", loadBalancer.getSSHPort());
         jsonObject.put("caching_attributes", loadBalancer.getCachingAttributes());
         jsonObject.put("password", loadBalancer.getPassword());
+        jsonObject.put("sshkeypath", loadBalancer.getSshKeyPath());
 
         for(Node node : loadBalancer.getNodes()){
             JSONObject jsonNodeInfo = parseNode(node);
@@ -100,6 +101,7 @@ public class ConfigWriter implements WriterInterface{
         jsonObject.put("operating_system", node.getOperatingSystem());
         jsonObject.put("password",node.getPassword());
         jsonObject.put("path", node.getPath());
+        jsonObject.put("sshkeypath", node.getSshKeyPath());
         return jsonObject;
     }
 

@@ -31,7 +31,11 @@ public class SSHClient implements SSHClientInterface {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
             Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
-            session.setPassword(machine.getPassword());
+            if(machine.getSshKeyPath() != null  && !machine.getSshKeyPath().equals("")){
+                jsch.addIdentity(machine.getSshKeyPath());
+            }else {
+                session.setPassword(machine.getPassword());
+            }
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setConfig(config);
@@ -67,15 +71,21 @@ public class SSHClient implements SSHClientInterface {
     @Override
     public String sendPackage(Machine machine) throws WooshException {
         WooshLogger logger = new WooshLogger();
+        logger.startNewLog(machine.getName());
         logger.appendLoggingWithOutTime("-----------------------STARTED----------------------------");
         logger.appendLoggingWithOutTime("DEPLOYMENTLOG FOR: " +machine.getName());
         logger.appendLoggingWithOutTime("IP: " + machine.getIp());
 
         try {
             JSch jsch = new JSch();
-            setKnownHostFile(jsch);
             Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
-            session.setPassword(machine.getPassword());
+            setKnownHostFile(jsch);
+            if(machine.getSshKeyPath() != null  && !machine.getSshKeyPath().equals("")){
+                jsch.addIdentity(machine.getSshKeyPath());
+            }else {
+                session.setPassword(machine.getPassword());
+            }
+
             session.connect();
             Channel channel = session.openChannel("sftp");
             channel.connect();
@@ -91,6 +101,7 @@ public class SSHClient implements SSHClientInterface {
 
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
+                System.out.println(line);
                 executeRemoteCommandAsSudo(session, machine, machine.getPassword(), line, logger);
             }
             channel.disconnect();
@@ -104,7 +115,7 @@ public class SSHClient implements SSHClientInterface {
             return ex.getMessage();
         }
         logger.appendLoggingWithOutTime("-----------------------DONE-------------------------------");
-        logger.saveLogsAndClear(machine.getName());
+        logger.saveLogsAndClear();
         return "Succes";
     }
 
@@ -132,26 +143,30 @@ public class SSHClient implements SSHClientInterface {
             byte[] tmp=new byte[1024];
             while(true){
                 while(stdout.available()>0){
-                    int i=stdout.read(tmp, 0, 1024);
-                    if(i<0)break;
-                    logger.appendLoggingWithTime(new String(tmp, 0, i));
+                    if(!read(stdout,tmp,logger)) break;
                 }
                 while(stderr.available()>0){
-                    int i=stdout.read(tmp, 0, 1024);
-                    if(i<0)break;
-                    logger.appendLoggingWithTime(new String(tmp, 0, i));
+                    if(!read(stdout,tmp,logger)) break;
                 }
                 if(channel.isClosed()){
                     logger.appendLoggingWithTime("exit-status: "+channel.getExitStatus());
                     break;
                 }
-                Thread.sleep(100);
+                Thread.sleep(400);
             }
         } catch (Exception ex) {
             throw new WooshException("Failure in execting command " + command);
         } finally {
             channel.disconnect();
         }
+    }
+
+    private boolean read(InputStream stdout,  byte[] tmp, WooshLogger logger) throws IOException {
+        int i=stdout.read(tmp, 0, 1024);
+        if(i<0)return false;
+        String errorLog = new String(tmp, 0, i);
+        logger.appendLoggingWithTime(errorLog);
+        return true;
     }
 
 }

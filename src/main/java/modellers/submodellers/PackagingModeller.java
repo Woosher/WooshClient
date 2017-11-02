@@ -67,7 +67,11 @@ public class PackagingModeller implements PackagingInterface {
             if(listOfFiles != null){
                 for(int i = 0; i<listOfFiles.length; i++){
                     File tempFile = listOfFiles[i];
-                    FileUtils.copyFileToDirectory(tempFile,targetDir);
+                    if(tempFile.isDirectory()){
+                        FileUtils.copyDirectoryToDirectory(tempFile,targetDir);
+                    }else {
+                        FileUtils.copyFileToDirectory(tempFile,targetDir);
+                    }
                 }
                 createNodeBashScript(targetDir.getPath(), node);
             }
@@ -114,13 +118,63 @@ public class PackagingModeller implements PackagingInterface {
             case ENVIRONMENT_JAVA:
                 return doJavaBashScript(path,node);
             case ENVIRONMENT_CSHARP:
-                return null;
+                return doCSharpBashScript(path,node);
             case ENVIRONMENT_PYTHON:
-                return null;
+                return doPythonScript(path, node);
             case ENVIRONMENT_RUBY:
-                return null;
+                return doRubyBashScript(path,node);
         }
         return null;
+    }
+
+    private String doPythonScript(String path, Node node){
+        StringBuilder sb = new StringBuilder();
+        sb.append(ADD_DEADSNAKES);
+        sb.append("\n");
+        sb.append(UPDATE);
+        sb.append("\n");
+        sb.append(INSTALL_PYTHON);
+        sb.append("\n");
+        File[] rbFiles = filterForExtention(path, "py");
+        for(int i = 0; i<rbFiles.length; i++){
+            File rbFile = rbFiles[i];
+            sb.append(PYTHON).append(SERVERPATH).append(node.getName()).append("/").append(rbFile.getName());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+
+    private String doRubyBashScript(String path, Node node){
+        StringBuilder sb = new StringBuilder();
+        sb.append(INSTALL_RUBY);
+        sb.append("\n");
+        File[] rbFiles = filterForExtention(path, "rb");
+        for(int i = 0; i<rbFiles.length; i++){
+            File rbFile = rbFiles[i];
+            sb.append(RUN).append(SERVERPATH).append(node.getName()).append("/").append(rbFile.getName());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+    private String doCSharpBashScript(String path, Node node){
+        StringBuilder sb = new StringBuilder();
+        sb.append(ADD_KEY_SERVER);
+        sb.append("\n");
+        sb.append(ECHO_MONO_PROJECT);
+        sb.append("\n");
+        sb.append(UPDATE);
+        sb.append("\n");
+        sb.append(INSTALL_MONO);
+        sb.append("\n");
+        File[] exeFiles = filterForExtention(path, "exe");
+        for(int i = 0; i<exeFiles.length; i++){
+            File exeFile = exeFiles[i];
+            sb.append(MONO).append(SERVERPATH).append(node.getName()).append("/").append(exeFile.getName());
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
     private String doJavaBashScript(String path, Node node){
@@ -130,9 +184,10 @@ public class PackagingModeller implements PackagingInterface {
         File[] jarFiles = filterForExtention(path, "jar");
         for(int i = 0; i<jarFiles.length; i++){
             File jarFile = jarFiles[i];
-            sb.append("sudo java -jar ").append(SERVERPATH).append(node.getName()).append("/").append(jarFile.getName());
+            sb.append("sudo java -jar ").append(SERVERPATH).append(node.getName()).append("/").append(jarFile.getName()).append(" &> executioner.log  ");
             sb.append("\n");
         }
+        System.out.println(sb.toString());
         return sb.toString();
     }
 

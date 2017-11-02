@@ -4,6 +4,8 @@ import controller.subcontrollers.PopupController;
 import controller.subcontrollers.PopupDeployController;
 import controller.subcontrollers.PopupErrorController;
 import entities.ConnectionInfo;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import modellers.FlowModeller;
 import modellers.interfaces.ResultsListener;
@@ -34,6 +36,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
 
+import static values.Constants.UBUNTU_XENIAL;
+
 
 public class Controller {
 
@@ -48,13 +52,16 @@ public class Controller {
     ListView<Node> nodeListView;
 
     @FXML
-    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, passwordTxt, pathTxt, osTxt, envTxt, nodeNumberTxt, deploymentNameTxt;
+    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, passwordTxt, pathTxt, nodeNumberTxt, deploymentNameTxt, sshKeyTxt;
 
     @FXML
     VBox infoLayout, nodeExtraInfo, loadBalancerExtraInfo;
 
     @FXML
     HBox innerBox1, innerBox2, addLoadBalancerBox;
+
+    @FXML
+    ComboBox<String> envBox;
 
     @FXML
     Button saveInfoButton, addNodeButton, toolsAddLb, toolsAddNode, toolsDelMachine, toolsAddNodeToLb;
@@ -95,6 +102,24 @@ public class Controller {
         toolsAddLb.setOnMouseClicked(event -> handleAddLoadbalancer());
         toolsDelMachine.setOnMouseClicked(event -> handleDeleteMachine());
         toolsAddNodeToLb.setOnMouseClicked(event -> handleAddNodeToLb());
+        sshKeyTxt.setOnMouseClicked(event -> handleSettingPath(sshKeyTxt));
+        pathTxt.setOnMouseClicked(event -> handleSettingPathForFolder(pathTxt));
+        portTxt.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.matches("\\d{0,7}([\\.]\\d{0,4})?")) {
+                    portTxt.setText(oldValue);
+                }
+            }
+        });
+        SSHportTxt.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.matches("\\d{0,7}([\\.]\\d{0,4})?")) {
+                    SSHportTxt.setText(oldValue);
+                }
+            }
+        });
         setupLists();
         createPopup();
         createPopupDeploy();
@@ -105,6 +130,8 @@ public class Controller {
      * Button handlers
      */
 
+
+
     private void handleProjectClose() {
         if (deploymentChanged) {
             createCloseDialog();
@@ -114,9 +141,10 @@ public class Controller {
     }
 
     private void clearDeployment() {
-        model.clearDeployment(deployment, new ResultsListener<Deployment>() {
+        model.clearDeployment(new ResultsListener<Deployment>() {
             @Override
             public void onCompletion(Deployment result) {
+                deployment = result;
                 resetGUI();
                 setupLists();
             }
@@ -153,32 +181,37 @@ public class Controller {
         currentMachine.setIp(ipTxt.getText());
         currentMachine.setSSHPort(Integer.parseInt(SSHportTxt.getText()));
         currentMachine.setPort(Integer.parseInt(portTxt.getText()));
+        currentMachine.setSshKeyPath(sshKeyTxt.getText());
         if (currentMachine instanceof Node) {
             Node node = (Node) currentMachine;
             node.setPath(pathTxt.getText());
-            node.setEnvironment(envTxt.getText());
-            node.setOperatingSystem(osTxt.getText());
+            String env = envBox.getSelectionModel().getSelectedItem();
+            System.out.println(envBox.getSelectionModel().getSelectedItem());
+            node.setEnvironment(env);
+            node.setOperatingSystem(UBUNTU_XENIAL);
         }
         setupLists();
     }
 
     private void handleAddNodeToLb() {
-        if (currentMachine != null && currentMachine instanceof LoadBalancer) {
-            LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
-            Platform.runLater(() -> {
-                model.addNodeToLoadBalancer(loadBalancer, "node" + ++nodeCount, new ResultsListener<String>() {
-                    @Override
-                    public void onCompletion(String result) {
-                    }
+        if (deployment != null) {
+            if (currentMachine != null && currentMachine instanceof LoadBalancer) {
+                LoadBalancer loadBalancer = (LoadBalancer) currentMachine;
+                Platform.runLater(() -> {
+                    model.addNodeToLoadBalancer(loadBalancer, "node" + ++nodeCount, new ResultsListener<String>() {
+                        @Override
+                        public void onCompletion(String result) {
+                        }
 
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        showError(throwable.getMessage());
-                    }
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            showError(throwable.getMessage());
+                        }
+                    });
                 });
-            });
-        } else {
-            showError("You have not selected a loadbalancer");
+            } else {
+                showError("You have not selected a loadbalancer");
+            }
         }
     }
 
@@ -285,6 +318,31 @@ public class Controller {
         }
     }
 
+    private void handleSettingPathForFolder(TextField textField) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Select folder of program");
+        chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        File dir = chooser.showDialog(new Stage());
+        if (dir != null) {
+            String path = dir.getAbsolutePath();
+            if (path != null) {
+                textField.setText(path);
+            }
+        }
+    }
+
+    private void handleSettingPath(TextField textField) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Select File");
+        File file = chooser.showOpenDialog(new Stage());
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            if (path != null) {
+                textField.setText(path);
+            }
+        }
+    }
+
     private void handleLoad() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Open File");
@@ -384,17 +442,19 @@ public class Controller {
     }
 
     private void putNodeOnDeployment(){
-        model.addNodeToDeployment("Node" + ++MachinesCount, new ResultsListener<String>() {
-            @Override
-            public void onCompletion(String result) {
+        if(deployment != null){
+            model.addNodeToDeployment("Node" + ++MachinesCount, new ResultsListener<String>() {
+                @Override
+                public void onCompletion(String result) {
 
-            }
+                }
 
-            @Override
-            public void onFailure(Throwable throwable) {
-                showError(throwable.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Throwable throwable) {
+                    showError(throwable.getMessage());
+                }
+            });
+        }
     }
 
     private void putLoadbalancerOnDeployment() {
@@ -423,6 +483,7 @@ public class Controller {
             portTxt.setText(machine.getPort() + "");
             SSHportTxt.setText(Integer.toString(machine.getSSHPort()));
             passwordTxt.setText(machine.getPassword());
+            sshKeyTxt.setText(machine.getSshKeyPath());
 
             if (machine instanceof LoadBalancer) {
                 LoadBalancer loadBalancer = (LoadBalancer) machine;
@@ -437,11 +498,23 @@ public class Controller {
                 nodeExtraInfo.setManaged(true);
                 loadBalancerExtraInfo.setVisible(false);
                 loadBalancerExtraInfo.setManaged(false);
-                osTxt.setText(node.getOperatingSystem());
                 pathTxt.setText(node.getPath());
-                envTxt.setText(node.getEnvironment());
+                envBox.getSelectionModel().select(getIndexForString(node.getEnvironment()));
             }
         }
+    }
+
+    private int getIndexForString(String environment){
+        if(environment != null){
+            List<String> items = envBox.getItems();
+            for(int i = 0; i<items.size(); i++){
+                String option = items.get(i);
+                if(environment.equals(option)){
+                    return i;
+                }
+            }
+        }
+        return 0;
     }
 
     private void resetGUI() {

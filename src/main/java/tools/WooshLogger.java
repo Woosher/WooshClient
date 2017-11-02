@@ -13,8 +13,10 @@ import static values.Constants.FULLTEMPPATH;
 public class WooshLogger {
 
     StringBuilder stringBuilder;
+    FileWriter fooWriter;
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
     DateTimeFormatter saveDtf = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+    private File file;
 
     public WooshLogger(){
         stringBuilder = new StringBuilder();
@@ -34,17 +36,30 @@ public class WooshLogger {
     private void append(String text){
         stringBuilder.append(text);
         stringBuilder.append(System.getProperty("line.separator"));
+        try {
+            System.out.println(stringBuilder.toString());
+            fooWriter.write(stringBuilder.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        stringBuilder.setLength(0);
     }
 
-    public void saveLogsAndClear(String name) throws WooshException {
+    public void startNewLog(String name) throws WooshException {
         LocalDateTime now = LocalDateTime.now();
         String path = FULLTEMPPATH + saveDtf.format(now) + "-" + name + ".txt";
-        File file = null;
         try {
             file = Utils.generateFile(path);
-            FileWriter fooWriter = new FileWriter(file, false);
-            fooWriter.write(stringBuilder.toString());
+            fooWriter = new FileWriter(file, false);
+        } catch (IOException e) {
+            throw new WooshException("Could not create log file" );
+        }
+    }
+
+    public void saveLogsAndClear() throws WooshException {
+        try {
             fooWriter.close();
+            stringBuilder.setLength(0);
         } catch (IOException e) {
             throw new WooshException("Could not create log file" );
         }

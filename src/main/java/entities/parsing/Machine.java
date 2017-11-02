@@ -4,8 +4,16 @@ import java.util.Observable;
 
 abstract public class Machine extends Observable {
 
-    private String name,username,ip,password, pathCompressed, bashScript;
+    private String name,username,ip,password, pathCompressed, bashScript, sshKeyPath;
     private int SSHPort, port;
+
+    public String getSshKeyPath() {
+        return sshKeyPath;
+    }
+
+    public void setSshKeyPath(String sshKeyPath) {
+        this.sshKeyPath = sshKeyPath;
+    }
 
     public String getBashScript() {
         return bashScript;
