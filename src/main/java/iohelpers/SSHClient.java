@@ -16,6 +16,7 @@ import static values.Constants.SERVERPATH;
 public class SSHClient implements SSHClientInterface {
 
 
+
     private void setKnownHostFile(JSch jsch) throws WooshException {
         try {
             File file = Utils.generateFile(System.getProperty("user.home") + "/.ssh/known_hosts");
@@ -31,9 +32,9 @@ public class SSHClient implements SSHClientInterface {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
             Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
-            if(machine.getSshKeyPath() != null  && !machine.getSshKeyPath().equals("")){
+            if (machine.getSshKeyPath() != null && !machine.getSshKeyPath().equals("")) {
                 jsch.addIdentity(machine.getSshKeyPath());
-            }else {
+            } else {
                 session.setPassword(machine.getPassword());
             }
             java.util.Properties config = new java.util.Properties();
@@ -51,7 +52,7 @@ public class SSHClient implements SSHClientInterface {
 
         JSch jsch = new JSch();
         setKnownHostFile(jsch);
-        try{
+        try {
             Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
             session.setPassword(machine.getPassword());
             session.connect();
@@ -73,16 +74,16 @@ public class SSHClient implements SSHClientInterface {
         WooshLogger logger = new WooshLogger();
         logger.startNewLog(machine.getName());
         logger.appendLoggingWithOutTime("-----------------------STARTED----------------------------");
-        logger.appendLoggingWithOutTime("DEPLOYMENTLOG FOR: " +machine.getName());
+        logger.appendLoggingWithOutTime("DEPLOYMENTLOG FOR: " + machine.getName());
         logger.appendLoggingWithOutTime("IP: " + machine.getIp());
 
         try {
             JSch jsch = new JSch();
             Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
             setKnownHostFile(jsch);
-            if(machine.getSshKeyPath() != null  && !machine.getSshKeyPath().equals("")){
+            if (machine.getSshKeyPath() != null && !machine.getSshKeyPath().equals("")) {
                 jsch.addIdentity(machine.getSshKeyPath());
-            }else {
+            } else {
                 session.setPassword(machine.getPassword());
             }
 
@@ -111,20 +112,21 @@ public class SSHClient implements SSHClientInterface {
         } catch (Exception ex) {
             ex.printStackTrace();
             return ex.getMessage();
+        } finally {
+            logger.appendLoggingWithOutTime("-----------------------DONE-------------------------------");
+            logger.saveLogsAndClear();
         }
-        logger.appendLoggingWithOutTime("-----------------------DONE-------------------------------");
-        logger.saveLogsAndClear();
         return "Succes";
     }
 
     private void executeRemoteCommandAsSudo(Session session, boolean hasMore, String password,
-                                                   String command, WooshLogger logger) throws WooshException {
+                                            String command, WooshLogger logger) throws WooshException {
         Channel channel = null;
         StringBuffer result = new StringBuffer();
         try {
             channel = session.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
-            ((ChannelExec) channel).setPty(true);
+            ((ChannelExec) channel).setPty(false);
             channel.connect();
             InputStream stdout = channel.getInputStream();
             InputStream stderr = ((ChannelExec) channel).getErrStream();
@@ -132,30 +134,23 @@ public class SSHClient implements SSHClientInterface {
             ((ChannelExec) channel).setErrStream(System.err);
             out.write((password + "\n").getBytes());
             out.flush();
-            out.write((command + "\n").getBytes());
-            out.flush();
-            out.write((password + "\n").getBytes());
-            out.flush();
             out.close();
-            if(hasMore){
-                byte[] tmp=new byte[1024];
-                while(true){
-                    while(stdout.available()>0){
-                        if(!read(stdout,tmp,logger)) break;
+            byte[] tmp = new byte[1024];
+            if(hasMore) {
+                while (true) {
+                    while (stdout.available() > 0) {
+                        if (!read(stdout, tmp, logger)) break;
                     }
-                    while(stderr.available()>0){
-                        if(!read(stdout,tmp,logger)) break;
+                    while (stderr.available() > 0) {
+                        if (!read(stderr, tmp, logger)) break;
                     }
-                    if(channel.isClosed()){
-                        logger.appendLoggingWithTime("exit-status: "+channel.getExitStatus());
+                    if (channel.isClosed()) {
+                        logger.appendLoggingWithTime("exit-status: " + channel.getExitStatus());
                         break;
                     }
                     Thread.sleep(400);
                 }
-            }else {
-                channel.disconnect();
             }
-
         } catch (Exception ex) {
             throw new WooshException("Failure in executing command " + command);
         } finally {
@@ -163,9 +158,9 @@ public class SSHClient implements SSHClientInterface {
         }
     }
 
-    private boolean read(InputStream stdout,  byte[] tmp, WooshLogger logger) throws IOException {
-        int i=stdout.read(tmp, 0, 1024);
-        if(i<0)return false;
+    private boolean read(InputStream stdout, byte[] tmp, WooshLogger logger) throws IOException {
+        int i = stdout.read(tmp, 0, 1024);
+        if (i < 0) return false;
         String errorLog = new String(tmp, 0, i);
         logger.appendLoggingWithTime(errorLog);
         return true;

@@ -56,7 +56,7 @@ public class ConfigReader implements ConfigReaderInterface {
         loadBalancer.setSSHPort(jsonObject.getInt("sshport"));
         loadBalancer.setCachingAttributes(jsonObject.getString("caching_attributes"));
         loadBalancer.setPassword(jsonObject.getString("password"));
-        loadBalancer.setSshKeyPath(jsonObject.getString("sshkeypath"));
+       // loadBalancer.setSshKeyPath(jsonObject.getString("sshkeypath"));
         JSONArray JSONnodes = jsonObject.getJSONArray("nodes");
         for(int i = 0; i<JSONnodes.length(); i++){
             JSONObject JSONnode = JSONnodes.getJSONObject(i);
@@ -78,7 +78,7 @@ public class ConfigReader implements ConfigReaderInterface {
         node.setOperatingSystem(jsonObject.getString("operating_system"));
         node.setPassword(jsonObject.getString("password"));
         node.setPath(jsonObject.getString("path"));
-        node.setSshKeyPath(jsonObject.getString("sshkeypath"));
+       // node.setSshKeyPath(jsonObject.getString("sshkeypath"));
         return node;
     }
 

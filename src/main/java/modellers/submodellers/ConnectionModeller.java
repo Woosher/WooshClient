@@ -61,7 +61,7 @@ public class ConnectionModeller implements ConnectionInterface {
     @Override
     public ConnectionInfo sendPackage(Machine machine){
         try {
-            return new ConnectionInfo(machine,sshClient.sendPackage(machine));
+            return new ConnectionInfo(machine,new SSHClient().sendPackage(machine));
         } catch (WooshException e) {
             return new ConnectionInfo(machine,e.getMessage());
         }

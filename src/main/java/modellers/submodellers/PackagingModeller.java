@@ -186,7 +186,7 @@ public class PackagingModeller implements PackagingInterface {
         File[] jarFiles = filterForExtention(path, "jar");
         for(int i = 0; i<jarFiles.length; i++){
             File jarFile = jarFiles[i];
-            sb.append("nohup java -jar ").append(SERVERPATH).append(node.getName()).append("/").append(jarFile.getName());
+            sb.append("sudo nohup java -jar ").append(SERVERPATH).append(node.getName()).append("/").append(jarFile.getName());
             sb.append("\n");
         }
         System.out.println(sb.toString());
