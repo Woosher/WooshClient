@@ -49,36 +49,39 @@ public class ConfigReader implements ConfigReaderInterface {
     private LoadBalancer parseLoadBalancerFromJSON(JSONObject jsonObject){
         LoadBalancer loadBalancer = new LoadBalancer();
         List<Node> nodes = new ArrayList<Node>();
-        loadBalancer.setName(jsonObject.getString("name"));
-        loadBalancer.setUsername(jsonObject.getString("username"));
-        loadBalancer.setIp(jsonObject.getString("ip"));
-        loadBalancer.setPort(jsonObject.getInt("port"));
-        loadBalancer.setSSHPort(jsonObject.getInt("sshport"));
-        loadBalancer.setCachingAttributes(jsonObject.getString("caching_attributes"));
-        loadBalancer.setPassword(jsonObject.getString("password"));
-       // loadBalancer.setSshKeyPath(jsonObject.getString("sshkeypath"));
-        JSONArray JSONnodes = jsonObject.getJSONArray("nodes");
-        for(int i = 0; i<JSONnodes.length(); i++){
-            JSONObject JSONnode = JSONnodes.getJSONObject(i);
-            Node node = parseNodeFromJSON(JSONnode);
-            nodes.add(node);
+        if(jsonObject.has("name")) loadBalancer.setName(jsonObject.getString("name"));
+        if(jsonObject.has("username")) loadBalancer.setUsername(jsonObject.getString("username"));
+        if(jsonObject.has("ip")) loadBalancer.setIp(jsonObject.getString("ip"));
+        if(jsonObject.has("port")) loadBalancer.setPort(jsonObject.getInt("port"));
+        if(jsonObject.has("sshport")) loadBalancer.setSSHPort(jsonObject.getInt("sshport"));
+        if(jsonObject.has("caching_attributes")) loadBalancer.setCachingAttributes(jsonObject.getString("caching_attributes"));
+        if(jsonObject.has("password")) loadBalancer.setPassword(jsonObject.getString("password"));
+        if(jsonObject.has("sshkeypath")) loadBalancer.setSshKeyPath(jsonObject.getString("sshkeypath"));
+        if(jsonObject.has("nodes")){
+            JSONArray JSONnodes = jsonObject.getJSONArray("nodes");
+            for(int i = 0; i<JSONnodes.length(); i++){
+                JSONObject JSONnode = JSONnodes.getJSONObject(i);
+                Node node = parseNodeFromJSON(JSONnode);
+                nodes.add(node);
+            }
+            loadBalancer.setNodes(nodes);
         }
-        loadBalancer.setNodes(nodes);
+
         return loadBalancer;
     }
 
     private Node parseNodeFromJSON(JSONObject jsonObject){
         Node node = new Node();
-        node.setIp(jsonObject.getString("ip"));
-        node.setPort(jsonObject.getInt("port"));
-        node.setSSHPort(jsonObject.getInt("sshport"));
-        node.setName(jsonObject.getString("name"));
-        node.setUsername(jsonObject.getString("username"));
-        node.setEnvironment(jsonObject.getString("software_environment"));
-        node.setOperatingSystem(jsonObject.getString("operating_system"));
-        node.setPassword(jsonObject.getString("password"));
-        node.setPath(jsonObject.getString("path"));
-       // node.setSshKeyPath(jsonObject.getString("sshkeypath"));
+        if(jsonObject.has("ip"))  node.setIp(jsonObject.getString("ip"));
+        if(jsonObject.has("port"))  node.setPort(jsonObject.getInt("port"));
+        if(jsonObject.has("sshport"))  node.setSSHPort(jsonObject.getInt("sshport"));
+        if(jsonObject.has("name"))  node.setName(jsonObject.getString("name"));
+        if(jsonObject.has("username"))  node.setUsername(jsonObject.getString("username"));
+        if(jsonObject.has("software_enviroment"))  node.setEnvironment(jsonObject.getString("software_environment"));
+        if(jsonObject.has("operating_system"))  node.setOperatingSystem(jsonObject.getString("operating_system"));
+        if(jsonObject.has("password"))  node.setPassword(jsonObject.getString("password"));
+        if(jsonObject.has("path"))  node.setPath(jsonObject.getString("path"));
+        if(jsonObject.has("sshkeypath"))  node.setSshKeyPath(jsonObject.getString("sshkeypath"));
         return node;
     }
 
