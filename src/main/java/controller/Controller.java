@@ -370,7 +370,7 @@ public class Controller {
                         }
                     });
                 });
-            } else if (nodeListView.getItems().contains(currentMachine)) {
+            } else if (nodeListView != null && nodeListView.getItems() != null && nodeListView.getItems().contains(currentMachine)) {
                 Platform.runLater(() -> {
                     model.removeNodeFromLoadBalancer(nodeListView.getItems(), (Node) currentMachine, new ResultsListener<String>() {
                         @Override
