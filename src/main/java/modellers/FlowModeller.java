@@ -38,10 +38,10 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void loadDeployment(String path,final ResultsListener<Deployment> resultsListener) {
+    public void loadDeployment(String path, String password, final ResultsListener<Deployment> resultsListener) {
         supplyAsync(()-> {
             try {
-                return readController.readConfigFile(path);
+                return readController.readConfigFile(path, password);
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -52,10 +52,10 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void saveDeployment(String path, ResultsListener<Void> resultsListener) {
+    public void saveDeployment(String path, String password, ResultsListener<Void> resultsListener) {
         supplyAsync(() -> {
             try {
-                packagingController.formatToConfigFile(memoryMapper.getDeployment(),path);
+                packagingController.formatToConfigFile(memoryMapper.getDeployment(),path, password);
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }

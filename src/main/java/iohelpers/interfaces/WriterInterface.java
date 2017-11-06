@@ -7,7 +7,7 @@ import org.json.JSONObject;
 public interface WriterInterface {
 
 
-    void saveDeployment(Deployment deployment, String path) throws WooshException;
+    void saveDeployment(Deployment deployment, String path, String password) throws WooshException;
 
     String saveFile(String content, String path) throws WooshException;
 

@@ -201,8 +201,8 @@ public class PackagingModeller implements PackagingInterface {
         } );
     }
 
-    public void formatToConfigFile(Deployment deployment, String path) throws WooshException {
-        configWriter.saveDeployment(deployment,path);
+    public void formatToConfigFile(Deployment deployment, String path, String password) throws WooshException {
+        configWriter.saveDeployment(deployment,path, password);
     }
 
 }

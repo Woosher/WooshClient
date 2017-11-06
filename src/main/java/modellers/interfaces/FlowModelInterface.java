@@ -11,9 +11,9 @@ import java.util.List;
 
 public interface FlowModelInterface {
 
-    void loadDeployment(String path,final ResultsListener<Deployment> resultsListener) ;
+    void loadDeployment(String path, String load, final ResultsListener<Deployment> resultsListener) ;
 
-    void saveDeployment(String path, final ResultsListener<Void> resultsListener) ;
+    void saveDeployment(String path, String password, final ResultsListener<Void> resultsListener) ;
 
     void clearDeployment(final ResultsListener<Deployment> resultsListener) ;
 

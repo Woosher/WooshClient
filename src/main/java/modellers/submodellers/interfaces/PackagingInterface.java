@@ -11,6 +11,6 @@ public interface PackagingInterface {
 
     String readyDeployment(Deployment deployment) throws WooshException;
 
-    void formatToConfigFile(Deployment deployment, String path) throws WooshException;
+    void formatToConfigFile(Deployment deployment, String path, String password) throws WooshException;
 
 }

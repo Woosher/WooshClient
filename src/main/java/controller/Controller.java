@@ -7,6 +7,9 @@ import entities.ConnectionInfo;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.geometry.Insets;
+import javafx.scene.layout.GridPane;
+import javafx.util.Pair;
 import modellers.FlowModeller;
 import modellers.interfaces.ResultsListener;
 import entities.parsing.Deployment;
@@ -28,6 +31,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.*;
 import javafx.util.Callback;
 import modellers.interfaces.FlowModelInterface;
+import tools.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,6 +70,9 @@ public class Controller {
     @FXML
     Button saveInfoButton, addNodeButton, toolsAddLb, toolsAddNode, toolsDelMachine, toolsAddNodeToLb;
 
+    PasswordField passwordField, retypePasswordField;
+
+    Label passwordLabel, retypePasswordLabel;
 
     private int nodeCount = 0;
     private int MachinesCount = 0;
@@ -78,6 +85,10 @@ public class Controller {
     private PopupErrorController popupErrorController;
     private FlowModelInterface model;
     private Alert alert;
+    private Dialog<Pair<String, String>> dialog = new Dialog<>();
+    private javafx.scene.Node doneButton;
+    private ButtonType done;
+    private ChangeListener<String> savePassListener, loadPassListener;
 
 
     @FXML
@@ -124,12 +135,120 @@ public class Controller {
         createPopup();
         createPopupDeploy();
         createPopupError();
+        createPasswordDialog();
     }
 
     /********************************************************************************************************
      * Button handlers
      */
 
+    private void createPasswordDialog() {
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+        retypePasswordField = new PasswordField();
+        retypePasswordField.setPromptText("Re-type Password");
+
+        passwordLabel = new Label("Password");
+        retypePasswordLabel = new Label("Re-type Password");
+
+
+        grid.add(retypePasswordLabel, 0, 1);
+        grid.add(retypePasswordField, 1, 1);
+
+        grid.add(passwordLabel, 0, 0);
+        grid.add(passwordField, 1, 0);
+
+        done = new ButtonType("DONE", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(done, ButtonType.CANCEL);
+
+        doneButton = dialog.getDialogPane().lookupButton(done);
+        doneButton.setDisable(true);
+
+        dialog.getDialogPane().setContent(grid);
+
+        savePassListener = new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                doneButton.setDisable(!equalValuePasswords());
+            }
+        };
+
+        loadPassListener = new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                doneButton.setDisable(newValue.trim().isEmpty());
+
+            }
+        };
+    }
+
+    private void saveWithPasswordDialog(String path) {
+        dialog.setTitle("Save with password");
+        dialog.setHeaderText("Type your password to encrypt configuration");
+        retypePasswordLabel.setVisible(true);
+        retypePasswordField.setVisible(true);
+        passwordField.setText("");
+        retypePasswordField.setText("");
+
+        passwordField.textProperty().addListener(savePassListener);
+        retypePasswordField.textProperty().addListener(savePassListener);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == done) {
+                if (equalValuePasswords()) {
+                    Utils.printLogs("EQUAL");
+                    return new Pair<>(retypePasswordField.getText(), passwordField.getText());
+                }
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+        result.ifPresent(passwords -> {
+            saveWithPassword(path, passwords.getKey());
+        });
+    }
+
+    private void loadwithPasswordDialog(String path) {
+        dialog.setTitle("Load with password");
+        dialog.setHeaderText("Type your password to decrypt configuration");
+        retypePasswordLabel.setVisible(false);
+        retypePasswordField.setVisible(false);
+
+        passwordField.textProperty().addListener((observable, oldValue, newValue) -> {
+            doneButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == done) {
+                return new Pair<>(passwordField.getText(), passwordField.getText());
+            }
+            return null;
+        });
+
+        retypePasswordField.textProperty().removeListener(savePassListener);
+        passwordField.textProperty().removeListener(savePassListener);
+        passwordField.textProperty().removeListener(loadPassListener);
+        passwordField.setText("");
+        retypePasswordField.setText("");
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+        result.ifPresent(passwords -> {
+            loadWithPassword(path, passwords.getKey());
+        });
+
+    }
+
+    private boolean equalValuePasswords() {
+        String retype = retypePasswordField.getText();
+        String password = passwordField.getText();
+        return (retype != null) && (password != null) && !retype.isEmpty() && retype.equals(password);
+    }
 
 
     private void handleProjectClose() {
@@ -166,9 +285,9 @@ public class Controller {
         setupNodeList();
         Machine machine = machineListView.getSelectionModel().getSelectedItem();
         if (machine != null && machine instanceof LoadBalancer) {
-            ObservableList<Node> nodes = ((LoadBalancer)machine).getNodes();
+            ObservableList<Node> nodes = ((LoadBalancer) machine).getNodes();
             nodeListView.setItems(nodes);
-        }else{
+        } else {
             nodeListView.setItems(null);
         }
         updateInfoLayout(machine);
@@ -235,7 +354,7 @@ public class Controller {
         }
     }
 
-    private void handleDeleteMachine(){
+    private void handleDeleteMachine() {
         if (currentMachine != null) {
             if (machineListView.getItems().contains(currentMachine)) {
                 Platform.runLater(() -> {
@@ -252,7 +371,7 @@ public class Controller {
                         }
                     });
                 });
-            } else if(nodeListView.getItems().contains(currentMachine)){
+            } else if (nodeListView.getItems().contains(currentMachine)) {
                 Platform.runLater(() -> {
                     model.removeNodeFromLoadBalancer(nodeListView.getItems(), (Node) currentMachine, new ResultsListener<String>() {
                         @Override
@@ -349,8 +468,13 @@ public class Controller {
         File file = chooser.showOpenDialog(new Stage());
         if (file != null) {
             String path = file.getAbsolutePath();
-            if (path != null) {
-                model.loadDeployment(path, new ResultsListener<Deployment>() {
+            loadwithPasswordDialog(path);
+        }
+    }
+
+    private void loadWithPassword(String path, String password){
+        if (path != null) {
+                model.loadDeployment(path,password, new ResultsListener<Deployment>() {
                     @Override
                     public void onCompletion(Deployment result) {
                         deployment = result;
@@ -363,7 +487,6 @@ public class Controller {
                     }
                 });
             }
-        }
     }
 
     private void handleSave() {
@@ -373,20 +496,25 @@ public class Controller {
         File file = chooser.showSaveDialog(new Stage());
         if (file != null) {
             String path = file.getAbsolutePath();
-            if (path != null) {
-                deployment.setName(deploymentNameTxt.getText());
-                model.saveDeployment(path, new ResultsListener<Void>() {
-                    @Override
-                    public void onCompletion(Void result) {
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        showError(throwable.getMessage());
-                    }
-                });
-            }
+            saveWithPasswordDialog(path);
         }
+    }
+
+    private void saveWithPassword(String path, String password) {
+        if (path != null) {
+            deployment.setName(deploymentNameTxt.getText());
+            model.saveDeployment(path, password, new ResultsListener<Void>() {
+                @Override
+                public void onCompletion(Void result) {
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    showError(throwable.getMessage());
+                }
+            });
+        }
+
     }
 
     private void handleAddKnownHosts(List<Machine> hosts) {
@@ -441,8 +569,8 @@ public class Controller {
 
     }
 
-    private void putNodeOnDeployment(){
-        if(deployment != null){
+    private void putNodeOnDeployment() {
+        if (deployment != null) {
             model.addNodeToDeployment("Node" + ++MachinesCount, new ResultsListener<String>() {
                 @Override
                 public void onCompletion(String result) {
@@ -504,12 +632,12 @@ public class Controller {
         }
     }
 
-    private int getIndexForString(String environment){
-        if(environment != null){
+    private int getIndexForString(String environment) {
+        if (environment != null) {
             List<String> items = envBox.getItems();
-            for(int i = 0; i<items.size(); i++){
+            for (int i = 0; i < items.size(); i++) {
                 String option = items.get(i);
-                if(environment.equals(option)){
+                if (environment.equals(option)) {
                     return i;
                 }
             }
@@ -558,7 +686,7 @@ public class Controller {
                     deploymentChanged = true;
                 }
             });
-            if(machine instanceof LoadBalancer) {
+            if (machine instanceof LoadBalancer) {
                 LoadBalancer loadBalancer = (LoadBalancer) machine;
                 loadBalancer.getNodes().addListener(new ListChangeListener<Node>() {
                     @Override

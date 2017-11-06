@@ -5,7 +5,7 @@ import exceptions.WooshException;
 
 public interface ReaderInterface {
 
-    Deployment readConfigFile(String path) throws WooshException;
+    Deployment readConfigFile(String path, String password) throws WooshException;
 
 
 
