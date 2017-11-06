@@ -23,12 +23,8 @@ public class ReadModeller implements ReaderInterface {
         JSONObject jsonObject= null;
         String decryptedText = null;
         try{
-            System.out.println("DECRYPT WITH " + password);
-            System.out.println("DECRYPTING" + configText);
             decryptedText = Crypto.decrypt(password,configText);
-            System.out.println("PLAIN TEXT IS" + decryptedText);
         }catch (Exception e){
-            e.printStackTrace();
             throw new WooshException("Wrong password for configuration");
         }
         jsonObject = new JSONObject(decryptedText);

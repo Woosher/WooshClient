@@ -201,7 +201,6 @@ public class Controller {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == done) {
                 if (equalValuePasswords()) {
-                    Utils.printLogs("EQUAL");
                     return new Pair<>(retypePasswordField.getText(), passwordField.getText());
                 }
             }
