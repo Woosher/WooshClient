@@ -77,11 +77,12 @@ public class ConfigReader implements ConfigReaderInterface {
         if(jsonObject.has("sshport"))  node.setSSHPort(jsonObject.getInt("sshport"));
         if(jsonObject.has("name"))  node.setName(jsonObject.getString("name"));
         if(jsonObject.has("username"))  node.setUsername(jsonObject.getString("username"));
-        if(jsonObject.has("software_enviroment"))  node.setEnvironment(jsonObject.getString("software_environment"));
+        if(jsonObject.has("software_environment"))  node.setEnvironment(jsonObject.getString("software_environment"));
         if(jsonObject.has("operating_system"))  node.setOperatingSystem(jsonObject.getString("operating_system"));
         if(jsonObject.has("password"))  node.setPassword(jsonObject.getString("password"));
         if(jsonObject.has("path"))  node.setPath(jsonObject.getString("path"));
         if(jsonObject.has("sshkeypath"))  node.setSshKeyPath(jsonObject.getString("sshkeypath"));
+        if(jsonObject.has("useSSHKey")) node.setUseSSHKey(jsonObject.getBoolean("useSSHKey"));
         return node;
     }
 

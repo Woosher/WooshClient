@@ -56,7 +56,10 @@ public class Controller {
     ListView<Node> nodeListView;
 
     @FXML
-    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, passwordTxt, pathTxt, nodeNumberTxt, deploymentNameTxt, sshKeyTxt;
+    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, pathTxt, nodeNumberTxt, deploymentNameTxt, sshKeyTxt;
+
+    @FXML
+    PasswordField passwordTxt;
 
     @FXML
     VBox infoLayout, nodeExtraInfo, loadBalancerExtraInfo;
@@ -66,6 +69,9 @@ public class Controller {
 
     @FXML
     ComboBox<String> envBox;
+
+    @FXML
+    CheckBox passCheck, keyCheck;
 
     @FXML
     Button saveInfoButton, addNodeButton, toolsAddLb, toolsAddNode, toolsDelMachine, toolsAddNodeToLb;
@@ -115,6 +121,20 @@ public class Controller {
         toolsAddNodeToLb.setOnMouseClicked(event -> handleAddNodeToLb());
         sshKeyTxt.setOnMouseClicked(event -> handleSettingPath(sshKeyTxt));
         pathTxt.setOnMouseClicked(event -> handleSettingPathForFolder(pathTxt));
+
+        setupLists();
+        addListeners();
+        createPopup();
+        createPopupDeploy();
+        createPopupError();
+        createPasswordDialog();
+    }
+
+    /********************************************************************************************************
+     * Button handlers
+     */
+
+    private void addListeners(){
         portTxt.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -131,60 +151,22 @@ public class Controller {
                 }
             }
         });
-        setupLists();
-        createPopup();
-        createPopupDeploy();
-        createPopupError();
-        createPasswordDialog();
-    }
 
-    /********************************************************************************************************
-     * Button handlers
-     */
-
-    private void createPasswordDialog() {
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        passwordField = new PasswordField();
-        passwordField.setPromptText("Password");
-        retypePasswordField = new PasswordField();
-        retypePasswordField.setPromptText("Re-type Password");
-
-        passwordLabel = new Label("Password");
-        retypePasswordLabel = new Label("Re-type Password");
-
-
-        grid.add(retypePasswordLabel, 0, 1);
-        grid.add(retypePasswordField, 1, 1);
-
-        grid.add(passwordLabel, 0, 0);
-        grid.add(passwordField, 1, 0);
-
-        done = new ButtonType("DONE", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(done, ButtonType.CANCEL);
-
-        doneButton = dialog.getDialogPane().lookupButton(done);
-        doneButton.setDisable(true);
-
-        dialog.getDialogPane().setContent(grid);
-
-        savePassListener = new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                doneButton.setDisable(!equalValuePasswords());
+        passCheck.selectedProperty().addListener(event -> {
+            if(passCheck.isSelected()){
+                sshKeyTxt.setDisable(true);
+                passwordTxt.setDisable(false);
+                keyCheck.setSelected(false);
             }
-        };
+        });
 
-        loadPassListener = new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                doneButton.setDisable(newValue.trim().isEmpty());
-
+        keyCheck.selectedProperty().addListener(event -> {
+            if(keyCheck.isSelected()){
+                sshKeyTxt.setDisable(false);
+                passwordTxt.setDisable(true);
+                passCheck.setSelected(false);
             }
-        };
+        });
     }
 
     private void saveWithPasswordDialog(String path) {
@@ -206,7 +188,7 @@ public class Controller {
             }
             return null;
         });
-
+        Platform.runLater(() -> passwordField.requestFocus());
         Optional<Pair<String, String>> result = dialog.showAndWait();
         result.ifPresent(passwords -> {
             saveWithPassword(path, passwords.getKey());
@@ -218,7 +200,6 @@ public class Controller {
         dialog.setHeaderText("Type your password to decrypt configuration");
         retypePasswordLabel.setVisible(false);
         retypePasswordField.setVisible(false);
-
         passwordField.textProperty().addListener((observable, oldValue, newValue) -> {
             doneButton.setDisable(newValue.trim().isEmpty());
         });
@@ -235,7 +216,7 @@ public class Controller {
         passwordField.textProperty().removeListener(loadPassListener);
         passwordField.setText("");
         retypePasswordField.setText("");
-
+        Platform.runLater(() -> passwordField.requestFocus());
         Optional<Pair<String, String>> result = dialog.showAndWait();
         result.ifPresent(passwords -> {
             loadWithPassword(path, passwords.getKey());
@@ -300,11 +281,11 @@ public class Controller {
         currentMachine.setSSHPort(Integer.parseInt(SSHportTxt.getText()));
         currentMachine.setPort(Integer.parseInt(portTxt.getText()));
         currentMachine.setSshKeyPath(sshKeyTxt.getText());
+        currentMachine.setUseSSHKey(keyCheck.isSelected());
         if (currentMachine instanceof Node) {
             Node node = (Node) currentMachine;
             node.setPath(pathTxt.getText());
             String env = envBox.getSelectionModel().getSelectedItem();
-            System.out.println(envBox.getSelectionModel().getSelectedItem());
             node.setEnvironment(env);
             node.setOperatingSystem(UBUNTU_XENIAL);
         }
@@ -428,6 +409,7 @@ public class Controller {
 
                 @Override
                 public void onFailure(Throwable throwable) {
+                    throwable.printStackTrace();
                     showError(throwable.getMessage());
                 }
             });
@@ -505,6 +487,7 @@ public class Controller {
             model.saveDeployment(path, password, new ResultsListener<Void>() {
                 @Override
                 public void onCompletion(Void result) {
+                    deploymentChanged = false;
                 }
 
                 @Override
@@ -611,6 +594,8 @@ public class Controller {
             SSHportTxt.setText(Integer.toString(machine.getSSHPort()));
             passwordTxt.setText(machine.getPassword());
             sshKeyTxt.setText(machine.getSshKeyPath());
+            keyCheck.setSelected(machine.isUseSSHKey());
+            passCheck.setSelected(!machine.isUseSSHKey());
 
             if (machine instanceof LoadBalancer) {
                 LoadBalancer loadBalancer = (LoadBalancer) machine;
@@ -647,59 +632,47 @@ public class Controller {
     private void resetGUI() {
         resetPopup();
         infoLayout.setVisible(false);
-        machineListView.getItems().clear();
-        nodeListView.getItems().clear();
+        if(machineListView.getItems() != null) machineListView.getItems().clear();
+        if(nodeListView.getItems() != null) nodeListView.getItems().clear();
         deploymentNameTxt.setText("");
+        deploymentChanged = false;
     }
 
     private void setupDeploymentInGui() {
         Platform.runLater(() -> {
+            deploymentChanged = false;
             machineListView.setItems(deployment.getMachines());
             deploymentNameTxt.setText(deployment.getName());
             setupLists();
             addObservers();
         });
-
-
     }
 
     private void addObservers() {
-        deployment.addObserver(new Observer() {
+        Observer observer = new Observer() {
             @Override
             public void update(Observable o, Object arg) {
                 deploymentChanged = true;
             }
-        });
+        };
 
-        deployment.getMachines().addListener(new ListChangeListener<Machine>() {
+        ListChangeListener<Machine> listChangeListener = new ListChangeListener<Machine>() {
             @Override
             public void onChanged(Change<? extends Machine> c) {
                 deploymentChanged = true;
             }
-        });
+        };
+
+        deployment.addObserver(observer);
+        deployment.getMachines().addListener(listChangeListener);
 
         for (Machine machine : deployment.getMachines()) {
-            machine.addObserver(new Observer() {
-                @Override
-                public void update(Observable o, Object arg) {
-                    deploymentChanged = true;
-                }
-            });
+            machine.addObserver(observer);
             if (machine instanceof LoadBalancer) {
                 LoadBalancer loadBalancer = (LoadBalancer) machine;
-                loadBalancer.getNodes().addListener(new ListChangeListener<Node>() {
-                    @Override
-                    public void onChanged(Change<? extends Node> c) {
-                        deploymentChanged = true;
-                    }
-                });
+                loadBalancer.getNodes().addListener(listChangeListener);
                 for (Node node : loadBalancer.getNodes()) {
-                    node.addObserver(new Observer() {
-                        @Override
-                        public void update(Observable o, Object arg) {
-                            deploymentChanged = true;
-                        }
-                    });
+                    node.addObserver(observer);
                 }
             }
         }
@@ -751,7 +724,7 @@ public class Controller {
     private void createCloseDialog() {
         alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Woosh");
-        alert.setHeaderText("You have unsaved changed in your deployment");
+        alert.setHeaderText("You have unsaved changes in your deployment");
         alert.setContentText("Choose your option.");
 
         ButtonType buttonTypeOne = new ButtonType("Save");
@@ -860,6 +833,52 @@ public class Controller {
         });
 
     }
+
+    private void createPasswordDialog() {
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+        retypePasswordField = new PasswordField();
+        retypePasswordField.setPromptText("Re-type Password");
+
+        passwordLabel = new Label("Password");
+        retypePasswordLabel = new Label("Re-type Password");
+
+
+        grid.add(retypePasswordLabel, 0, 1);
+        grid.add(retypePasswordField, 1, 1);
+
+        grid.add(passwordLabel, 0, 0);
+        grid.add(passwordField, 1, 0);
+
+        done = new ButtonType("DONE", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(done, ButtonType.CANCEL);
+
+        doneButton = dialog.getDialogPane().lookupButton(done);
+        doneButton.setDisable(true);
+
+        dialog.getDialogPane().setContent(grid);
+
+        savePassListener = new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                doneButton.setDisable(!equalValuePasswords());
+            }
+        };
+
+        loadPassListener = new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                doneButton.setDisable(newValue.trim().isEmpty());
+
+            }
+        };
+    }
+
 
     private void resetPopup() {
         Platform.runLater(() -> {

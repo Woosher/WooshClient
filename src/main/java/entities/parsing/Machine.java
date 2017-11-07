@@ -6,6 +6,15 @@ abstract public class Machine extends Observable {
 
     private String name,username,ip,password, pathCompressed, bashScript, sshKeyPath;
     private int SSHPort, port;
+    private boolean useSSHKey = false;
+
+    public boolean isUseSSHKey() {
+        return useSSHKey;
+    }
+
+    public void setUseSSHKey(boolean useSSHKey) {
+        this.useSSHKey = useSSHKey;
+    }
 
     public String getSshKeyPath() {
         return sshKeyPath;

@@ -8,6 +8,10 @@ import tools.Utils;
 import tools.WooshLogger;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -32,7 +36,7 @@ public class SSHClient implements SSHClientInterface {
             JSch jsch = new JSch();
             setKnownHostFile(jsch);
             Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
-            if (machine.getSshKeyPath() != null && !machine.getSshKeyPath().equals("")) {
+            if (machine.isUseSSHKey()) {
                 jsch.addIdentity(machine.getSshKeyPath());
             } else {
                 session.setPassword(machine.getPassword());
@@ -81,26 +85,28 @@ public class SSHClient implements SSHClientInterface {
             JSch jsch = new JSch();
             Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
             setKnownHostFile(jsch);
-            if (machine.getSshKeyPath() != null && !machine.getSshKeyPath().equals("")) {
+            if (machine.isUseSSHKey()) {
                 jsch.addIdentity(machine.getSshKeyPath());
             } else {
+                logger.hideCharset(machine.getPassword());
                 session.setPassword(machine.getPassword());
             }
-
             session.connect();
             Channel channel = session.openChannel("sftp");
             channel.connect();
+
             ChannelSftp channelSftp = (ChannelSftp) channel;
             executeRemoteCommandAsSudo(session, true, machine.getPassword(), "sudo mkdir -p " + SERVERPATH, logger);
             channelSftp.cd(SERVERPATH);
+
             executeRemoteCommandAsSudo(session, true, machine.getPassword(), "sudo chmod -R 777 " + SERVERPATH, logger);
+
             File f = new File(machine.getPathCompressed());
             channelSftp.put(new FileInputStream(f), f.getName());
             Scanner scanner = new Scanner(machine.getBashScript());
 
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                System.out.println(line);
                 executeRemoteCommandAsSudo(session, scanner.hasNextLine(), machine.getPassword(), line, logger);
             }
             channel.disconnect();
@@ -126,7 +132,7 @@ public class SSHClient implements SSHClientInterface {
         try {
             channel = session.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
-            ((ChannelExec) channel).setPty(false);
+            ((ChannelExec) channel).setPty(true);
             channel.connect();
             InputStream stdout = channel.getInputStream();
             InputStream stderr = ((ChannelExec) channel).getErrStream();
@@ -135,6 +141,7 @@ public class SSHClient implements SSHClientInterface {
             out.write((password + "\n").getBytes());
             out.flush();
             out.close();
+            logger.appendLoggingWithTime(command);
             byte[] tmp = new byte[1024];
             if(hasMore) {
                 while (true) {
@@ -152,6 +159,7 @@ public class SSHClient implements SSHClientInterface {
                 }
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new WooshException("Failure in executing command " + command);
         } finally {
             channel.disconnect();
@@ -161,8 +169,8 @@ public class SSHClient implements SSHClientInterface {
     private boolean read(InputStream stdout, byte[] tmp, WooshLogger logger) throws IOException {
         int i = stdout.read(tmp, 0, 1024);
         if (i < 0) return false;
-        String errorLog = new String(tmp, 0, i);
-        logger.appendLoggingWithTime(errorLog);
+        String log = new String(tmp, 0, i);
+        logger.appendLoggingWithTime(log);
         return true;
     }
 

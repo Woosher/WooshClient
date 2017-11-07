@@ -20,6 +20,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.PasswordField?>
 <BorderPane fx:id="parent" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.Controller">
     <center>
@@ -98,11 +100,15 @@
                 <TextField fx:id="usernameTxt" ></TextField>
 
                 <Label fx:id="passwordLabel" text="Password"></Label>
-                <TextField fx:id="passwordTxt" ></TextField>
-
+                <HBox>
+                    <CheckBox fx:id="passCheck"></CheckBox>
+                <PasswordField fx:id="passwordTxt" ></PasswordField>
+                </HBox>
                 <Label fx:id="sshKeyLabel" text="SSH Key"></Label>
+                <HBox>
+                    <CheckBox fx:id="keyCheck"></CheckBox>
                 <TextField fx:id="sshKeyTxt" ></TextField>
-
+                </HBox>
                 <Label fx:id="ipLabel" text="IP"></Label>
                 <TextField fx:id="ipTxt" ></TextField>
 

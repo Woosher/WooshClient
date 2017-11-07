@@ -189,7 +189,6 @@ public class PackagingModeller implements PackagingInterface {
             sb.append("sudo nohup java -jar ").append(SERVERPATH).append(node.getName()).append("/").append(jarFile.getName());
             sb.append("\n");
         }
-        System.out.println(sb.toString());
         return sb.toString();
     }
 
