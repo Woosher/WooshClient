@@ -19,7 +19,11 @@ import static values.Constants.SERVERPATH;
 
 public class SSHClient implements SSHClientInterface {
 
+    private WooshLogger logger;
 
+    public SSHClient(){
+        logger = new WooshLogger();
+    }
 
     private void setKnownHostFile(JSch jsch) throws WooshException {
         try {
@@ -58,7 +62,12 @@ public class SSHClient implements SSHClientInterface {
         setKnownHostFile(jsch);
         try {
             Session session = jsch.getSession(machine.getUsername(), machine.getIp(), machine.getSSHPort());
-            session.setPassword(machine.getPassword());
+            if (machine.isUseSSHKey()) {
+                jsch.addIdentity(machine.getSshKeyPath());
+            } else {
+                session.setPassword(machine.getPassword());
+            }
+            session.connect(8000);
             session.connect();
             session.disconnect();
         } catch (JSchException e) {
@@ -75,7 +84,7 @@ public class SSHClient implements SSHClientInterface {
 
     @Override
     public String sendPackage(Machine machine) throws WooshException {
-        WooshLogger logger = new WooshLogger();
+
         logger.startNewLog(machine.getName());
         logger.appendLoggingWithOutTime("-----------------------STARTED----------------------------");
         logger.appendLoggingWithOutTime("DEPLOYMENTLOG FOR: " + machine.getName());
@@ -96,10 +105,10 @@ public class SSHClient implements SSHClientInterface {
             channel.connect();
 
             ChannelSftp channelSftp = (ChannelSftp) channel;
-            executeRemoteCommandAsSudo(session, true, machine.getPassword(), "sudo mkdir -p " + SERVERPATH, logger);
+            executeRemoteCommandAsSudo(session, true, machine.getPassword(), "sudo mkdir -p " + SERVERPATH);
             channelSftp.cd(SERVERPATH);
 
-            executeRemoteCommandAsSudo(session, true, machine.getPassword(), "sudo chmod -R 777 " + SERVERPATH, logger);
+            executeRemoteCommandAsSudo(session, true, machine.getPassword(), "sudo chmod -R 777 " + SERVERPATH);
 
             File f = new File(machine.getPathCompressed());
             channelSftp.put(new FileInputStream(f), f.getName());
@@ -107,7 +116,7 @@ public class SSHClient implements SSHClientInterface {
 
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                executeRemoteCommandAsSudo(session, scanner.hasNextLine(), machine.getPassword(), line, logger);
+                executeRemoteCommandAsSudo(session, scanner.hasNextLine(), machine.getPassword(), line);
             }
             channel.disconnect();
             session.disconnect();
@@ -122,11 +131,11 @@ public class SSHClient implements SSHClientInterface {
             logger.appendLoggingWithOutTime("-----------------------DONE-------------------------------");
             logger.saveLogsAndClear();
         }
-        return "Succes";
+        return "Success";
     }
 
     private void executeRemoteCommandAsSudo(Session session, boolean hasMore, String password,
-                                            String command, WooshLogger logger) throws WooshException {
+                                            String command) throws WooshException {
         Channel channel = null;
         StringBuffer result = new StringBuffer();
         try {
