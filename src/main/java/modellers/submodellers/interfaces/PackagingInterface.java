@@ -6,7 +6,6 @@ import exceptions.WooshException;
 
 public interface PackagingInterface {
 
-
     String createNginxScript(LoadBalancer loadBalancer) throws WooshException;
 
     String readyDeployment(Deployment deployment) throws WooshException;

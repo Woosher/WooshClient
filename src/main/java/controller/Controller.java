@@ -409,8 +409,10 @@ public class Controller {
 
                 @Override
                 public void onFailure(Throwable throwable) {
-                    throwable.printStackTrace();
-                    showError(throwable.getMessage());
+                    popupDeployController.setSpinnerVisibility(false);
+                    popupDeployController.resetInfo();
+                    popupDeployStage.close();
+                    showError(throwable.getCause().getMessage());
                 }
             });
         } else {

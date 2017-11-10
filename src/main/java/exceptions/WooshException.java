@@ -10,5 +10,4 @@ public class WooshException extends Exception{
         super(message);
     }
 
-
 }

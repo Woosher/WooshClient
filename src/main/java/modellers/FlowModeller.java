@@ -183,12 +183,7 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     private ConnectionInfo[] deploy() throws WooshException{
-        try {
-            packagingController.readyDeployment(memoryMapper.getDeployment());
-        } catch (WooshException e) {
-            e.printStackTrace();
-        }
-
+        packagingController.readyDeployment(memoryMapper.getDeployment());
         Stack<Machine> machines = new Stack<>();
         for(Machine machine: memoryMapper.getDeployment().getMachines()){
             if(machine instanceof LoadBalancer){
@@ -196,14 +191,11 @@ public class FlowModeller implements FlowModelInterface {
             }
         }
         machines.addAll(memoryMapper.getDeployment().getMachines());
-
         int numOfMachines = machines.size();
-
         CompletableFuture<?>[] allFutures = new CompletableFuture<?>[numOfMachines];
         for (int i=0; i<numOfMachines; ++i) {
             allFutures[i] = CompletableFuture.supplyAsync(() -> {return connectionController.sendPackage(machines.pop());});
         }
-
         CompletableFuture.allOf(allFutures).join();
         return Arrays.stream(allFutures).map(CompletableFuture::join).toArray(ConnectionInfo[]::new);
     }

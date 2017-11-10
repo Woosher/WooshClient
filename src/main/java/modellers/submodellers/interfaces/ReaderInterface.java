@@ -7,6 +7,4 @@ public interface ReaderInterface {
 
     Deployment readConfigFile(String path, String password) throws WooshException;
 
-
-
 }

@@ -145,16 +145,16 @@ public class ConfigChecker implements CheckerInterface {
         if(loadBalancer.getName() == null){
             errorMsg += "You have no name for a loadbalancer \n";
         }
-        if(loadBalancer.getUsername() == null){
+        if(loadBalancer.getUsername() == null || loadBalancer.getUsername().isEmpty()){
             errorMsg += "You have no username in a loadbalancer \n";
         }
-        if(loadBalancer.getIp() == null) {
+        if(loadBalancer.getIp() == null ) {
             errorMsg += "You are missing an ip in a loadbalancer \n";
         }
         if(loadBalancer.getSSHPort() == 0){
             errorMsg += "You are missing a port in a loadbalancer \n";
         }
-        if(loadBalancer.getPassword() == null){
+        if(loadBalancer.getPassword() == null && !loadBalancer.isUseSSHKey()){
             errorMsg += "You are missing a password in a loadbalancer \n";
         }
         if(loadBalancer.getNodes() != null){
@@ -189,7 +189,7 @@ public class ConfigChecker implements CheckerInterface {
         if(node.getSSHPort() == 0){
             errorMsg += "You are missing a port in a node \n";
         }
-        if(node.getPassword() == null){
+        if(node.getPassword() == null && !node.isUseSSHKey()){
             errorMsg += "You are missing a password in a node\n";
         }
         return errorMsg;

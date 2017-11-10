@@ -10,6 +10,4 @@ public interface ConfigReaderInterface {
 
     String loadConfig(String path) throws WooshException;
 
-    boolean checkDeployment(Deployment deployment) throws WooshException;
-
 }

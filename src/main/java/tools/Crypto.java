@@ -15,11 +15,14 @@ import java.util.Base64;
 
 public class Crypto {
 
-    static byte[] salt = {
+    static byte[] SALT = {
             (byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32,
             (byte) 0x56, (byte) 0x35, (byte) 0xE3, (byte) 0x03
     };
-    static int iterationCount = 19;
+    static int ITCOUNT = 19;
+
+    static String ALGORITHM = "PBEWithMD5AndDES";
+    static String CHARSET = "UTF-8";
 
     public static String encrypt(String secretKey, String plainText)
             throws NoSuchAlgorithmException,
@@ -30,20 +33,16 @@ public class Crypto {
             UnsupportedEncodingException,
             IllegalBlockSizeException,
             BadPaddingException {
-        //Key generation for enc and desc
-        KeySpec keySpec = new PBEKeySpec(secretKey.toCharArray(), salt, iterationCount);
-        SecretKey key = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(keySpec);
-        // Prepare the parameter to the ciphers
-        AlgorithmParameterSpec paramSpec = new PBEParameterSpec(salt, iterationCount);
 
-        //Enc process
-        Cipher ecipher = Cipher.getInstance(key.getAlgorithm());
-        ecipher.init(Cipher.ENCRYPT_MODE, key, paramSpec);
-        String charSet = "UTF-8";
-        byte[] in = plainText.getBytes(charSet);
-        byte[] out = ecipher.doFinal(in);
-        String encStr = new String(Base64.getEncoder().encode(out));
-        return encStr;
+        KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), SALT, ITCOUNT);
+        SecretKey key = SecretKeyFactory.getInstance(ALGORITHM).generateSecret(spec);
+        AlgorithmParameterSpec paramSpec = new PBEParameterSpec(SALT, ITCOUNT);
+
+        Cipher cipher = Cipher.getInstance(key.getAlgorithm());
+        cipher.init(Cipher.ENCRYPT_MODE, key, paramSpec);
+        byte[] in = plainText.getBytes(CHARSET);
+        byte[] out = cipher.doFinal(in);
+        return new String(Base64.getEncoder().encode(out));
     }
 
     public static String decrypt(String secretKey, String encryptedText)
@@ -52,24 +51,19 @@ public class Crypto {
             NoSuchPaddingException,
             InvalidKeyException,
             InvalidAlgorithmParameterException,
-            UnsupportedEncodingException,
             IllegalBlockSizeException,
             BadPaddingException,
             IOException {
 
-        //Key generation for enc and desc
-        KeySpec keySpec = new PBEKeySpec(secretKey.toCharArray(), salt, iterationCount);
-        SecretKey key = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(keySpec);
-        // Prepare the parameter to the ciphers
-        AlgorithmParameterSpec paramSpec = new PBEParameterSpec(salt, iterationCount);
-        //Decryption process; same key will be used for decr
-        Cipher dcipher = Cipher.getInstance(key.getAlgorithm());
-        dcipher.init(Cipher.DECRYPT_MODE, key, paramSpec);
+        KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), SALT, ITCOUNT);
+        SecretKey key = SecretKeyFactory.getInstance(ALGORITHM).generateSecret(spec);
+        AlgorithmParameterSpec paramSpec = new PBEParameterSpec(SALT, ITCOUNT);
+
+        Cipher decipher = Cipher.getInstance(key.getAlgorithm());
+        decipher.init(Cipher.DECRYPT_MODE, key, paramSpec);
         byte[] enc = Base64.getDecoder().decode(encryptedText.trim());
-        byte[] utf8 = dcipher.doFinal(enc);
-        String charSet = "UTF-8";
-        String plainStr = new String(utf8, charSet);
-        return plainStr;
+        byte[] utf8 = decipher.doFinal(enc);
+        return new String(utf8, CHARSET);
     }
 
 

@@ -22,14 +22,6 @@ public class Scripter implements ScripterInterface {
         scriptHelper = new ScriptHelper();
     }
 
-    public Machine packNode(Node node){
-        return null;
-    }
-
-    public Machine packLoadBalancer(LoadBalancer lb){
-        return null;
-    }
-
     public String compressPackage( String folderPath, String destinationPath, String archiveName) throws WooshException {
         File destination = new File(destinationPath);
         File source = new File(folderPath);

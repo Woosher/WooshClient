@@ -22,18 +22,12 @@ public class Constants {
     public static final String LOGPATH = FULLTEMPPATH + "/logs/";
 
     public static final String SERVERPATH = "/etc/woosh/packages/wooshserver/";
-    public static final String SERVERPATH1 = "/etc/woosh/packages/";
-    public static final String SERVERPATH2 = "/etc/woosh/packages/wooshserver/";
-    public static final String SERVERPATH3 = "/etc/woosh/packages/wooshserver/";
     public static final String NGINXCONF = "nginx.conf";
-    public static final String EXESCRIPT = "executescript.sh";
-    public static final String BASHSTART = "#!/bin/bash";
     public static final String INSTALLJAVA = "sudo apt-get install default-jre -y";
     public static final String INSTALLNGINX = "sudo apt-get install nginx -y";
     public static final String INSTALL_MONO = "sudo apt install mono-mcs -y";
     public static final String INSTALL_RUBY = "sudo apt-get install ruby-full -y";
     public static final String INSTALL_PYTHON= "sudo apt-get install python3.6 -y";
-    public static final String INSTALL_TMUX = "sudo apt-get install tmux";
     public static final String UBUNTU_XENIAL= "Ubuntu_Xenial";
 
     public static final String NGINXPATH = "/etc/nginx/";

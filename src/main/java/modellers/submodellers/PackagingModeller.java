@@ -6,6 +6,7 @@ import entities.parsing.LoadBalancer;
 import entities.parsing.Machine;
 import entities.parsing.Node;
 import exceptions.WooshException;
+import iohelpers.ConfigChecker;
 import iohelpers.ConfigWriter;
 import iohelpers.Scripter;
 import iohelpers.interfaces.CheckerInterface;
@@ -25,10 +26,12 @@ public class PackagingModeller implements PackagingInterface {
 
     private WriterInterface configWriter;
     private ScripterInterface scripter;
+    private CheckerInterface configChecker;
 
     public PackagingModeller(){
         configWriter = new ConfigWriter();
         scripter = new Scripter();
+        configChecker = new ConfigChecker();
     }
 
     @Override
@@ -39,6 +42,7 @@ public class PackagingModeller implements PackagingInterface {
     @Override
     public String readyDeployment(Deployment deployment) throws WooshException {
         try {
+            configChecker.checkDeploymentObject(deployment);
             String path = FULLTEMPPATH + deployment.getName() + "/";
             Utils.generateSimpleFolder(path);
             for(Machine machine: deployment.getMachines()) {
@@ -51,7 +55,7 @@ public class PackagingModeller implements PackagingInterface {
                     updateAndSaveNode((Node)machine,path);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new WooshException(e.getMessage());
         }
         return null;

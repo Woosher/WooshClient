@@ -86,12 +86,6 @@ public class ConfigReader implements ConfigReaderInterface {
         return node;
     }
 
-
-
-    public Deployment parseConfig(JSONObject jsonObject) throws WooshException {
-        return null;
-    }
-
     public String loadConfig(String path) throws WooshException {
         String everything = null;
         try(BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -108,18 +102,7 @@ public class ConfigReader implements ConfigReaderInterface {
         } catch (IOException e) {
             throw new WooshException("Could not open file: " + path);
         }
-
-           /*TODO
-            Ryk JSON Parsing ud fra entitetsklasserne
-            --- CONFIGCHECKER STUFF --
-            1. Smid JSON ind i configchecker
-            2. hvis configchecker ikke returnere nogle fejl så parse alt json til et deployment og returner dette
-         */
-
         return everything;
     }
 
-    public boolean checkDeployment(Deployment deployment) throws WooshException {
-        return false;
-    }
 }
