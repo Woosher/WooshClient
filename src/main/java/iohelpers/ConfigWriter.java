@@ -13,24 +13,15 @@ import org.json.JSONObject;
 import tools.Crypto;
 import tools.Utils;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 public class ConfigWriter implements WriterInterface {
 
-    private CheckerInterface configChecker;
 
     public ConfigWriter() {
-        this.configChecker = new ConfigChecker();
+
     }
 
 
@@ -113,7 +104,7 @@ public class ConfigWriter implements WriterInterface {
         jsonObject.put("software_environment", node.getEnvironment());
         jsonObject.put("operating_system", node.getOperatingSystem());
         jsonObject.put("password", node.getPassword());
-        jsonObject.put("path", node.getPath());
+        jsonObject.put("path", node.getProgramPath());
         jsonObject.put("sshkeypath", node.getSshKeyPath());
         jsonObject.put("useSSHKey", node.isUseSSHKey());
         return jsonObject;

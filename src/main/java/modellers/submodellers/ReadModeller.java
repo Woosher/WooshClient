@@ -4,6 +4,7 @@ import entities.parsing.Deployment;
 import exceptions.WooshException;
 import iohelpers.ConfigReader;
 import iohelpers.interfaces.CheckerInterface;
+import iohelpers.interfaces.ConfigReaderInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
 import modellers.submodellers.interfaces.ReaderInterface;
@@ -12,7 +13,7 @@ import tools.Crypto;
 
 public class ReadModeller implements ReaderInterface {
 
-    ConfigReader configReader;
+    ConfigReaderInterface configReader;
 
     public ReadModeller(){
         configReader = new ConfigReader();

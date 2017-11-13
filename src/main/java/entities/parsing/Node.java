@@ -1,21 +1,19 @@
 package entities.parsing;
 
-import org.json.JSONObject;
-
 public class Node extends Machine {
 
-    private String environment, operatingSystem, path;
+    private String environment, operatingSystem, programPath;
 
     public Node(){
 
     }
 
-    public String getPath() {
-        return path;
+    public String getProgramPath() {
+        return programPath;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setProgramPath(String programPath) {
+        this.programPath = programPath;
         notifyListeners();
     }
 

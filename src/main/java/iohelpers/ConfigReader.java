@@ -19,10 +19,8 @@ import java.util.List;
 
 public class ConfigReader implements ConfigReaderInterface {
 
-    private CheckerInterface configChecker;
 
     public ConfigReader(){
-        this.configChecker = new ConfigChecker();
     }
 
     public Deployment parseFromJSON(JSONObject jsonObject){
@@ -80,7 +78,7 @@ public class ConfigReader implements ConfigReaderInterface {
         if(jsonObject.has("software_environment"))  node.setEnvironment(jsonObject.getString("software_environment"));
         if(jsonObject.has("operating_system"))  node.setOperatingSystem(jsonObject.getString("operating_system"));
         if(jsonObject.has("password"))  node.setPassword(jsonObject.getString("password"));
-        if(jsonObject.has("path"))  node.setPath(jsonObject.getString("path"));
+        if(jsonObject.has("path"))  node.setProgramPath(jsonObject.getString("path"));
         if(jsonObject.has("sshkeypath"))  node.setSshKeyPath(jsonObject.getString("sshkeypath"));
         if(jsonObject.has("useSSHKey")) node.setUseSSHKey(jsonObject.getBoolean("useSSHKey"));
         return node;

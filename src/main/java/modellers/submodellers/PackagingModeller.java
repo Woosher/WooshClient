@@ -63,7 +63,7 @@ public class PackagingModeller implements PackagingInterface {
 
     private void updateAndSaveNode(Node node, String path) throws WooshException {
         String nodePath = path + node.getName() + "/";
-        File source = new File(node.getPath());
+        File source = new File(node.getProgramPath());
         File targetDir = null;
         try {
             targetDir = Utils.generateSimpleFolder(nodePath);

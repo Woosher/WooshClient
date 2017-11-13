@@ -177,7 +177,7 @@ public class ConfigChecker implements CheckerInterface {
         if(node.getName() == null){
             errorMsg += "You are missing a name in a node \n";
         }
-        if(node.getPath() == null){
+        if(node.getProgramPath() == null){
             errorMsg += "You are missing a path in a node \n";
         }
         if(node.getOperatingSystem() == null){

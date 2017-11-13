@@ -31,7 +31,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.*;
 import javafx.util.Callback;
 import modellers.interfaces.FlowModelInterface;
-import tools.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -284,7 +283,7 @@ public class Controller {
         currentMachine.setUseSSHKey(keyCheck.isSelected());
         if (currentMachine instanceof Node) {
             Node node = (Node) currentMachine;
-            node.setPath(pathTxt.getText());
+            node.setProgramPath(pathTxt.getText());
             String env = envBox.getSelectionModel().getSelectedItem();
             node.setEnvironment(env);
             node.setOperatingSystem(UBUNTU_XENIAL);
@@ -612,7 +611,7 @@ public class Controller {
                 nodeExtraInfo.setManaged(true);
                 loadBalancerExtraInfo.setVisible(false);
                 loadBalancerExtraInfo.setManaged(false);
-                pathTxt.setText(node.getPath());
+                pathTxt.setText(node.getProgramPath());
                 envBox.getSelectionModel().select(getIndexForString(node.getEnvironment()));
             }
         }
