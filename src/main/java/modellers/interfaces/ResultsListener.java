@@ -7,5 +7,4 @@ public interface ResultsListener<T> {
 
     public void onFailure(Throwable throwable);
 
-
 }

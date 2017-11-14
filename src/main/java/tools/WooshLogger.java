@@ -13,10 +13,10 @@ import static values.Constants.LOGPATH;
 
 public class WooshLogger {
 
-    StringBuilder stringBuilder;
-    FileWriter fooWriter;
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
-    DateTimeFormatter saveDtf = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+    private StringBuilder stringBuilder;
+    private FileWriter fooWriter;
+    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
+    private DateTimeFormatter saveDtf = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
     private String charset = null;
     private static String passwordHidden = "****************";
     private File file;

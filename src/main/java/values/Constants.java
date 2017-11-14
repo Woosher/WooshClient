@@ -48,6 +48,9 @@ public class Constants {
     public static final String ENVIRONMENT_CSHARP = "C#";
     public static final String ENVIRONMENT_RUBY = "RUBY";
 
+    public static final String ENC_ALGORITHM = "PBEWithMD5AndTripleDES";
+    public static final String CHARSET_UTF8 = "UTF-8";
+
 
     public static final String TRUSTED = "Trusted";
 

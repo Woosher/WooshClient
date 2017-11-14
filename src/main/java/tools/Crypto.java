@@ -1,17 +1,24 @@
 package tools;
 
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.security.crypto.keygen.KeyGenerators;
+
 import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.AlgorithmParameters;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
+
+import static values.Constants.ENC_ALGORITHM;
+import static values.Constants.CHARSET_UTF8;
 
 public class Crypto {
 
@@ -21,49 +28,31 @@ public class Crypto {
     };
     static int ITCOUNT = 19;
 
-    static String ALGORITHM = "PBEWithMD5AndDES";
-    static String CHARSET = "UTF-8";
 
-    public static String encrypt(String secretKey, String plainText)
-            throws NoSuchAlgorithmException,
-            InvalidKeySpecException,
-            NoSuchPaddingException,
-            InvalidKeyException,
-            InvalidAlgorithmParameterException,
-            UnsupportedEncodingException,
-            IllegalBlockSizeException,
-            BadPaddingException {
+    public static String encrypt(String secretKey, String plainText) throws Exception{
 
         KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), SALT, ITCOUNT);
-        SecretKey key = SecretKeyFactory.getInstance(ALGORITHM).generateSecret(spec);
+        SecretKey key = SecretKeyFactory.getInstance(ENC_ALGORITHM).generateSecret(spec);
         AlgorithmParameterSpec paramSpec = new PBEParameterSpec(SALT, ITCOUNT);
 
         Cipher cipher = Cipher.getInstance(key.getAlgorithm());
         cipher.init(Cipher.ENCRYPT_MODE, key, paramSpec);
-        byte[] in = plainText.getBytes(CHARSET);
+        byte[] in = plainText.getBytes(CHARSET_UTF8);
         byte[] out = cipher.doFinal(in);
         return new String(Base64.getEncoder().encode(out));
     }
 
-    public static String decrypt(String secretKey, String encryptedText)
-            throws NoSuchAlgorithmException,
-            InvalidKeySpecException,
-            NoSuchPaddingException,
-            InvalidKeyException,
-            InvalidAlgorithmParameterException,
-            IllegalBlockSizeException,
-            BadPaddingException,
-            IOException {
+    public static String decrypt(String secretKey, String encryptedText) throws Exception{
 
         KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), SALT, ITCOUNT);
-        SecretKey key = SecretKeyFactory.getInstance(ALGORITHM).generateSecret(spec);
+        SecretKey key = SecretKeyFactory.getInstance(ENC_ALGORITHM).generateSecret(spec);
         AlgorithmParameterSpec paramSpec = new PBEParameterSpec(SALT, ITCOUNT);
 
         Cipher decipher = Cipher.getInstance(key.getAlgorithm());
         decipher.init(Cipher.DECRYPT_MODE, key, paramSpec);
         byte[] enc = Base64.getDecoder().decode(encryptedText.trim());
         byte[] utf8 = decipher.doFinal(enc);
-        return new String(utf8, CHARSET);
+        return new String(utf8, CHARSET_UTF8);
     }
 
 

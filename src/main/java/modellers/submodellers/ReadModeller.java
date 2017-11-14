@@ -15,17 +15,17 @@ public class ReadModeller implements ReaderInterface {
 
     ConfigReaderInterface configReader;
 
-    public ReadModeller(){
+    public ReadModeller() {
         configReader = new ConfigReader();
     }
 
     public Deployment readConfigFile(String path, String password) throws WooshException {
         String configText = configReader.loadConfig(path);
-        JSONObject jsonObject= null;
+        JSONObject jsonObject = null;
         String decryptedText = null;
-        try{
-            decryptedText = Crypto.decrypt(password,configText);
-        }catch (Exception e){
+        try {
+            decryptedText = Crypto.decrypt(password, configText);
+        } catch (Exception e) {
             throw new WooshException("Wrong password for configuration");
         }
         jsonObject = new JSONObject(decryptedText);
