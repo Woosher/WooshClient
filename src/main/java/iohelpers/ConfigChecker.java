@@ -14,6 +14,7 @@ import java.util.Stack;
 public class ConfigChecker implements CheckerInterface {
 
 
+    //Outdated and unused
     @Override
     public void checkDeploymentJSON(JSONObject jsonObject) throws WooshException {
         if(!jsonObject.has("deployment_name")){
