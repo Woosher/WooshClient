@@ -24,8 +24,8 @@
             </columnConstraints>
             <children>
                 <Label  fx:id="headerName" minWidth="50" text="Name"  GridPane.columnIndex="0"  GridPane.rowIndex="0" />
-                <Label fx:id="headerCerti"  minWidth="50" text="Fingerprint" GridPane.columnIndex="1" GridPane.rowIndex="0"  />
-                <Label fx:id="status"  minWidth="50" text="Status" GridPane.columnIndex="2"  GridPane.rowIndex="0"  />
+                <Label fx:id="headerCerti"  minWidth="50" text="Message" GridPane.columnIndex="1" GridPane.rowIndex="0"  />
+                <Label fx:id="status"  minWidth="50" text="Trusted host" GridPane.columnIndex="2"  GridPane.rowIndex="0"  />
             </children>
         </GridPane>
 

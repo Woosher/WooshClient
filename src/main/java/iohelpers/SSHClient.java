@@ -70,6 +70,8 @@ public class SSHClient implements SSHClientInterface {
                 throw new WooshException(" Unknown host, fingerprint: " + e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1));
             } else if (e.getMessage().contains("Connection refused")) {
                 throw new WooshException("Connection refused");
+            }else{
+                throw new WooshException(e.getMessage());
             }
         } catch (Exception ex) {
             throw new WooshException(" Error with " + machine.getIp());
