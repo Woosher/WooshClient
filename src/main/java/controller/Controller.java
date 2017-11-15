@@ -408,9 +408,11 @@ public class Controller {
 
                 @Override
                 public void onFailure(Throwable throwable) {
-                    popupDeployController.setSpinnerVisibility(false);
-                    popupDeployController.resetInfo();
-                    popupDeployStage.close();
+                    Platform.runLater(() -> {
+                        popupDeployController.setSpinnerVisibility(false);
+                        popupDeployController.resetInfo();
+                        popupDeployStage.close();
+                    });
                     showError(throwable.getCause().getMessage());
                 }
             });
