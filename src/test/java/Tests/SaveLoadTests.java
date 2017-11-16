@@ -24,8 +24,6 @@ import static org.junit.Assert.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SaveLoadTests {
 
-
-
     @Test
     public void testValidJSON(){
         Boolean result = true;
