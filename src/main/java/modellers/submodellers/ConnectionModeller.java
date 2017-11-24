@@ -26,8 +26,9 @@ public class ConnectionModeller implements ConnectionInterface {
     @Override
     public List<ConnectionInfo> testConnections(Deployment deployment){
         List<ConnectionInfo> list = new ArrayList<>();
-        String status = TRUSTED;
+        String status;
         for (Machine machine: deployment.getMachines()) {
+            status = TRUSTED;
             try {
                 sshClient.testConnection(machine);
             } catch (WooshException e) {

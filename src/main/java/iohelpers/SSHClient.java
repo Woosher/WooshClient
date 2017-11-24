@@ -63,13 +63,18 @@ public class SSHClient implements SSHClientInterface {
                 session.setPassword(machine.getPassword());
             }
             session.connect(8000);
-            session.connect();
             session.disconnect();
         } catch (JSchException e) {
             if (e.getMessage().contains("UnknownHostKey")) {
                 throw new WooshException(" Unknown host, fingerprint: " + e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1));
             } else if (e.getMessage().contains("Connection refused")) {
                 throw new WooshException("Connection refused");
+            }else if (e.getMessage().contains("Connection timed out")) {
+                throw new WooshException("Connection timed out");
+            }else if (e.getMessage().contains("No route to host")) {
+                throw new WooshException("No route to host: please check your internet connection.");
+            } else if (e.getMessage().contains("Connection reset")) {
+                throw new WooshException("Connection reset: Is an SSH client installed?");
             }else{
                 throw new WooshException(e.getMessage());
             }
@@ -119,8 +124,17 @@ public class SSHClient implements SSHClientInterface {
             session.disconnect();
 
         } catch (JSchException e) {
-            e.printStackTrace();
-            return e.getMessage();
+            if (e.getMessage().contains("UnknownHostKey")) {
+                return "Unknown host, fingerprint: " + e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1);
+            } else if (e.getMessage().contains("Connection refused")) {
+                return "Connection refused";
+            }else if (e.getMessage().contains("Connection timed out")) {
+                return "Connection timed out";
+            }else if (e.getMessage().contains("No route to host")) {
+                return "No route to host: please check your internet connection.";
+            }else{
+                return e.getMessage();
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             return ex.getMessage();
