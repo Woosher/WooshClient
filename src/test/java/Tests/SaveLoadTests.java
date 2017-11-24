@@ -106,7 +106,6 @@ public class SaveLoadTests {
         }
 
 
-
         try{
             cw.saveDeployment(d,path,PASSWORD);
         }catch (WooshException e){
@@ -131,7 +130,7 @@ public class SaveLoadTests {
 
 
     @AfterClass
-    public static void clealUp(){
+    public static void cleanUp(){
         String path = System.getProperty("user.home")+"/"+DEPLOYMENT_NAME+".txt";
         try{new File(path).delete();}catch(Exception e){}
     }
