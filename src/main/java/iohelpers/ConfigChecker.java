@@ -9,7 +9,11 @@ import iohelpers.interfaces.CheckerInterface;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConfigChecker implements CheckerInterface {
 
@@ -143,9 +147,25 @@ public class ConfigChecker implements CheckerInterface {
         if(loadBalancer.getCachingAttributes() == null){
             errorMsg += "You have no caching attributes \n";
         }
-        if(loadBalancer.getName() == null){
-            errorMsg += "You have no name for a loadbalancer \n";
+
+        if(loadBalancer.getName() != null){
+            if(!isVaildName(loadBalancer.getName())){
+                errorMsg += "You can only choose a combination of letters and numbers as name for a node\n";
+            }
+        }else {
+            errorMsg += "You are missing a name in a node \n";
         }
+
+        if(loadBalancer.isUseSSHKey()){
+            if(loadBalancer.getSshKeyPath() != null){
+                if(!isVaildPath(loadBalancer.getSshKeyPath())){
+                    errorMsg += "You have a wrong SSH Key path specified in a load balancer \n";
+                }
+            }
+        }
+
+
+
         if(loadBalancer.getUsername() == null || loadBalancer.getUsername().isEmpty()){
             errorMsg += "You have no username in a loadbalancer \n";
         }
@@ -175,10 +195,28 @@ public class ConfigChecker implements CheckerInterface {
         if(node.getEnvironment() == null){
             errorMsg += "You are missing environment in a node  \n";
         }
-        if(node.getName() == null){
+
+        if(node.getName() != null){
+            if(!isVaildName(node.getName())){
+                errorMsg += "You can only choose a combination of letters and numbers as name for a node.\n";
+            }
+        }else {
             errorMsg += "You are missing a name in a node \n";
         }
-        if(node.getProgramPath() == null){
+
+        if(node.isUseSSHKey()){
+            if(node.getSshKeyPath() != null){
+                if(!isVaildPath(node.getSshKeyPath())){
+                    errorMsg += "You have a wrong SSH Key path specified in a node \n";
+                }
+            }
+        }
+
+        if(node.getProgramPath() != null){
+            if(!isVaildPath(node.getProgramPath())){
+                errorMsg += "You have a wrong path specified in a node \n";
+            }
+        }else {
             errorMsg += "You are missing a path in a node \n";
         }
         if(node.getOperatingSystem() == null){
@@ -194,6 +232,16 @@ public class ConfigChecker implements CheckerInterface {
             errorMsg += "You are missing a password in a node\n";
         }
         return errorMsg;
+    }
+
+    private  boolean isVaildPath(String file) {
+        return new File(file).exists();
+    }
+
+    private boolean isVaildName(String name){
+        Pattern p = Pattern.compile("[^A-Za-z0-9]");
+        Matcher m = p.matcher(name);
+        return !m.find();
     }
 
 }
