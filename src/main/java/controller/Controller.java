@@ -46,7 +46,7 @@ public class Controller {
 
 
     @FXML
-    MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem, addLoadBalancerMenuItem;
+    MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem;
 
     @FXML
     ListView<Machine> machineListView;
@@ -108,7 +108,6 @@ public class Controller {
         deployMenuItem.setOnAction(event -> handleDeploy());
         closeMenuItem.setOnAction(event -> handleProjectClose());
         connectionTestMenuItem.setOnAction(event -> handleTestConnections());
-        addLoadBalancerMenuItem.setOnAction(event -> handleAddLoadbalancer());
         addLoadBalancerBox.setOnMouseClicked(event -> handleAddLoadbalancer());
         machineListView.setOnMouseClicked(event -> handleMachineClick());
         nodeListView.setOnMouseClicked(event -> handleNodeClick());

@@ -80,9 +80,8 @@
                         <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="Close project"/>
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
+                <Menu mnemonicParsing="false" text="Deployment options">
                     <items>
-                        <MenuItem fx:id="addLoadBalancerMenuItem" mnemonicParsing="false" text="Add Balancer"/>
                         <MenuItem fx:id="connectionTestMenuItem" mnemonicParsing="false" text="Test Connections"/>
                         <MenuItem fx:id="deployMenuItem" mnemonicParsing="false" text="Deploy system"/>
                     </items>
