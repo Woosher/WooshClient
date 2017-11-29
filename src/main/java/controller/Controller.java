@@ -75,8 +75,10 @@ public class Controller {
     @FXML
     Button saveInfoButton, addNodeButton, toolsAddLb, toolsAddNode, toolsDelMachine, toolsAddNodeToLb;
 
+    @FXML
     PasswordField passwordField, retypePasswordField;
 
+    @FXML
     Label passwordLabel, retypePasswordLabel;
 
     private int nodeCount = 0;
