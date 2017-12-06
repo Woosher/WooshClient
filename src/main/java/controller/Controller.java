@@ -55,7 +55,7 @@ public class Controller {
     ListView<Node> nodeListView;
 
     @FXML
-    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, pathTxt, nodeNumberTxt, deploymentNameTxt, sshKeyTxt;
+    TextField nameTxt, usernameTxt, ipTxt, SSHportTxt, portTxt, pathTxt, nodeNumberTxt, deploymentNameTxt, sshKeyTxt, customScriptPath;
 
     @FXML
     PasswordField passwordTxt;
@@ -70,7 +70,7 @@ public class Controller {
     ComboBox<String> envBox;
 
     @FXML
-    CheckBox passCheck, keyCheck;
+    CheckBox passCheck, keyCheck, customScriptCheck;
 
     @FXML
     Button saveInfoButton, addNodeButton, toolsAddLb, toolsAddNode, toolsDelMachine, toolsAddNodeToLb;
@@ -121,6 +121,7 @@ public class Controller {
         toolsAddNodeToLb.setOnMouseClicked(event -> handleAddNodeToLb());
         sshKeyTxt.setOnMouseClicked(event -> handleSettingPath(sshKeyTxt));
         pathTxt.setOnMouseClicked(event -> handleSettingPathForFolder(pathTxt));
+        customScriptPath.setOnMouseClicked(event -> handleSettingPath(customScriptPath));
 
         setupLists();
         addListeners();
@@ -134,7 +135,7 @@ public class Controller {
      * Button handlers
      */
 
-    private void addListeners(){
+    private void addListeners() {
         portTxt.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -153,7 +154,7 @@ public class Controller {
         });
 
         passCheck.selectedProperty().addListener(event -> {
-            if(passCheck.isSelected()){
+            if (passCheck.isSelected()) {
                 sshKeyTxt.setDisable(true);
                 passwordTxt.setDisable(false);
                 keyCheck.setSelected(false);
@@ -161,10 +162,24 @@ public class Controller {
         });
 
         keyCheck.selectedProperty().addListener(event -> {
-            if(keyCheck.isSelected()){
+            if (keyCheck.isSelected()) {
                 sshKeyTxt.setDisable(false);
                 passwordTxt.setDisable(true);
                 passCheck.setSelected(false);
+            }
+        });
+
+        customScriptCheck.selectedProperty().addListener(event -> {
+            if (customScriptCheck.isSelected()) {
+                customScriptPath.setDisable(false);
+            } else {
+                customScriptPath.setDisable(true);
+            }
+        });
+
+        customScriptCheck.setOnMouseClicked(event -> {
+            if (customScriptCheck.isSelected()) {
+                showError("Custom script files must have line breaks in between commands.");
             }
         });
     }
@@ -282,6 +297,8 @@ public class Controller {
         currentMachine.setPort(Integer.parseInt(portTxt.getText()));
         currentMachine.setSshKeyPath(sshKeyTxt.getText());
         currentMachine.setUseSSHKey(keyCheck.isSelected());
+        currentMachine.setUseCustomScript(customScriptCheck.isSelected());
+        currentMachine.setCustomScriptPath(customScriptPath.getText());
         if (currentMachine instanceof Node) {
             Node node = (Node) currentMachine;
             node.setProgramPath(pathTxt.getText());
@@ -458,21 +475,21 @@ public class Controller {
         }
     }
 
-    private void loadWithPassword(String path, String password){
+    private void loadWithPassword(String path, String password) {
         if (path != null) {
-                model.loadDeployment(path,password, new ResultsListener<Deployment>() {
-                    @Override
-                    public void onCompletion(Deployment result) {
-                        deployment = result;
-                        setupDeploymentInGui();
-                    }
+            model.loadDeployment(path, password, new ResultsListener<Deployment>() {
+                @Override
+                public void onCompletion(Deployment result) {
+                    deployment = result;
+                    setupDeploymentInGui();
+                }
 
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        showError(throwable.getCause().getMessage());
-                    }
-                });
-            }
+                @Override
+                public void onFailure(Throwable throwable) {
+                    showError(throwable.getCause().getMessage());
+                }
+            });
+        }
     }
 
     private void handleSave() {
@@ -601,6 +618,8 @@ public class Controller {
             sshKeyTxt.setText(machine.getSshKeyPath());
             keyCheck.setSelected(machine.isUseSSHKey());
             passCheck.setSelected(!machine.isUseSSHKey());
+            customScriptCheck.setSelected(machine.isUseCustomScript());
+            customScriptPath.setText(machine.getCustomScriptPath());
 
             if (machine instanceof LoadBalancer) {
                 LoadBalancer loadBalancer = (LoadBalancer) machine;
@@ -637,8 +656,8 @@ public class Controller {
     private void resetGUI() {
         resetPopup();
         infoLayout.setVisible(false);
-        if(machineListView.getItems() != null) machineListView.getItems().clear();
-        if(nodeListView.getItems() != null) nodeListView.getItems().clear();
+        if (machineListView.getItems() != null) machineListView.getItems().clear();
+        if (nodeListView.getItems() != null) nodeListView.getItems().clear();
         deploymentNameTxt.setText("");
         deploymentChanged = false;
     }

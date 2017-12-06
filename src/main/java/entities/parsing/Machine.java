@@ -4,9 +4,26 @@ import java.util.Observable;
 
 abstract public class Machine extends Observable {
 
-    private String name,username,ip,password, pathCompressed, bashScript, sshKeyPath;
+    private String name,username,ip,password, pathCompressed, bashScript, sshKeyPath, customScriptPath;
     private int SSHPort, port;
+    private boolean useCustomScript = false;
     private boolean useSSHKey = false;
+
+    public String getCustomScriptPath() {
+        return customScriptPath;
+    }
+
+    public void setCustomScriptPath(String customScriptPath) {
+        this.customScriptPath = customScriptPath;
+    }
+
+    public boolean isUseCustomScript() {
+        return useCustomScript;
+    }
+
+    public void setUseCustomScript(boolean useCustomScript) {
+        this.useCustomScript = useCustomScript;
+    }
 
     public boolean isUseSSHKey() {
         return useSSHKey;

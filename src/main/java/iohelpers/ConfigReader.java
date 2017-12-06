@@ -55,6 +55,8 @@ public class ConfigReader implements ConfigReaderInterface {
         if(jsonObject.has("caching_attributes")) loadBalancer.setCachingAttributes(jsonObject.getString("caching_attributes"));
         if(jsonObject.has("password")) loadBalancer.setPassword(jsonObject.getString("password"));
         if(jsonObject.has("sshkeypath")) loadBalancer.setSshKeyPath(jsonObject.getString("sshkeypath"));
+        if(jsonObject.has("useCustomScript")) loadBalancer.setUseCustomScript(jsonObject.getBoolean("useCustomScript"));
+        if(jsonObject.has("customScriptPath")) loadBalancer.setCustomScriptPath(jsonObject.getString("customScriptPath"));
         if(jsonObject.has("nodes")){
             JSONArray JSONnodes = jsonObject.getJSONArray("nodes");
             for(int i = 0; i<JSONnodes.length(); i++){
@@ -81,6 +83,8 @@ public class ConfigReader implements ConfigReaderInterface {
         if(jsonObject.has("path"))  node.setProgramPath(jsonObject.getString("path"));
         if(jsonObject.has("sshkeypath"))  node.setSshKeyPath(jsonObject.getString("sshkeypath"));
         if(jsonObject.has("useSSHKey")) node.setUseSSHKey(jsonObject.getBoolean("useSSHKey"));
+        if(jsonObject.has("useCustomScript")) node.setUseCustomScript(jsonObject.getBoolean("useCustomScript"));
+        if(jsonObject.has("customScriptPath")) node.setCustomScriptPath(jsonObject.getString("customScriptPath"));
         return node;
     }
 

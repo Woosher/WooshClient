@@ -84,6 +84,8 @@ public class ConfigWriter implements WriterInterface {
         jsonObject.put("password", loadBalancer.getPassword());
         jsonObject.put("sshkeypath", loadBalancer.getSshKeyPath());
         jsonObject.put("useSSHKey", loadBalancer.isUseSSHKey());
+        jsonObject.put("useCustomScript", loadBalancer.isUseCustomScript());
+        jsonObject.put("customScriptPath", loadBalancer.getCustomScriptPath());
 
         for (Node node : loadBalancer.getNodes()) {
             JSONObject jsonNodeInfo = parseNode(node);
@@ -108,6 +110,8 @@ public class ConfigWriter implements WriterInterface {
         jsonObject.put("path", node.getProgramPath());
         jsonObject.put("sshkeypath", node.getSshKeyPath());
         jsonObject.put("useSSHKey", node.isUseSSHKey());
+        jsonObject.put("useCustomScript", node.isUseCustomScript());
+        jsonObject.put("customScriptPath", node.getCustomScriptPath());
         return jsonObject;
     }
 

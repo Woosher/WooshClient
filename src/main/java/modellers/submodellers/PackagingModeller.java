@@ -16,9 +16,7 @@ import org.apache.commons.io.FileUtils;
 import modellers.submodellers.interfaces.PackagingInterface;
 import tools.Utils;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 
 import static values.Constants.*;
 
@@ -77,7 +75,8 @@ public class PackagingModeller implements PackagingInterface {
                         FileUtils.copyFileToDirectory(tempFile,targetDir);
                     }
                 }
-                createNodeBashScript(targetDir.getPath(), node);
+                String bashScript = createNodeBashScript(targetDir.getPath(), node);
+                checkScriptConfiguration(node, bashScript);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,7 +84,15 @@ public class PackagingModeller implements PackagingInterface {
         String compressedPath = scripter.compressPackage(nodePath, path, node.getName());
         Utils.delete(nodePath);
         node.setPathCompressed(compressedPath);
+    }
 
+    private void checkScriptConfiguration(Machine machine, String bashScript) throws WooshException {
+        if(!machine.isUseCustomScript()){
+            machine.setBashScript(bashScript);
+        }else {
+            String customScriptPath = machine.getCustomScriptPath();
+            machine.setBashScript(getContentOfPath(customScriptPath));
+        }
     }
 
     private void updateAndSaveLb(LoadBalancer loadBalancer, String path) throws WooshException{
@@ -94,8 +101,34 @@ public class PackagingModeller implements PackagingInterface {
         String content = createNginxScript(loadBalancer);
         String nginxPath = configWriter.saveFile(content,loadBalancerConf);
         String bashScript = createLoadBalancerBashScript();
-        loadBalancer.setBashScript(bashScript);
+        checkScriptConfiguration(loadBalancer, bashScript);
         loadBalancer.setPathCompressed(nginxPath);
+    }
+
+    private String getContentOfPath(String path) throws WooshException{
+        BufferedReader br = null;
+        FileReader fr = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            fr = new FileReader(path);
+            br = new BufferedReader(fr);
+            String sCurrentLine;
+            while ((sCurrentLine = br.readLine()) != null) {
+                stringBuilder.append(sCurrentLine).append("\n");
+            }
+        } catch (IOException e) {
+            throw new WooshException("Customscript path is not correct");
+        } finally {
+            try {
+                if (br != null)
+                    br.close();
+                if (fr != null)
+                    fr.close();
+            } catch (IOException ex) {
+                throw  new WooshException("Could not close file");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private String createLoadBalancerBashScript() throws WooshException {
@@ -107,14 +140,13 @@ public class PackagingModeller implements PackagingInterface {
         return sb.toString();
     }
 
-    private void createNodeBashScript(String path, Node node) throws WooshException {
+    private String createNodeBashScript(String path, Node node) throws WooshException {
         StringBuilder sb = new StringBuilder();
         String content = getBashForEnvironment(path, node);
         sb.append("sudo ").append("mkdir -p ").append(SERVERPATH).append(node.getName()).append("\n");
         sb.append("sudo ").append("tar -xvzf ").append(SERVERPATH).append(node.getName()).append(".tar.gz ").append("-C ").append(SERVERPATH).append(node.getName()).append("\n");
         sb.append(content);
-
-        node.setBashScript(sb.toString());
+        return sb.toString();
     }
 
     private String getBashForEnvironment(String path, Node node){

@@ -108,6 +108,11 @@
                     <CheckBox fx:id="keyCheck"></CheckBox>
                 <TextField fx:id="sshKeyTxt" ></TextField>
                 </HBox>
+                <Label fx:id="customScriptLabel" text="Use custom script"></Label>
+                <HBox>
+                    <CheckBox fx:id="customScriptCheck" selected="false"></CheckBox>
+                    <TextField fx:id="customScriptPath" disable="true"></TextField>
+                </HBox>
                 <Label fx:id="ipLabel" text="IP"></Label>
                 <TextField fx:id="ipTxt" ></TextField>
 
