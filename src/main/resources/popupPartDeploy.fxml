@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="controller.subcontrollers.PopupDeployPartController"
+          prefWidth="710" maxWidth="-Infinity" minHeight="-Infinity" minWidth="710">
+
+    <columnConstraints>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"  />
+    </columnConstraints>
+    <children>
+        <GridPane GridPane.rowIndex="0" fx:id="gridPane"  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+            <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS"  maxWidth="550"  minWidth="490" />
+                <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS"  maxWidth="50"  minWidth="50"  />
+
+            </columnConstraints>
+            <children>
+                <Label  fx:id="headerName" minWidth="50" text="Machine name"  GridPane.columnIndex="0"  GridPane.rowIndex="0" />
+                <Label fx:id="status"  minWidth="70" text="Deploy" GridPane.columnIndex="2"  GridPane.rowIndex="0"  />
+            </children>
+        </GridPane>
+
+
+        <ListView fx:id="listview" prefWidth="700" GridPane.rowIndex="1" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150"></ListView>
+        <Button fx:id="buttonDeploy" text="Deploy"  minWidth="80" GridPane.rowIndex="2" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.valignment="CENTER"  ></Button>
+    </children>
+
+</GridPane>

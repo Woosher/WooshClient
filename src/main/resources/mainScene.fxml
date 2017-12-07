@@ -84,6 +84,7 @@
                     <items>
                         <MenuItem fx:id="connectionTestMenuItem" mnemonicParsing="false" text="Test Connections"/>
                         <MenuItem fx:id="deployMenuItem" mnemonicParsing="false" text="Deploy system"/>
+                        <MenuItem fx:id="deployPartMenuItem" mnemonicParsing="false" text="Deploy part of system"/>
                     </items>
                 </Menu>
             </menus>

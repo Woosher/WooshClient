@@ -2,6 +2,7 @@ package controller;
 
 import controller.subcontrollers.PopupController;
 import controller.subcontrollers.PopupDeployController;
+import controller.subcontrollers.PopupDeployPartController;
 import controller.subcontrollers.PopupErrorController;
 import entities.ConnectionInfo;
 import javafx.beans.value.ChangeListener;
@@ -46,7 +47,7 @@ public class Controller {
 
 
     @FXML
-    MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem;
+    MenuItem saveMenuItem, loadMenuItem, closeMenuItem, connectionTestMenuItem, deployMenuItem, deployPartMenuItem;
 
     @FXML
     ListView<Machine> machineListView;
@@ -86,9 +87,10 @@ public class Controller {
     private Machine currentMachine;
     private boolean deploymentChanged = false;
     private Deployment deployment;
-    private Stage popupStage, popupDeployStage, popupErrorStage;
+    private Stage popupStage, popupDeployStage, popupErrorStage, popupDeployPartStage;
     private PopupController popupController;
     private PopupDeployController popupDeployController;
+    private PopupDeployPartController popupDeployPartController;
     private PopupErrorController popupErrorController;
     private FlowModelInterface model;
     private Alert alert;
@@ -108,6 +110,7 @@ public class Controller {
         saveMenuItem.setOnAction(event -> handleSave());
         loadMenuItem.setOnAction(event -> handleLoad());
         deployMenuItem.setOnAction(event -> handleDeploy());
+        deployPartMenuItem.setOnAction(event -> handlePartDeploy());
         closeMenuItem.setOnAction(event -> handleProjectClose());
         connectionTestMenuItem.setOnAction(event -> handleTestConnections());
         addLoadBalancerBox.setOnMouseClicked(event -> handleAddLoadbalancer());
@@ -129,6 +132,7 @@ public class Controller {
         createPopupDeploy();
         createPopupError();
         createPasswordDialog();
+        createPopupDeployPart();
     }
 
     /********************************************************************************************************
@@ -412,7 +416,7 @@ public class Controller {
             popupDeployStage.show();
             popupDeployController.setSpinnerVisibility(true);
             popupDeployController.resetInfo();
-            model.sendPackages(new ResultsListener<List<ConnectionInfo>>() {
+            model.sendAllPackages(new ResultsListener<List<ConnectionInfo>>() {
                 @Override
                 public void onCompletion(List<ConnectionInfo> result) {
                     Platform.runLater(() -> {
@@ -435,6 +439,17 @@ public class Controller {
 
                 }
             });
+        } else {
+            showError("You have nothing inside your deployment");
+        }
+    }
+
+    private void handlePartDeploy() {
+        if (deployment != null) {
+            popupDeployPartStage.show();
+            ObservableList<Machine> observableList = FXCollections.observableArrayList();
+            observableList.addAll(deployment.getMachinesAsList());
+            popupDeployPartController.addInfo(observableList);
         } else {
             showError("You have nothing inside your deployment");
         }
@@ -525,6 +540,21 @@ public class Controller {
         model.addKnownHosts(hosts, new ResultsListener<Boolean>() {
             @Override
             public void onCompletion(Boolean result) {
+                resetPopup();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                resetPopup();
+                showError(throwable.getMessage());
+            }
+        });
+    }
+
+    private void handleDeployPart(List<Machine> macs) {
+        model.sendPackages(macs, new ResultsListener<List<ConnectionInfo>>() {
+            @Override
+            public void onCompletion(List<ConnectionInfo> result) {
                 resetPopup();
             }
 
@@ -853,6 +883,40 @@ public class Controller {
 
                 List<Machine> machines = popupController.getSelectedMachines();
                 handleAddKnownHosts(machines);
+            }
+        });
+
+    }
+
+    private void createPopupDeployPart() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("popupPartDeploy.fxml"));
+        Parent root1 = null;
+        try {
+            root1 = (Parent) fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        popupDeployPartStage = new Stage();
+        popupDeployPartStage.initModality(Modality.APPLICATION_MODAL);
+        popupDeployPartStage.setTitle("Deploy");
+        popupDeployPartStage.setScene(new Scene(root1));
+        popupDeployPartStage.setResizable(false);
+        popupDeployPartStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                popupDeployPartController.resetInfo();
+            }
+        });
+        popupDeployPartController = (PopupDeployPartController) fxmlLoader.getController();
+        popupDeployPartController.setEventHandler(new EventHandler() {
+            @Override
+            public void handle(Event event) {
+                Platform.runLater(() -> {
+                    popupDeployPartController.setListViewDisabled(true);
+                });
+
+                List<Machine> machines = popupDeployPartController.getSelectedMachines();
+                handleDeployPart(machines);
             }
         });
 

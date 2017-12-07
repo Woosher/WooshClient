@@ -40,6 +40,17 @@ public class Deployment extends Observable {
         return machines;
     }
 
+    public List<Machine> getMachinesAsList(){
+        List<Machine> machinesList = new ArrayList<>();
+        for(Machine machine: machines){
+            if(machine instanceof LoadBalancer){
+                machinesList.addAll(((LoadBalancer)machine).getNodes());
+            }
+        }
+        machinesList.addAll(machines);
+        return machinesList;
+    }
+
     public void setMachines(List<Machine> machines) {
         this.machines.clear();
         this.machines.addAll(machines);

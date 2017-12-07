@@ -29,7 +29,9 @@ public interface FlowModelInterface {
 
     void addKnownHosts(List<Machine> macs, final ResultsListener<Boolean> resultsListener);
 
-    void sendPackages(final ResultsListener<List<ConnectionInfo>> resultsListener) ;
+    void sendAllPackages(final ResultsListener<List<ConnectionInfo>> resultsListener) ;
+
+    void sendPackages(List<Machine> macs, final ResultsListener<List<ConnectionInfo>> resultsListener) ;
 
     void testConnections(final ResultsListener<List<ConnectionInfo>> resultsListener);
 

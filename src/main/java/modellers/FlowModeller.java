@@ -169,10 +169,11 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void sendPackages(final ResultsListener<List<ConnectionInfo>> resultsListener) {
+    public void sendAllPackages(final ResultsListener<List<ConnectionInfo>> resultsListener) {
         supplyAsync(()-> {
             try {
-                return deploy();
+                packagingModeller.readyDeployment(memoryModeller.getDeployment());
+                return deploy(memoryModeller.getDeployment().getMachinesAsList());
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -183,19 +184,26 @@ public class FlowModeller implements FlowModelInterface {
 
     }
 
-    private ConnectionInfo[] deploy() throws WooshException{
-        packagingModeller.readyDeployment(memoryModeller.getDeployment());
-        Stack<Machine> machines = new Stack<>();
-        for(Machine machine: memoryModeller.getDeployment().getMachines()){
-            if(machine instanceof LoadBalancer){
-                machines.addAll(((LoadBalancer)machine).getNodes());
+    @Override
+    public void sendPackages(List<Machine> macs, ResultsListener<List<ConnectionInfo>> resultsListener) {
+        supplyAsync(()-> {
+            try {
+                return deploy(macs);
+            } catch (WooshException e) {
+                throw new RuntimeException(e.getMessage());
             }
-        }
-        machines.addAll(memoryModeller.getDeployment().getMachines());
+        }).thenAccept(a -> {
+            resultsListener.onCompletion(Arrays.asList(a));})
+                .exceptionally((t) -> {
+                    resultsListener.onFailure(t); return null;});
+    }
+
+
+    private ConnectionInfo[] deploy(List<Machine> machines) throws WooshException {
         int numOfMachines = machines.size();
         CompletableFuture<?>[] allFutures = new CompletableFuture<?>[numOfMachines];
         for (int i=0; i<numOfMachines; ++i) {
-            allFutures[i] = CompletableFuture.supplyAsync(() -> {return connectionModeller.sendPackage(machines.pop());});
+            allFutures[i] = CompletableFuture.supplyAsync(() -> {return connectionModeller.sendPackage(machines.remove(0));});
         }
         CompletableFuture.allOf(allFutures).join();
         return Arrays.stream(allFutures).map(CompletableFuture::join).toArray(ConnectionInfo[]::new);
