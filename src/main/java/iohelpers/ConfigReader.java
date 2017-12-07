@@ -47,16 +47,8 @@ public class ConfigReader implements ConfigReaderInterface {
     private LoadBalancer parseLoadBalancerFromJSON(JSONObject jsonObject){
         LoadBalancer loadBalancer = new LoadBalancer();
         List<Node> nodes = new ArrayList<Node>();
-        if(jsonObject.has("name")) loadBalancer.setName(jsonObject.getString("name"));
-        if(jsonObject.has("username")) loadBalancer.setUsername(jsonObject.getString("username"));
-        if(jsonObject.has("ip")) loadBalancer.setIp(jsonObject.getString("ip"));
-        if(jsonObject.has("port")) loadBalancer.setPort(jsonObject.getInt("port"));
-        if(jsonObject.has("sshport")) loadBalancer.setSSHPort(jsonObject.getInt("sshport"));
         if(jsonObject.has("caching_attributes")) loadBalancer.setCachingAttributes(jsonObject.getString("caching_attributes"));
-        if(jsonObject.has("password")) loadBalancer.setPassword(jsonObject.getString("password"));
-        if(jsonObject.has("sshkeypath")) loadBalancer.setSshKeyPath(jsonObject.getString("sshkeypath"));
-        if(jsonObject.has("useCustomScript")) loadBalancer.setUseCustomScript(jsonObject.getBoolean("useCustomScript"));
-        if(jsonObject.has("customScriptPath")) loadBalancer.setCustomScriptPath(jsonObject.getString("customScriptPath"));
+        parseMachineInfo(jsonObject, loadBalancer);
         if(jsonObject.has("nodes")){
             JSONArray JSONnodes = jsonObject.getJSONArray("nodes");
             for(int i = 0; i<JSONnodes.length(); i++){
@@ -70,21 +62,25 @@ public class ConfigReader implements ConfigReaderInterface {
         return loadBalancer;
     }
 
+    private void parseMachineInfo(JSONObject jsonObject, Machine machine){
+        if(jsonObject.has("ip"))  machine.setIp(jsonObject.getString("ip"));
+        if(jsonObject.has("port"))  machine.setPort(jsonObject.getInt("port"));
+        if(jsonObject.has("sshport"))  machine.setSSHPort(jsonObject.getInt("sshport"));
+        if(jsonObject.has("name"))  machine.setName(jsonObject.getString("name"));
+        if(jsonObject.has("username"))  machine.setUsername(jsonObject.getString("username"));
+        if(jsonObject.has("password"))  machine.setPassword(jsonObject.getString("password"));
+        if(jsonObject.has("sshkeypath"))  machine.setSshKeyPath(jsonObject.getString("sshkeypath"));
+        if(jsonObject.has("useSSHKey")) machine.setUseSSHKey(jsonObject.getBoolean("useSSHKey"));
+        if(jsonObject.has("useCustomScript")) machine.setUseCustomScript(jsonObject.getBoolean("useCustomScript"));
+        if(jsonObject.has("customScriptPath")) machine.setCustomScriptPath(jsonObject.getString("customScriptPath"));
+    }
+
     private Node parseNodeFromJSON(JSONObject jsonObject){
         Node node = new Node();
-        if(jsonObject.has("ip"))  node.setIp(jsonObject.getString("ip"));
-        if(jsonObject.has("port"))  node.setPort(jsonObject.getInt("port"));
-        if(jsonObject.has("sshport"))  node.setSSHPort(jsonObject.getInt("sshport"));
-        if(jsonObject.has("name"))  node.setName(jsonObject.getString("name"));
-        if(jsonObject.has("username"))  node.setUsername(jsonObject.getString("username"));
+        if(jsonObject.has("path"))  node.setProgramPath(jsonObject.getString("path"));
         if(jsonObject.has("software_environment"))  node.setEnvironment(jsonObject.getString("software_environment"));
         if(jsonObject.has("operating_system"))  node.setOperatingSystem(jsonObject.getString("operating_system"));
-        if(jsonObject.has("password"))  node.setPassword(jsonObject.getString("password"));
-        if(jsonObject.has("path"))  node.setProgramPath(jsonObject.getString("path"));
-        if(jsonObject.has("sshkeypath"))  node.setSshKeyPath(jsonObject.getString("sshkeypath"));
-        if(jsonObject.has("useSSHKey")) node.setUseSSHKey(jsonObject.getBoolean("useSSHKey"));
-        if(jsonObject.has("useCustomScript")) node.setUseCustomScript(jsonObject.getBoolean("useCustomScript"));
-        if(jsonObject.has("customScriptPath")) node.setCustomScriptPath(jsonObject.getString("customScriptPath"));
+        parseMachineInfo(jsonObject, node);
         return node;
     }
 

@@ -72,20 +72,10 @@ public class ConfigWriter implements WriterInterface {
     }
 
     private JSONObject parseLoadBalancer(LoadBalancer loadBalancer) {
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = parseMachineJson(loadBalancer);
         JSONArray jsonArray = new JSONArray();
         jsonObject.put("type", "loadbalancer");
-        jsonObject.put("name", loadBalancer.getName());
-        jsonObject.put("username", loadBalancer.getUsername());
-        jsonObject.put("ip", loadBalancer.getIp());
-        jsonObject.put("port", loadBalancer.getPort());
-        jsonObject.put("sshport", loadBalancer.getSSHPort());
         jsonObject.put("caching_attributes", loadBalancer.getCachingAttributes());
-        jsonObject.put("password", loadBalancer.getPassword());
-        jsonObject.put("sshkeypath", loadBalancer.getSshKeyPath());
-        jsonObject.put("useSSHKey", loadBalancer.isUseSSHKey());
-        jsonObject.put("useCustomScript", loadBalancer.isUseCustomScript());
-        jsonObject.put("customScriptPath", loadBalancer.getCustomScriptPath());
 
         for (Node node : loadBalancer.getNodes()) {
             JSONObject jsonNodeInfo = parseNode(node);
@@ -96,22 +86,30 @@ public class ConfigWriter implements WriterInterface {
         return jsonObject;
     }
 
-    private JSONObject parseNode(Node node) {
+    private JSONObject parseMachineJson(Machine machine){
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("ip", machine.getIp());
+        jsonObject.put("port", machine.getPort());
+        jsonObject.put("sshport", machine.getSSHPort());
+        jsonObject.put("name", machine.getName());
+        jsonObject.put("username", machine.getUsername());
+        jsonObject.put("password", machine.getPassword());
+        jsonObject.put("sshkeypath", machine.getSshKeyPath());
+        jsonObject.put("useSSHKey", machine.isUseSSHKey());
+        jsonObject.put("useCustomScript", machine.isUseCustomScript());
+        jsonObject.put("customScriptPath", machine.getCustomScriptPath());
+        return jsonObject;
+
+
+    }
+
+    private JSONObject parseNode(Node node) {
+        JSONObject jsonObject = parseMachineJson(node);
         jsonObject.put("type", "node");
-        jsonObject.put("ip", node.getIp());
-        jsonObject.put("port", node.getPort());
-        jsonObject.put("sshport", node.getSSHPort());
-        jsonObject.put("name", node.getName());
-        jsonObject.put("username", node.getUsername());
         jsonObject.put("software_environment", node.getEnvironment());
         jsonObject.put("operating_system", node.getOperatingSystem());
-        jsonObject.put("password", node.getPassword());
         jsonObject.put("path", node.getProgramPath());
-        jsonObject.put("sshkeypath", node.getSshKeyPath());
-        jsonObject.put("useSSHKey", node.isUseSSHKey());
-        jsonObject.put("useCustomScript", node.isUseCustomScript());
-        jsonObject.put("customScriptPath", node.getCustomScriptPath());
+
         return jsonObject;
     }
 
