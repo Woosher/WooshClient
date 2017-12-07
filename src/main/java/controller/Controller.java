@@ -552,16 +552,30 @@ public class Controller {
     }
 
     private void handleDeployPart(List<Machine> macs) {
+        popupDeployPartController.setSpinnerVisibility(true);
+        popupDeployController.resetInfo();
         model.sendPackages(macs, new ResultsListener<List<ConnectionInfo>>() {
             @Override
             public void onCompletion(List<ConnectionInfo> result) {
-                resetPopup();
+                Platform.runLater(() -> {
+                    popupDeployPartController.setSpinnerVisibility(false);
+                    popupDeployPartStage.close();
+                    ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
+                    observableList.addAll(result);
+                    popupDeployController.addInfo(observableList);
+                    popupDeployStage.show();
+                });
             }
 
             @Override
             public void onFailure(Throwable throwable) {
-                resetPopup();
-                showError(throwable.getMessage());
+                Platform.runLater(() -> {
+                    popupDeployController.setSpinnerVisibility(false);
+                    popupDeployController.resetInfo();
+                    popupDeployStage.close();
+                });
+                showError(throwable.getCause().getMessage());
+
             }
         });
     }
@@ -908,6 +922,7 @@ public class Controller {
             }
         });
         popupDeployPartController = (PopupDeployPartController) fxmlLoader.getController();
+        popupDeployPartController.setSpinnerVisibility(false);
         popupDeployPartController.setEventHandler(new EventHandler() {
             @Override
             public void handle(Event event) {
@@ -917,6 +932,8 @@ public class Controller {
 
                 List<Machine> machines = popupDeployPartController.getSelectedMachines();
                 handleDeployPart(machines);
+
+
             }
         });
 

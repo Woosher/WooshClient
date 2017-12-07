@@ -25,6 +25,7 @@
 
 
         <ListView fx:id="listview" prefWidth="700" GridPane.rowIndex="1" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150"></ListView>
+        <ProgressIndicator GridPane.rowIndex="1" fx:id="spinner"  maxHeight="70" maxWidth="70" prefWidth="50" prefHeight="50"></ProgressIndicator>
         <Button fx:id="buttonDeploy" text="Deploy"  minWidth="80" GridPane.rowIndex="2" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.valignment="CENTER"  ></Button>
     </children>
 

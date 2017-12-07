@@ -28,6 +28,9 @@ public class PopupDeployPartController {
     }
 
     @FXML
+    private ProgressIndicator spinner;
+
+    @FXML
     private Button buttonDeploy;
 
     @FXML
@@ -63,6 +66,10 @@ public class PopupDeployPartController {
                 });
             }
         });
+    }
+
+    public void setSpinnerVisibility(boolean visibility){
+        spinner.setVisible(visibility);
     }
 
     public List<Machine> getSelectedMachines(){
