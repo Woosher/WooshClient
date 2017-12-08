@@ -559,6 +559,7 @@ public class Controller {
             public void onCompletion(List<ConnectionInfo> result) {
                 Platform.runLater(() -> {
                     popupDeployPartController.setSpinnerVisibility(false);
+                    popupDeployController.setSpinnerVisibility(false);
                     popupDeployPartStage.close();
                     ObservableList<ConnectionInfo> observableList = FXCollections.observableArrayList();
                     observableList.addAll(result);
@@ -570,6 +571,7 @@ public class Controller {
             @Override
             public void onFailure(Throwable throwable) {
                 Platform.runLater(() -> {
+                    popupDeployPartController.setSpinnerVisibility(false);
                     popupDeployController.setSpinnerVisibility(false);
                     popupDeployController.resetInfo();
                     popupDeployStage.close();
