@@ -185,9 +185,10 @@ public class FlowModeller implements FlowModelInterface {
     }
 
     @Override
-    public void sendPackages(List<Machine> macs, ResultsListener<List<ConnectionInfo>> resultsListener) {
+    public void sendPackages(String name, List<Machine> macs, ResultsListener<List<ConnectionInfo>> resultsListener) {
         supplyAsync(()-> {
             try {
+                packagingModeller.readyMachines(name, macs);
                 return deploy(macs);
             } catch (WooshException e) {
                 throw new RuntimeException(e.getMessage());

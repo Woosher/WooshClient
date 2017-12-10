@@ -31,7 +31,7 @@ public interface FlowModelInterface {
 
     void sendAllPackages(final ResultsListener<List<ConnectionInfo>> resultsListener) ;
 
-    void sendPackages(List<Machine> macs, final ResultsListener<List<ConnectionInfo>> resultsListener) ;
+    void sendPackages(String name, List<Machine> macs, final ResultsListener<List<ConnectionInfo>> resultsListener) ;
 
     void testConnections(final ResultsListener<List<ConnectionInfo>> resultsListener);
 

@@ -17,6 +17,7 @@ import modellers.submodellers.interfaces.PackagingInterface;
 import tools.Utils;
 
 import java.io.*;
+import java.util.List;
 
 import static values.Constants.*;
 
@@ -38,25 +39,39 @@ public class PackagingModeller implements PackagingInterface {
     }
 
     @Override
-    public String readyDeployment(Deployment deployment) throws WooshException {
+    public void readyDeployment(Deployment deployment) throws WooshException {
         try {
             configChecker.checkDeploymentObject(deployment);
             String path = FULLTEMPPATH + deployment.getName() + "/";
             Utils.generateSimpleFolder(path);
-            for(Machine machine: deployment.getMachines()) {
-                if(machine instanceof LoadBalancer) {
-                    updateAndSaveLb((LoadBalancer)machine, path);
-                    for (Node node : ((LoadBalancer)machine).getNodes()) {
-                        updateAndSaveNode(node, path);
-                    }
-                }else{
-                    updateAndSaveNode((Node)machine,path);
-                }
-            }
+            updateMachines(deployment.getMachinesAsList(), path);
         } catch (Exception e) {
             throw new WooshException(e.getMessage());
         }
-        return null;
+    }
+
+    @Override
+    public void readyMachines(String name, List<Machine> machines) throws WooshException {
+        String path = FULLTEMPPATH + name + "/";
+        try {
+            Utils.generateSimpleFolder(path);
+        } catch (IOException e) {
+            throw new WooshException("Couldn't create temp folder.");
+        }
+        updateMachines(machines, path);
+    }
+
+    private void updateMachines(List<Machine> machines, String path) throws WooshException{
+        for(Machine machine: machines) {
+            if(machine instanceof LoadBalancer) {
+                updateAndSaveLb((LoadBalancer)machine, path);
+                for (Node node : ((LoadBalancer)machine).getNodes()) {
+                    updateAndSaveNode(node, path);
+                }
+            }else{
+                updateAndSaveNode((Node)machine,path);
+            }
+        }
     }
 
     private void updateAndSaveNode(Node node, String path) throws WooshException {

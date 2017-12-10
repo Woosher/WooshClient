@@ -554,7 +554,7 @@ public class Controller {
     private void handleDeployPart(List<Machine> macs) {
         popupDeployPartController.setSpinnerVisibility(true);
         popupDeployController.resetInfo();
-        model.sendPackages(macs, new ResultsListener<List<ConnectionInfo>>() {
+        model.sendPackages(deployment.getName(), macs, new ResultsListener<List<ConnectionInfo>>() {
             @Override
             public void onCompletion(List<ConnectionInfo> result) {
                 Platform.runLater(() -> {

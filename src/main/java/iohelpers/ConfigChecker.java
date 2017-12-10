@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,23 +83,20 @@ public class ConfigChecker implements CheckerInterface {
     @Override
     public void checkDeploymentObject(Deployment deployment) throws WooshException {
         checkDeploymentAttributes(deployment);
-        checkDeploymentDuplicates(deployment);
+        checkDeploymentDuplicates(deployment.getMachinesAsList());
     }
 
-    private void checkDeploymentDuplicates(Deployment deployment) throws WooshException{
-        /*TODO
-            Udbyg så den kan tjekke en node stack også
-         */
-        Stack<Machine> machines = new Stack<>();
-        machines.addAll(deployment.getMachines());
-        for(Machine machine: deployment.getMachines()){
-            if(machine instanceof LoadBalancer) {
-                machines.addAll(((LoadBalancer)machine).getNodes());
-            }
+    @Override
+    public void checkMachineList(List<Machine> machineList) throws WooshException {
+        checkDeploymentDuplicates(machineList);
+    }
 
-        }
-        Machine firstMachine = machines.pop();
-        checkMachineStack(firstMachine, machines);
+    private void checkDeploymentDuplicates(List<Machine> machines) throws WooshException{
+        Stack<Machine> machineStack = new Stack<>();
+        machineStack.addAll(machines);
+
+        Machine firstMachine = machineStack.pop();
+        checkMachineStack(firstMachine, machineStack);
 
     }
 
