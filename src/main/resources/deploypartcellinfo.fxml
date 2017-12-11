@@ -14,7 +14,7 @@
 
     </columnConstraints>
     <children>
-        <Label style="-fx-font-weight: bold" fx:id="label1" minWidth="110" prefWidth="100" text="loadbalancer1"  GridPane.columnIndex="0"  GridPane.rowIndex="1" />
+        <Label style="-fx-font-weight: bold" fx:id="label1" minWidth="110" prefWidth="200" text="loadbalancer1"  GridPane.columnIndex="0"  GridPane.rowIndex="1" />
         <Label fx:id="label2"  minWidth="50" text="" GridPane.columnIndex="1"  GridPane.rowIndex="1" />
         <CheckBox  mnemonicParsing="false" GridPane.halignment="CENTER"   fx:id="checkBox"  GridPane.columnIndex="2"  GridPane.rowIndex="1"  ></CheckBox>
     </children>

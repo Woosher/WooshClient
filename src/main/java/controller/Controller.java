@@ -558,6 +558,7 @@ public class Controller {
             @Override
             public void onCompletion(List<ConnectionInfo> result) {
                 Platform.runLater(() -> {
+                    popupDeployPartController.setListViewDisabled(false);
                     popupDeployPartController.setSpinnerVisibility(false);
                     popupDeployController.setSpinnerVisibility(false);
                     popupDeployPartStage.close();
